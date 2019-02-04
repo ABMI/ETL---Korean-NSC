@@ -1,3 +1,4 @@
+
 etlExecute<-function(connectionDetails,
                      rawDatabaseSchema,
                      cdmDatabaseSchema,
@@ -7,11 +8,11 @@ etlExecute<-function(connectionDetails,
                      table30,
                      table40,
                      table60,
-                     cdmVer = "5.3.1",
-                     sourceToConceptVer="20181231",
-                     omopVocabularyVer = ""){
+                     cdmVer = "v5.3.1",
+                     sourceToConceptVer="20181231", #Need to be checked
+                     omopVocabularyVer = "v5.0 04-DEC-18"){
 
-	pathToSql <- system.file("sql", "sql server", package = "ETL---Korean-NSC")
+	pathToSql <- system.file("sql", "sql server", package = "etlKoreanNSC")
 	if(createCdmDdl) {
 		sql <- SqlRender::readSql(file.path(pathToSql),"000.OMOP CDM sql server ddl.sql")
 		sql <- SqlRender::renderSql(sql,

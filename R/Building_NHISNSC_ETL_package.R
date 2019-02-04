@@ -38,7 +38,8 @@ executeETL <- function(CDM_ddl = TRUE,
                 dose_era = TRUE,
                 indexing = TRUE,
                 constraints = TRUE,
-                connectionDetails
+                connectionDetails,
+                sqlFolder
                 ){
                         if (CDM_ddl == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder, "/000.OMOP CDM sql server ddl.sql"))
