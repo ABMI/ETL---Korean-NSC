@@ -20,6 +20,7 @@
 #' @export
 executeETL <- function(CDM_ddl = TRUE,
                 master_table = TRUE,
+                import_voca = TRUE,
                 location = TRUE,
                 care_site = TRUE,
                 person = TRUE,
@@ -36,6 +37,7 @@ executeETL <- function(CDM_ddl = TRUE,
                 cost = TRUE,
                 generateEra = TRUE,
                 dose_era = TRUE,
+                cdm_source = TRUE,
                 indexing = TRUE,
                 constraints = TRUE,
                 connectionDetails,
@@ -44,9 +46,18 @@ executeETL <- function(CDM_ddl = TRUE,
                         if (CDM_ddl == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder, "/000.OMOP CDM sql server ddl.sql"))
                                 sql <- SqlRender::renderSql(sql, NHISNSC_database)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=conn$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
 
-                                DatabaseConnector::executeSql(connection = connection, sql)
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                        }
+
+                        if (import_voca == TRUE){
+                                sql <- SqlRender::readSql(paste0(sqlFolder,"/001.Import_voca.sql"))
+                                sql <- SqlRender::renderSql(sql
+                                                        , Mapping_database)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
                         }
 
                         if (master_table == TRUE){
@@ -60,17 +71,17 @@ executeETL <- function(CDM_ddl = TRUE,
                                                         , NHIS_60T
                                                         , NHIS_JK
                                                         , NHIS_GJ)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=conn$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
 
-                                DatabaseConnector::executeSql(connection = conn, sql)
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
                         }
 
                         if (location == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/020.Location.sql"))
                                 sql <- SqlRender::renderSql(sql, NHISNSC_database)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=conn$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
 
-                                DatabaseConnector::executeSql(connection = conn, sql)
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
                         }
 
                         if (care_site == TRUE){
@@ -79,9 +90,9 @@ executeETL <- function(CDM_ddl = TRUE,
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
                                                             , NHIS_YK)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=conn$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
 
-                                DatabaseConnector::executeSql(connection = conn, sql)
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
                         }
 
                         if (person == TRUE){
@@ -90,9 +101,9 @@ executeETL <- function(CDM_ddl = TRUE,
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
                                                             , NHIS_JK)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=conn$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
 
-                                DatabaseConnector::executeSql(connection = conn, sql)
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
                         }
 
                         if (death == TRUE){
@@ -100,10 +111,11 @@ executeETL <- function(CDM_ddl = TRUE,
                                 sql <- SqlRender::renderSql(sql
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
+                                                            , Mapping_database
                                                             , NHIS_JK)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=conn$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
 
-                                DatabaseConnector::executeSql(connection = conn, sql)
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
                         }
                         if (observation_period == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/060.Observation_period.sql"))
@@ -111,9 +123,9 @@ executeETL <- function(CDM_ddl = TRUE,
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
                                                             , NHIS_JK)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=conn$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
 
-                                DatabaseConnector::executeSql(connection = conn, sql)
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
                         }
 
                         if (visit_occurrence == TRUE){
@@ -123,9 +135,9 @@ executeETL <- function(CDM_ddl = TRUE,
                                                             , NHISNSC_rawdata
                                                             , NHIS_20T
                                                             , NHIS_GJ)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=conn$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
 
-                                DatabaseConnector::executeSql(connection = conn, sql)
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
                         }
 
                         if (condition_occurrence == TRUE){
@@ -133,11 +145,12 @@ executeETL <- function(CDM_ddl = TRUE,
                                 sql <- SqlRender::renderSql(sql
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
+                                                            , Mapping_database
                                                             , NHIS_20T
                                                             , NHIS_40T)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=conn$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
 
-                                DatabaseConnector::executeSql(connection = conn, sql)
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
                         }
 
                         if (observation == TRUE){
@@ -147,9 +160,9 @@ executeETL <- function(CDM_ddl = TRUE,
                                                             , NHISNSC_rawdata
                                                             , NHIS_JK
                                                             , NHIS_GJ)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=conn$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
 
-                                DatabaseConnector::executeSql(connection = conn, sql)
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
                         }
 
                         if (drug_exposure == TRUE){
@@ -157,12 +170,13 @@ executeETL <- function(CDM_ddl = TRUE,
                                 sql <- SqlRender::renderSql(sql
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
+                                                            , Mapping_database
                                                             , NHIS_20T
                                                             , NHIS_30T
                                                             , NHIS_60T)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=conn$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
 
-                                DatabaseConnector::executeSql(connection = conn, sql)
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
                         }
 
                         if (procedure_occurrence == TRUE){
@@ -170,11 +184,12 @@ executeETL <- function(CDM_ddl = TRUE,
                                 sql <- SqlRender::renderSql(sql
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
+                                                            , Mapping_database
                                                             , NHIS_30T
                                                             , NHIS_60T)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=conn$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
 
-                                DatabaseConnector::executeSql(connection = conn, sql)
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
                         }
 
                         if (device_exposure == TRUE){
@@ -182,11 +197,12 @@ executeETL <- function(CDM_ddl = TRUE,
                                 sql <- SqlRender::renderSql(sql
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
+                                                            , Mapping_database
                                                             , NHIS_30T
                                                             , NHIS_60T)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=conn$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
 
-                                DatabaseConnector::executeSql(connection = conn, sql)
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
                         }
 
                         if (measurement == TRUE){
@@ -194,9 +210,9 @@ executeETL <- function(CDM_ddl = TRUE,
                                 sql <- SqlRender::renderSql(sql
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=conn$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
 
-                                DatabaseConnector::executeSql(connection = conn, sql)
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
                         }
 
                         if (payer_plan_period == TRUE){
@@ -205,9 +221,9 @@ executeETL <- function(CDM_ddl = TRUE,
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
                                                             , NHIS_JK)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=conn$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
 
-                                DatabaseConnector::executeSql(connection = conn, sql)
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
                         }
 
                         if (cost == TRUE){
@@ -215,43 +231,52 @@ executeETL <- function(CDM_ddl = TRUE,
                                 sql <- SqlRender::renderSql(sql
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
+                                                            , Mapping_database
                                                             , NHIS_20T
                                                             , NHIS_30T
                                                             , NHIS_60T)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=conn$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
 
-                                DatabaseConnector::executeSql(connection = conn, sql)
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
                         }
 
                         if (generateEra == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/300.GenerateEra.sql"))
                                 sql <- SqlRender::renderSql(sql, NHISNSC_database)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=conn$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
 
-                                DatabaseConnector::executeSql(connection = conn, sql)
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
                         }
 
                         if (dose_era == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/310.Dose_era.sql"))
                                 sql <- SqlRender::renderSql(sql, NHISNSC_database)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=conn$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
 
-                                DatabaseConnector::executeSql(connection = conn, sql)
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                        }
+
+                        if (cdm_source == TRUE){
+                                sql <- SqlRender::readSql(paste0(sqlFolder,"/320.CDM_source.sql"))
+                                sql <- SqlRender::renderSql(sql, NHISNSC_database)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
                         }
 
                         if (indexing == TRUE){
-                                sql <- SqlRender::readSql(paste0(sqlFolder,"/001.Indexing.sql"))
+                                sql <- SqlRender::readSql(paste0(sqlFolder,"/400.Indexing.sql"))
                                 sql <- SqlRender::renderSql(sql, NHISNSC_database)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=conn$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
 
-                                DatabaseConnector::executeSql(connection = conn, sql)
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
                         }
 
                         if (indexing == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/500.Constraints.sql"))
                                 sql <- SqlRender::renderSql(sql, NHISNSC_database)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=conn$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
 
-                                DatabaseConnector::executeSql(connection = conn, sql)
+                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
                         }
                 }
