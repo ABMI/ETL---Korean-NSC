@@ -5,6 +5,7 @@
  
 @NHISNSC_rawdata : DB containing NHIS National Sample cohort DB
 @NHISNSC_database: DB for NHIS-NSC in CDM format
+@Mapping_database : DB for mapping table
 @NHIS_JK: JK table in NHIS NSC
 @@NHIS_20T: 20 table in NHIS NSC
 @NHIS_30T: 30 table in NHIS NSC
@@ -216,7 +217,7 @@ CREATE TABLE @NHISNSC_database.DRUG_EXPOSURE (
 ***************************************/ 
 select a.source_code, a.target_concept_id, a.domain_id, REPLACE(a.invalid_reason, '', NULL) as invalid_reason
 into #mapping_table
-from @NHISNSC_database.source_to_concept_map a join @NHISNSC_database.CONCEPT b on a.target_concept_id=b.concept_id
+from @Mapping_database.source_to_concept_map a join @Mapping_database.CONCEPT b on a.target_concept_id=b.concept_id
 where a.invalid_reason='' and b.invalid_reason='' and a.domain_id='drug';
 
 
