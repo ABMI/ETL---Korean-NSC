@@ -14,8 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' BuildingCDM function
+#' BuildingCDM Function
+#' 
+#' This function is the master function which contains Getquery, setNames, connectDB and executeETL functions. 
+#' By executing BuildingCDM function, the user will be asked to enter required information such as the detailed information of DB schemas, then the ETL process will be executed automatically. 
 #' @export
+#' @example 
 BuildingCDM <- function(){
                 Getquery()
                 setNames()

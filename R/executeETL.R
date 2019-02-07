@@ -14,9 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' execute ETL function
-#' @param CDM_ddl 
+#' executeETL Function
+#' 
+#' This function allows to execute ETL process.
+#' @param CDM_ddl, import_voca, master_table, location, care_site, person, death, observation_period, visit_occurrence, condition_occurrence, observation, drug_exposure, procedure_occurrence, device_exposure, measurement, payer_plan_period, cost, generateEra, dose_era, CDM_source, indexing, constraints
 #' @export
+#' @example executeETL() 
 executeETL <- function(CDM_ddl = TRUE,
                 import_voca = TRUE,
                 master_table = TRUE,

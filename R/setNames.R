@@ -14,12 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' setNames
+#' setNames Function
 #'
-#' This function for setting db and table names before execute DB connection and ETL function
+#' This function allows to set the names of variables which will be used in executeETL function. The user will be demanded to enter the names of tables and DB schemas.
 #' @export
-#' 
-#' 
+#' @example setNames()
 setNames <- function(){
         tryCatch(
                 NHISNSC_database,

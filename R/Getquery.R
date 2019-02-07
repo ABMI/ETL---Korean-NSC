@@ -14,8 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' SqlFolder directory path setting
+#' Getquery function
+#' 
+#' This function allows to set the directory where ETL queries are contained.
 #' @export
+#' @example Getquery()
 Getquery <- function(){
         tryCatch(
                 sqlFolder <<- choose.dir(),

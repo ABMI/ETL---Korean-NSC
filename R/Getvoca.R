@@ -14,8 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' vocaFolder directory path setting
+#' Getvoca Function
+#' 
+#' This function allows to set the directory where vocabulary files are contained, usually downloaded from ATHENA.
 #' @export
+#' @example Getvoca()
 Getvoca <- function(){
         tryCatch(
                 vocaFolder <<- choose.dir(),

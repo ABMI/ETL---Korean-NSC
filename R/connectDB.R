@@ -14,12 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' connectDB
+#' connectDB Function
 #'
-#' This function for DB server connecting
+#' This function allows the user to enter the detailed information for connection with Database. If the connection is successed then "Connection success!" will be showd on Console, otherwise "Connection failed" will be showed. 
 #' @export
-
-# Set User Info to check authority
+#' @example connectDB()
 connectDB <- function(){
         tryCatch(
                 dbms,
