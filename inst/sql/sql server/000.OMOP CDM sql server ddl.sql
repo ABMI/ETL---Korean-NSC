@@ -43,7 +43,8 @@ Standardized vocabulary
 ************************/
 
 -- 18.12.13 JHCho
-use @NHISNSC_database
+USE @Mapping_database
+--19.02.08 JMPark
 
 CREATE TABLE concept (
   concept_id			    INTEGER			  NOT NULL ,
@@ -139,7 +140,7 @@ CREATE TABLE source_to_concept_map (
 ;
 */
 
-
+USE @NHIS_NSC_new
 
 CREATE TABLE drug_strength (
   drug_concept_id				      INTEGER		  NOT NULL,
