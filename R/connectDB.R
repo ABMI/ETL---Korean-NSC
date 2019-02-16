@@ -44,7 +44,7 @@ connectDB <- function(){
                         password <<- readline("Enter your password : ")
                 })                
         
-        connectionDetails <- DatabaseConnector::createConnectionDetails(
+        connectionDetails <<- DatabaseConnector::createConnectionDetails(
                                                         dbms = dbms
                                                         , server = server
                                                         , schema = NHISNSC_rawdata

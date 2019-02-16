@@ -21,7 +21,7 @@
 #' @export
 #' @example executeETL() 
 executeETL <- function(CDM_ddl = TRUE,
-                import_voca = TRUE,
+                #import_voca = TRUE,        Importing voca could be unnecessary
                 master_table = TRUE,
                 location = TRUE,
                 care_site = TRUE,
@@ -45,25 +45,28 @@ executeETL <- function(CDM_ddl = TRUE,
                 ){
                         if (CDM_ddl == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder, "/000.OMOP CDM sql server ddl.sql"))
-                                sql <- SqlRender::renderSql(sql, NHISNSC_database)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
-
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
-                        }
-
-                        if (import_voca == TRUE){
-                                sql <- SqlRender::readSql(paste0(sqlFolder,"/001.Import_voca.sql"))
                                 sql <- SqlRender::renderSql(sql
-                                                        , Mapping_database
-                                                        , vocaFolder)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                                            , warnOnMissingParameters = TRUE
+                                                            , NHISNSC_database)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
+
+                        # if (import_voca == TRUE){
+                        #         sql <- SqlRender::readSql(paste0(sqlFolder,"/001.Import_voca.sql"))
+                        #         sql <- SqlRender::renderSql(sql
+                        #                                 , Mapping_database
+                        #                                 , vocaFolder)$sql
+                        #         sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
+                        # 
+                        #         DatabaseConnector::executeSql(connection = connection, sql)
+                        # }
 
                         if (master_table == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/010.Master_table.sql"))
                                 sql <- SqlRender::renderSql(sql
+                                                        , warnOnMissingParameters = TRUE
                                                         , NHISNSC_database
                                                         , NHISNSC_rawdata
                                                         , NHIS_20T
@@ -72,212 +75,239 @@ executeETL <- function(CDM_ddl = TRUE,
                                                         , NHIS_60T
                                                         , NHIS_JK
                                                         , NHIS_GJ)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
                         if (location == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/020.Location.sql"))
-                                sql <- SqlRender::renderSql(sql, NHISNSC_database)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                sql <- SqlRender::renderSql(sql
+                                                            , warnOnMissingParameters = TRUE
+                                                            , NHISNSC_database)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
                         if (care_site == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/030.Care_site.sql"))
                                 sql <- SqlRender::renderSql(sql
+                                                            , warnOnMissingParameters = TRUE
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
                                                             , NHIS_YK)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
                         if (person == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/040.Person.sql"))
                                 sql <- SqlRender::renderSql(sql
+                                                            , warnOnMissingParameters = TRUE
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
                                                             , NHIS_JK)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
                         if (death == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/050.Death.sql"))
                                 sql <- SqlRender::renderSql(sql
+                                                            , warnOnMissingParameters = TRUE
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
                                                             , Mapping_database
                                                             , NHIS_JK)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
                         if (observation_period == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/060.Observation_period.sql"))
                                 sql <- SqlRender::renderSql(sql
+                                                            , warnOnMissingParameters = TRUE
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
                                                             , NHIS_JK)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
                         if (visit_occurrence == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/070.Visit_occurrence.sql"))
                                 sql <- SqlRender::renderSql(sql
+                                                            , warnOnMissingParameters = TRUE
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
                                                             , NHIS_20T
                                                             , NHIS_GJ)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
                         if (condition_occurrence == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/080.Condition_occurrence.sql"))
                                 sql <- SqlRender::renderSql(sql
+                                                            , warnOnMissingParameters = TRUE
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
                                                             , Mapping_database
                                                             , NHIS_20T
                                                             , NHIS_40T)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
                         if (observation == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/090.Observation.sql"))
                                 sql <- SqlRender::renderSql(sql
+                                                            , warnOnMissingParameters = TRUE
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
                                                             , NHIS_JK
                                                             , NHIS_GJ)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
                         if (drug_exposure == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/100.Drug_exposure.sql"))
                                 sql <- SqlRender::renderSql(sql
+                                                            , warnOnMissingParameters = TRUE
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
                                                             , Mapping_database
                                                             , NHIS_20T
                                                             , NHIS_30T
                                                             , NHIS_60T)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
                         if (procedure_occurrence == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/110.Procedure_occurrence.sql"))
                                 sql <- SqlRender::renderSql(sql
+                                                            , warnOnMissingParameters = TRUE
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
                                                             , Mapping_database
                                                             , NHIS_30T
                                                             , NHIS_60T)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
                         if (device_exposure == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/120.Device_exposure.sql"))
                                 sql <- SqlRender::renderSql(sql
+                                                            , warnOnMissingParameters = TRUE
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
                                                             , Mapping_database
                                                             , NHIS_30T
                                                             , NHIS_60T)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
                         if (measurement == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/130.Measurement.sql"))
                                 sql <- SqlRender::renderSql(sql
+                                                            , warnOnMissingParameters = TRUE
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
                         if (payer_plan_period == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/140.Payer_plan_period.sql"))
                                 sql <- SqlRender::renderSql(sql
+                                                            , warnOnMissingParameters = TRUE
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
                                                             , NHIS_JK)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
                         if (cost == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/150.Cost.sql"))
                                 sql <- SqlRender::renderSql(sql
+                                                            , warnOnMissingParameters = TRUE
                                                             , NHISNSC_database
                                                             , NHISNSC_rawdata
                                                             , Mapping_database
                                                             , NHIS_20T
                                                             , NHIS_30T
                                                             , NHIS_60T)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
                         if (generateEra == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/300.GenerateEra.sql"))
-                                sql <- SqlRender::renderSql(sql, NHISNSC_database)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                sql <- SqlRender::renderSql(sql
+                                                            , warnOnMissingParameters = TRUE
+                                                            , NHISNSC_database)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
                         if (dose_era == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/310.Dose_era.sql"))
-                                sql <- SqlRender::renderSql(sql, NHISNSC_database)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                sql <- SqlRender::renderSql(sql
+                                                            , warnOnMissingParameters = TRUE
+                                                            , NHISNSC_database)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
                         if (cdm_source == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/320.CDM_source.sql"))
-                                sql <- SqlRender::renderSql(sql, NHISNSC_database)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                sql <- SqlRender::renderSql(sql
+                                                            , warnOnMissingParameters = TRUE
+                                                            , NHISNSC_database)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
                         if (indexing == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/400.Indexing.sql"))
-                                sql <- SqlRender::renderSql(sql, NHISNSC_database)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                sql <- SqlRender::renderSql(sql
+                                                            , warnOnMissingParameters = TRUE
+                                                            , NHISNSC_database)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
-                        if (indexing == TRUE){
+                        if (constraints == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"/500.Constraints.sql"))
-                                sql <- SqlRender::renderSql(sql, NHISNSC_database)$sql
-                                sql <- SqlRender::translateSql(sql, targetDialect=connectionDetails$dbms)$sql
+                                sql <- SqlRender::renderSql(sql
+                                                            , warnOnMissingParameters = TRUE
+                                                            , NHISNSC_database)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connectionDetails, sql)
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
+    
+                        
                 }
