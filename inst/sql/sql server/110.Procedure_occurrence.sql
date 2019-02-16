@@ -1,6 +1,6 @@
-/**************************************
+ï»¿/**************************************
  --encoding : UTF-8
- --Author: ÀÌ¼º¿ø
+ --Author: ì´ì„±ì›
  --Date: 2018.09.12
  
  @NHISNSC_rawdata : DB containing NHIS National Sample cohort DB
@@ -16,29 +16,29 @@
  @DRUG_MAPPINGTABLE : mapping table between EDI and OMOP vocabulary
  @PROCEDURE_MAPPINGTABLE : mapping table between Korean procedure and OMOP vocabulary
  
- --Description: Procedure_occurrence Å×ÀÌºí »ı¼º
-			   * 30T(Áø·á), 60T(Ã³¹æÀü) Å×ÀÌºí¿¡¼­ °¢°¢ ETLÀ» ¼öÇàÇØ¾ß ÇÔ
+ --Description: Procedure_occurrence í…Œì´ë¸” ìƒì„±
+			   * 30T(ì§„ë£Œ), 60T(ì²˜ë°©ì „) í…Œì´ë¸”ì—ì„œ ê°ê° ETLì„ ìˆ˜í–‰í•´ì•¼ í•¨
  --Generating Table: PROCEDURE_OCCURRENCE
 ***************************************/
 
 /**************************************
- 1. º¯È¯ µ¥ÀÌÅÍ °Ç¼ö ÆÄ¾Ç
+ 1. ë³€í™˜ ë°ì´í„° ê±´ìˆ˜ íŒŒì•…
 ***************************************/ 
 /*
--- 30T º¯È¯ ¿¹»ó °Ç¼ö(1:N ¸ÅÇÎ Çã¿ë)
+-- 30T ë³€í™˜ ì˜ˆìƒ ê±´ìˆ˜(1:N ë§¤í•‘ í—ˆìš©)
 select count(a.key_seq)
 from @NHISNSC_rawdata.@@NHIS_30T a, (select * from @NHISNSC_database.@source_to_concept_map where domain_id='procedure' and invalid_reason is null) b, @NHISNSC_rawdata.@NHIS_20T c
 where a.div_cd=b.source_code
 and a.key_seq=c.key_seq
 
--- Âü°í) 30T º¯È¯ ¿¹»ó °Ç¼ö (distinct ¿ë¾î¸¸ Ä«¿îÆ®)
+-- ì°¸ê³ ) 30T ë³€í™˜ ì˜ˆìƒ ê±´ìˆ˜ (distinct ìš©ì–´ë§Œ ì¹´ìš´íŠ¸)
 select count(a.key_seq)
 from @NHISNSC_rawdata.@@NHIS_30T a, @NHISNSC_rawdata.@NHIS_20T b
 where a.key_seq=b.key_seq
 and a.div_cd in (select distinct c.source_code
 	from (select * from @NHISNSC_database.@source_to_concept_map where domain_id='procedure' and invalid_reason is null) as c)
 	
--- Âü°í) 30T Áß 1:N ¸ÅÇÎ Áßº¹ °Ç¼ö
+-- ì°¸ê³ ) 30T ì¤‘ 1:N ë§¤í•‘ ì¤‘ë³µ ê±´ìˆ˜
 select count(a.key_seq), sum(cnt)
 from @NHISNSC_rawdata.@@NHIS_30T a, 
 	(select source_code, count(source_code)-1 as cnt 
@@ -47,22 +47,21 @@ from @NHISNSC_rawdata.@@NHIS_30T a,
 	having count(source_code) > 1) b
 where a.div_cd=b.source_code
 
-
 ----------------------------------------
--- 60T º¯È¯ ¿¹»ó °Ç¼ö(1:N ¸ÅÇÎ Çã¿ë)
+-- 60T ë³€í™˜ ì˜ˆìƒ ê±´ìˆ˜(1:N ë§¤í•‘ í—ˆìš©)
 select count(a.key_seq)
 from @NHISNSC_rawdata.@@NHIS_60T a, (select * from @NHISNSC_database.@source_to_concept_map where domain_id='procedure' and invalid_reason is null) b, @NHISNSC_rawdata.@NHIS_20T c
 where a.div_cd=b.source_code
 and a.key_seq=c.key_seq
 
--- Âü°í) 60T º¯È¯ ¿¹»ó °Ç¼ö (distinct ¿ë¾î¸¸ Ä«¿îÆ®)
+-- ì°¸ê³ ) 60T ë³€í™˜ ì˜ˆìƒ ê±´ìˆ˜ (distinct ìš©ì–´ë§Œ ì¹´ìš´íŠ¸)
 select count(a.key_seq)
 from @NHISNSC_rawdata.@@NHIS_60T a, @NHISNSC_rawdata.@NHIS_20T b
 where a.key_seq=b.key_seq
 and a.div_cd in (select distinct source_code
 	from (select * from @NHISNSC_database.@source_to_concept_map where domain_id='procedure' and invalid_reason is null) as c)
 
--- Âü°í) 60T Áß 1:N ¸ÅÇÎ Áßº¹ °Ç¼ö
+-- ì°¸ê³ ) 60T ì¤‘ 1:N ë§¤í•‘ ì¤‘ë³µ ê±´ìˆ˜
 select count(a.key_seq), sum(cnt)
 from @NHISNSC_rawdata.@@NHIS_60T a, 
 	(select source_code, count(source_code)-1 as cnt 
@@ -76,7 +75,7 @@ and a.key_seq=c.key_seq
 */
 
 /**************************************
- 2. Å×ÀÌºí »ı¼º
+ 2. í…Œì´ë¸” ìƒì„±
 ***************************************/ 
 /*
 CREATE TABLE @NHISNSC_database.PROCEDURE_OCCURRENCE ( 
@@ -96,7 +95,7 @@ CREATE TABLE @NHISNSC_database.PROCEDURE_OCCURRENCE (
 ;
 */
 /**************************************
- 2-1. ÀÓ½Ã ¸ÅÇÎ Å×ÀÌºí »ç¿ë
+ 2-1. ì„ì‹œ ë§¤í•‘ í…Œì´ë¸” ì‚¬ìš©
 ***************************************/ 
 select a.source_code, a.target_concept_id, a.domain_id, REPLACE(a.invalid_reason, '', NULL) as invalid_reason
 into #mapping_table
@@ -105,7 +104,7 @@ where a.invalid_reason='' and b.invalid_reason='' and a.domain_id='procedure';
 
 
 /**************************************
- 3-1. 30T¸¦ ÀÌ¿ëÇÏ¿© µ¥ÀÌÅÍ ÀÔ·Â
+ 3-1. 30Të¥¼ ì´ìš©í•˜ì—¬ ë°ì´í„° ì…ë ¥
 ***************************************/
 INSERT INTO @NHISNSC_database.PROCEDURE_OCCURRENCE 
 	(procedure_occurrence_id, person_id, procedure_concept_id, procedure_date, procedure_type_concept_id, 
@@ -137,7 +136,7 @@ WHERE left(a.div_cd,5)=b.source_code
 ;
 
 /**************************************
- 3-2. 60T¸¦ ÀÌ¿ëÇÏ¿© µ¥ÀÌÅÍ ÀÔ·Â
+ 3-2. 60Të¥¼ ì´ìš©í•˜ì—¬ ë°ì´í„° ì…ë ¥
 ***************************************/
 INSERT INTO @NHISNSC_database.PROCEDURE_OCCURRENCE 
 	(procedure_occurrence_id, person_id, procedure_concept_id, procedure_date, procedure_type_concept_id, 
@@ -169,7 +168,7 @@ WHERE left(a.div_cd,5)=b.source_code
 ;
 
 /**************************************
- 3-3. ¸ÅÇÎÅ×ÀÌºí°ú Á¶ÀÎµÇÁö ¾Ê´Â 30T µ¥ÀÌÅÍ ÀÔ·Â
+ 3-3. ë§¤í•‘í…Œì´ë¸”ê³¼ ì¡°ì¸ë˜ì§€ ì•ŠëŠ” 30T ë°ì´í„° ì…ë ¥
 ***************************************/
 INSERT INTO @NHISNSC_database.PROCEDURE_OCCURRENCE 
 	(procedure_occurrence_id, person_id, procedure_concept_id, procedure_date, procedure_type_concept_id, 
@@ -201,7 +200,7 @@ WHERE left(a.div_cd,5) not in (select source_code from #mapping_table )
 ;
 
 /**************************************
- 3-4. ¸ÅÇÎÅ×ÀÌºí°ú Á¶ÀÎµÇÁö ¾Ê´Â 60T µ¥ÀÌÅÍ ÀÔ·Â
+ 3-4. ë§¤í•‘í…Œì´ë¸”ê³¼ ì¡°ì¸ë˜ì§€ ì•ŠëŠ” 60T ë°ì´í„° ì…ë ¥
 ***************************************/
 INSERT INTO @NHISNSC_database.PROCEDURE_OCCURRENCE 
 	(procedure_occurrence_id, person_id, procedure_concept_id, procedure_date, procedure_type_concept_id, 

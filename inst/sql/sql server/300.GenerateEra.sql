@@ -48,7 +48,6 @@ OHDSI-SQL File Instructions
 USE @NHISNSC_database;
 
 
-
 /****
 DRUG ERA
 Note: Eras derived from DRUG_EXPOSURE table, using 30d gap

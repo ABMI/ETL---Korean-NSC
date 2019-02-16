@@ -1,6 +1,6 @@
-/**************************************
+ï»¿/**************************************
  --encoding : UTF-8
- --Author: ÀÌ¼º¿ø
+ --Author: ì´ì„±ì›
  --Date: 2018.09.10
  
  @NHISNSC_rawdata : DB containing NHIS National Sample cohort DB
@@ -11,12 +11,12 @@
  @NHIS_40T: 40 table in NHIS NSC
  @NHIS_60T: 60 table in NHIS NSC
  @NHIS_GJ: GJ table in NHIS NSC
- --Description: Visit_occurrence Å×ÀÌºí »ı¼º
+ --Description: Visit_occurrence í…Œì´ë¸” ìƒì„±
  --Generating Table: VISIT_OCCURRENCE
 ***************************************/
 
 /**************************************
- 1. Å×ÀÌºí »ı¼º
+ 1. í…Œì´ë¸” ìƒì„±
 ***************************************/ 
 /*
 CREATE TABLE @NHISNSC_database.VISIT_OCCURRENCE (
@@ -34,8 +34,9 @@ CREATE TABLE @NHISNSC_database.VISIT_OCCURRENCE (
 	visit_source_concept_id	integer
 );
 */
+
 /**************************************
- 2. µ¥ÀÌÅÍ ÀÔ·Â
+ 2. ë°ì´í„° ì…ë ¥
 ***************************************/ 
 insert into @NHISNSC_database.VISIT_OCCURRENCE (
 	visit_occurrence_id, person_id, visit_concept_id, visit_start_date, visit_start_time,
@@ -45,10 +46,10 @@ insert into @NHISNSC_database.VISIT_OCCURRENCE (
 select 
 	key_seq as visit_occurrence_id,
 	person_id as person_id,
-	case when form_cd in ('02', '2', '04', '06', '07', '10', '12') and in_pat_cors_type in ('11', '21', '31') then 9203 --ÀÔ¿ø + ÀÀ±Ş
-		when form_cd in ('02', '2', '04', '06', '07', '10', '12') and in_pat_cors_type not in ('11', '21', '31') then 9201 --ÀÔ¿ø + ÀÔ¿ø
-		when form_cd in ('03', '3', '05', '08', '8', '09', '9', '11', '13', '20', '21', 'ZZ') and in_pat_cors_type in ('11', '21', '31') then 9203 --¿Ü·¡ + ÀÀ±Ş
-		when form_cd in ('03', '3', '05', '08', '8', '09', '9', '11', '13', '20', '21', 'ZZ') and in_pat_cors_type not in ('11', '21', '31') then 9202 --¿Ü·¡ + ¿Ü·¡
+	case when form_cd in ('02', '2', '04', '06', '07', '10', '12') and in_pat_cors_type in ('11', '21', '31') then 9203 --ì…ì› + ì‘ê¸‰
+		when form_cd in ('02', '2', '04', '06', '07', '10', '12') and in_pat_cors_type not in ('11', '21', '31') then 9201 --ì…ì› + ì…ì›
+		when form_cd in ('03', '3', '05', '08', '8', '09', '9', '11', '13', '20', '21', 'ZZ') and in_pat_cors_type in ('11', '21', '31') then 9203 --ì™¸ë˜ + ì‘ê¸‰
+		when form_cd in ('03', '3', '05', '08', '8', '09', '9', '11', '13', '20', '21', 'ZZ') and in_pat_cors_type not in ('11', '21', '31') then 9202 --ì™¸ë˜ + ì™¸ë˜
 		else 0
 	end as visit_concept_id,
 	convert(date, recu_fr_dt, 112) as visit_start_date,
@@ -68,7 +69,7 @@ select
 from @NHISNSC_rawdata.@NHIS_20T
 ;
 
---°Ç°­°ËÁø INSERT
+--ê±´ê°•ê²€ì§„ INSERT
 insert into @NHISNSC_database.VISIT_OCCURRENCE (
 	visit_occurrence_id, person_id, visit_concept_id, visit_start_date, visit_start_time,
 	visit_end_date, visit_end_time, visit_type_concept_id, provider_id, care_site_id,

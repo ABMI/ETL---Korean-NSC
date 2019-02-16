@@ -1,4 +1,4 @@
-/*********************************************************************************
+Ôªø/*********************************************************************************
 # Copyright 2017-11 Observational Health Data Sciences and Informatics
 #
 #
@@ -35,7 +35,6 @@ Authors:  Patrick Ryan, Christian Reich, Clair Blacketer
 
 *************************/
 
-
 /************************
 
 Standardized vocabulary
@@ -43,6 +42,8 @@ Standardized vocabulary
 ************************/
 
 -- 18.12.13 JHCho
+
+/*
 USE @Mapping_database
 --19.02.08 JMPark
 
@@ -140,7 +141,7 @@ CREATE TABLE source_to_concept_map (
 ;
 */
 
-USE @NHIS_NSC_new
+
 
 CREATE TABLE drug_strength (
   drug_concept_id				      INTEGER		  NOT NULL,
@@ -180,14 +181,14 @@ CREATE TABLE attribute_definition (
   attribute_syntax				    VARCHAR(MAX)	NULL
 )
 ;
-
+*/
 
 /**************************
 
 Standardized meta-data
 
 ***************************/
-
+USE @NHISNSC_database
 
 CREATE TABLE cdm_source
 (
@@ -693,7 +694,7 @@ CREATE TABLE cohort_attribute
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
---19.01.29 JMPark, ¡ﬂ∫πµ«¥¬ drug_era_id ªË¡¶
+--19.01.29 JMPark, Ï§ëÎ≥µÎêòÎäî drug_era_id ÏÇ≠Ï†ú
 CREATE TABLE drug_era
 (
   drug_era_id					BIGINT		IDENTITY(1,1)	NOT NULL ,

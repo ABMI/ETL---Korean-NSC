@@ -1,6 +1,6 @@
-/**************************************
+ï»¿/**************************************
  --encoding : UTF-8
- --Author: Á¶ÀçÇü
+ --Author: ì¡°ìž¬í˜•
  --Date: 2018.09.12
  
  @NHISNSC_rawdata: DB containing NHIS National Sample cohort DB
@@ -17,19 +17,19 @@
  @PROCEDURE_MAPPINGTABLE : mapping table between Korean procedure and OMOP vocabulary
  @DEVICE_MAPPINGTABLE : mapping table between EDI and OMOP vocabulary
  
- --Description: device Å×ÀÌºí »ý¼º
-			   1) device_exposure_end_date´Â drug_exposureÀÇ end_date¿Í °°Àº ¹æ¹ýÀ¸·Î »ý¼º
-			   2) quantityÀÇ °æ¿ì ´Ü°¡(UN_COST) È¤Àº ±Ý¾×(AMT)ÀÌ ºñÁ¤»óÀÌ°Å³ª, »ç¿ë·®(DD_MQTY_EXEC_FREQ, MDCN_EXEC_FREQ, DD_MQTY_FREQ)ÀÌ ºñÁ¤»óÀÎ °æ¿ì°¡ ¸¹°í,
-				  Á¤¼ö°¡ ¾Æ´Ñ °æ¿ì°¡ ¸¹À½(¸ÞµðÆûÀ» Àß¶ó¼­ ¾²´Â °æ¿ì µî) 
-					1. ´Ü°¡(UN_COST)¿Í ±Ý¾×(AMT)ÀÌ Á¤»óÀÎ °æ¿ì (NullÀÌ ¾Æ´Ï°Å³ª 0¿øÀÌ ¾Æ´Ñ °æ¿ì) AMT/UN_COST
-					2. ´Ü°¡(UN_COST)¿Í ±Ý¾×(AMT)ÀÌ Á¤»óÀÌ ¾Æ´Ñ °æ¿ì(0, Null, UN_COST>AMT) 30tÀÇ °æ¿ì »ç¿ë·®(DD_MQTY_EXEC_FREQ, MDCN_EXEC_FREQ, DD_MQTY_FREQ)ÀÇ °öÀ¸·Î,
-					   60tÀÇ °æ¿ì »ç¿ë·® (DD_EXEC_FREQ, MDCN_EXEC_FREQ, DD_MQTY_FREQ)ÀÇ °öÀ¸·Î °è»ê
-					3. ´Ü°¡, ±Ý¾×, »ç¿ë·® ¸ðµÎ ºñÁ¤»ó(0ÀÎ °æ¿ì)ÀÏ °æ¿ì 1·Î Á¤ÀÇ
+ --Description: device í…Œì´ë¸” ìƒì„±
+			   1) device_exposure_end_dateëŠ” drug_exposureì˜ end_dateì™€ ê°™ì€ ë°©ë²•ìœ¼ë¡œ ìƒì„±
+			   2) quantityì˜ ê²½ìš° ë‹¨ê°€(UN_COST) í˜¹ì€ ê¸ˆì•¡(AMT)ì´ ë¹„ì •ìƒì´ê±°ë‚˜, ì‚¬ìš©ëŸ‰(DD_MQTY_EXEC_FREQ, MDCN_EXEC_FREQ, DD_MQTY_FREQ)ì´ ë¹„ì •ìƒì¸ ê²½ìš°ê°€ ë§Žê³ ,
+				  ì •ìˆ˜ê°€ ì•„ë‹Œ ê²½ìš°ê°€ ë§ŽìŒ(ë©”ë””í¼ì„ ìž˜ë¼ì„œ ì“°ëŠ” ê²½ìš° ë“±) 
+					1. ë‹¨ê°€(UN_COST)ì™€ ê¸ˆì•¡(AMT)ì´ ì •ìƒì¸ ê²½ìš° (Nullì´ ì•„ë‹ˆê±°ë‚˜ 0ì›ì´ ì•„ë‹Œ ê²½ìš°) AMT/UN_COST
+					2. ë‹¨ê°€(UN_COST)ì™€ ê¸ˆì•¡(AMT)ì´ ì •ìƒì´ ì•„ë‹Œ ê²½ìš°(0, Null, UN_COST>AMT) 30tì˜ ê²½ìš° ì‚¬ìš©ëŸ‰(DD_MQTY_EXEC_FREQ, MDCN_EXEC_FREQ, DD_MQTY_FREQ)ì˜ ê³±ìœ¼ë¡œ,
+					   60tì˜ ê²½ìš° ì‚¬ìš©ëŸ‰ (DD_EXEC_FREQ, MDCN_EXEC_FREQ, DD_MQTY_FREQ)ì˜ ê³±ìœ¼ë¡œ ê³„ì‚°
+					3. ë‹¨ê°€, ê¸ˆì•¡, ì‚¬ìš©ëŸ‰ ëª¨ë‘ ë¹„ì •ìƒ(0ì¸ ê²½ìš°)ì¼ ê²½ìš° 1ë¡œ ì •ì˜
  --Generating Table: Device_exposure
 ***************************************/
 
 /**************************************
- 1. Å×ÀÌºí »ý¼º 
+ 1. í…Œì´ë¸” ìƒì„± 
 ***************************************/ 
 /*
 CREATE TABLE @NHISNSC_database.DEVICE_EXPOSURE ( 
@@ -49,7 +49,7 @@ CREATE TABLE @NHISNSC_database.DEVICE_EXPOSURE (
 */
 
 /**************************************
- 1-1. ÀÓ½Ã ¸ÅÇÎ Å×ÀÌºí »ç¿ë
+ 1-1. ìž„ì‹œ ë§¤í•‘ í…Œì´ë¸” ì‚¬ìš©
 ***************************************/ 
 select a.source_code, a.target_concept_id, a.domain_id, REPLACE(a.invalid_reason, '', NULL) as invalid_reason
 into #mapping_table
@@ -57,7 +57,7 @@ from @Mapping_database.source_to_concept_map a join @Mapping_database.CONCEPT b 
 where a.invalid_reason='' and b.invalid_reason='' and a.domain_id='device';
 
 /**************************************
- 2-1. 30T ÀÔ·Â
+ 2-1. 30T ìž…ë ¥
 ***************************************/  
 insert into @NHISNSC_database.DEVICE_EXPOSURE
 (device_exposure_id, person_id, device_concept_id, device_exposure_start_date, 
@@ -93,7 +93,7 @@ ON a.div_cd=b.source_code
 ;
 
 /**************************************
- 2-2. 60T ÀÔ·Â
+ 2-2. 60T ìž…ë ¥
 ***************************************/  
 insert into @NHISNSC_database.DEVICE_EXPOSURE
 (device_exposure_id, person_id, device_concept_id, device_exposure_start_date, 
@@ -129,7 +129,7 @@ FROM
 ;
 
 /**************************************
- 2-3. ¸ÅÇÎÅ×ÀÌºí°ú Á¶ÀÎµÇÁö ¾Ê´Â 30T ÀÔ·Â
+ 2-3. ë§¤í•‘í…Œì´ë¸”ê³¼ ì¡°ì¸ë˜ì§€ ì•ŠëŠ” 30T ìž…ë ¥
 ***************************************/
 insert into @NHISNSC_database.DEVICE_EXPOSURE
 (device_exposure_id, person_id, device_concept_id, device_exposure_start_date, 
@@ -166,7 +166,7 @@ where a.div_cd not in (select source_code from #mapping_table );
 
 
 /**************************************
- 2-4. ¸ÅÇÎÅ×ÀÌºí°ú Á¶ÀÎµÇÁö ¾Ê´Â 60T ÀÔ·Â
+ 2-4. ë§¤í•‘í…Œì´ë¸”ê³¼ ì¡°ì¸ë˜ì§€ ì•ŠëŠ” 60T ìž…ë ¥
 ***************************************/  
 insert into @NHISNSC_rawdata.DEVICE_EXPOSURE
 (device_exposure_id, person_id, device_concept_id, device_exposure_start_date, 
@@ -206,13 +206,13 @@ drop table #mapping_table;
 
 
 /*
--- quantity°¡ 0ÀÎ °æ¿ì 1·Î º¯°æ 
+-- quantityê°€ 0ì¸ ê²½ìš° 1ë¡œ ë³€ê²½ 
 update @NHISNSC_database.DEVICE_EXPOSURE
 set quantity = 1
 where quantity = 0
 ;
 */
-/******************* quantity 0ÀÎ °æ¿ì 1·Î º¯°æÇÏ±â Àü °á°ú È®ÀÎ*********************
-select * from @ResultDatabaseSchema.device_exposure where quantity=0 -- º¯°æ Àü -> 6268(Á¤¸Æ³»À¯Ä¡Ä§5275°Ç) / º¯°æ ÈÄ -> 0
-select * from @ResultDatabaseSchema.device_exposure where quantity=1 -- º¯°æ Àü -> 4548117 / º¯°æ ÈÄ -> 4554385
+/******************* quantity 0ì¸ ê²½ìš° 1ë¡œ ë³€ê²½í•˜ê¸° ì „ ê²°ê³¼ í™•ì¸*********************
+select * from @ResultDatabaseSchema.device_exposure where quantity=0 -- ë³€ê²½ ì „ -> 6268(ì •ë§¥ë‚´ìœ ì¹˜ì¹¨5275ê±´) / ë³€ê²½ í›„ -> 0
+select * from @ResultDatabaseSchema.device_exposure where quantity=1 -- ë³€ê²½ ì „ -> 4548117 / ë³€ê²½ í›„ -> 4554385
 *************************************************************************************/

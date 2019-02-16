@@ -1,6 +1,6 @@
-/**************************************
+ï»¿/**************************************
  --encoding : UTF-8
- --Author: ÀÌ¼º¿ø
+ --Author: ì´ì„±ì›
  --Date: 2018.09.11
  
  @NHISNSC_rawdata: DB containing NHIS National Sample cohort DB
@@ -13,12 +13,12 @@
  @NHIS_60T: 60 table in NHIS NSC
  @NHIS_GJ: GJ table in NHIS NSC
  @CONDITION_MAPPINGTABLE : mapping table between KCD and SNOMED-CT
- --Description: Condition_occurrence Å×ÀÌºí »ı¼º
+ --Description: Condition_occurrence í…Œì´ë¸” ìƒì„±
  --Generating Table: CONDITION_OCCURRENCE
 ***************************************/
 
 /**************************************
- 1. Å×ÀÌºí »ı¼º
+ 1. í…Œì´ë¸” ìƒì„±
 ***************************************/ 
 /*
 CREATE TABLE @NHISNSC_database.CONDITION_OCCURRENCE ( 
@@ -35,8 +35,9 @@ CREATE TABLE @NHISNSC_database.CONDITION_OCCURRENCE (
 	 condition_source_concept_id	VARCHAR(50)
 );
 */
+
 /**************************************
- 1-1. ÀÓ½Ã ¸ÅÇÎ Å×ÀÌºí »ç¿ë
+ 1-1. ì„ì‹œ ë§¤í•‘ í…Œì´ë¸” ì‚¬ìš©
 ***************************************/ 
 select a.source_code, a.target_concept_id, a.domain_id, REPLACE(a.invalid_reason, '', NULL) as invalid_reason
 into #mapping_table
@@ -44,18 +45,18 @@ from @Mapping_database.source_to_concept_map a join @Mapping_database.CONCEPT b 
 where a.invalid_reason='' and b.invalid_reason='' and a.domain_id='condition';);
 
 /**************************************
- 2. µ¥ÀÌÅÍ ÀÔ·Â
-    1) °üÃø½ÃÀÛÀÏ: ÀÚ°İ³âµµ.01.01ÀÌ µğÆúÆ®. Ãâ»ı³âµµ°¡ ±× ÀÌÀüÀÌ¸é Ãâ»ı³âµµ.01.01
-	2) °üÃøÁ¾·áÀÏ: ÀÚ°İ³âµµ.12.31ÀÌ µğÆúÆ®. »ç¸Á³â¿ùÀÌ ±× ÀÌÈÄ¸é »ç¸Á³â.¿ù.¸¶Áö¸·³¯
+ 2. ë°ì´í„° ì…ë ¥
+    1) ê´€ì¸¡ì‹œì‘ì¼: ìê²©ë…„ë„.01.01ì´ ë””í´íŠ¸. ì¶œìƒë…„ë„ê°€ ê·¸ ì´ì „ì´ë©´ ì¶œìƒë…„ë„.01.01
+	2) ê´€ì¸¡ì¢…ë£Œì¼: ìê²©ë…„ë„.12.31ì´ ë””í´íŠ¸. ì‚¬ë§ë…„ì›”ì´ ê·¸ ì´í›„ë©´ ì‚¬ë§ë…„.ì›”.ë§ˆì§€ë§‰ë‚ 
 	
-	Âü°í) 20T: 119,362,188
+	ì°¸ê³ ) 20T: 119,362,188
         40T: 299,379,698
 	
 	-- checklist
-	   1) »óº´ kcdcode full set ÀÖ´ÂÁö È®ÀÎ -> Á¶¼ö¿¬ ¼±»ı´Ô : ¿Ï·á
-	   2) condition_type_concept_id °ª È®ÀÎ -> À¯½ÂÂù ¼±»ı´Ô
+	   1) ìƒë³‘ kcdcode full set ìˆëŠ”ì§€ í™•ì¸ -> ì¡°ìˆ˜ì—° ì„ ìƒë‹˜ : ì™„ë£Œ
+	   2) condition_type_concept_id ê°’ í™•ì¸ -> ìœ ìŠ¹ì°¬ ì„ ìƒë‹˜
 ***************************************/ 
--- observation_period & visiti_occurrence ¿¡ ÀÖ´Â µ¥ÀÌÅÍ
+-- observation_period & visiti_occurrence ì— ìˆëŠ” ë°ì´í„°
 --((299,311,028), 00:50:39)
 INSERT INTO @NHISNSC_database.CONDITION_OCCURRENCE
 	(condition_occurrence_id, person_id, condition_concept_id, condition_start_date, condition_end_date,
@@ -88,25 +89,25 @@ from (
 			when c.SEQ_NO=2 then '44786629' --secondary condition
 			when c.SEQ_NO=3 then '45756845' --third condition
 			when c.SEQ_NO=4 then '45756846'	-- 4th condition
-			else '45756847'					-- 5»óº´À» Æ÷ÇÔÇÑ ³ª¸ÓÁö
+			else '45756847'					-- 5ìƒë³‘ì„ í¬í•¨í•œ ë‚˜ë¨¸ì§€
 		end as sick_order,
 		case when b.sub_sick=c.sick_sym then 'Y' else 'N' end as sub_sick_yn
 	from (select master_seq, person_id, key_seq, seq_no from @NHISNSC_database.SEQ_MASTER where source_table='140') a, 
-		@NHISNSC_rawdata.@NHIS_20T b, --@Ã³¸®ÇØÁà¾ßµÊ
+		@NHISNSC_rawdata.@NHIS_20T b, --@ì²˜ë¦¬í•´ì¤˜ì•¼ë¨
 		@NHISNSC_rawdata.@NHIS_40T c,
-		@NHISNSC_database.observation_period d --Ãß°¡
+		@NHISNSC_database.observation_period d --ì¶”ê°€
 	where a.person_id=b.person_id
 	and a.key_seq=b.key_seq
 	and a.key_seq=c.key_seq
 	and a.seq_no=c.seq_no
-	and b.person_id=d.person_id --Ãß°¡
-	and convert(date, c.recu_fr_dt, 112) between d.observation_period_start_date and d.observation_period_end_date) as m, --Ãß°¡
+	and b.person_id=d.person_id --ì¶”ê°€
+	and convert(date, c.recu_fr_dt, 112) between d.observation_period_start_date and d.observation_period_end_date) as m, --ì¶”ê°€
 	#mapping_table as n
 where m.sick_sym=n.source_code;
 
 
 /********************************************
-	2-1. ¸ÅÇÎµÇÁö¾Ê´Â °Ç¼öµéÀº concept_id ¸¦ 0 ³ÖÀ½
+	2-1. ë§¤í•‘ë˜ì§€ì•ŠëŠ” ê±´ìˆ˜ë“¤ì€ concept_id ë¥¼ 0 ë„£ìŒ
 ********************************************/
 INSERT INTO @NHISNSC_database.CONDITION_OCCURRENCE
 	(condition_occurrence_id, person_id, condition_concept_id, condition_start_date, condition_end_date,
@@ -140,19 +141,19 @@ from (
 			when c.SEQ_NO=2 then '44786629' --secondary condition
 			when c.SEQ_NO=3 then '45756845' --third condition
 			when c.SEQ_NO=4 then '45756846'	-- 4th condition
-			else '45756847'					-- 5»óº´À» Æ÷ÇÔÇÑ ³ª¸ÓÁö
+			else '45756847'					-- 5ìƒë³‘ì„ í¬í•¨í•œ ë‚˜ë¨¸ì§€
 		end as sick_order,
 		case when b.sub_sick=c.sick_sym then 'Y' else 'N' end as sub_sick_yn
 	from (select master_seq, person_id, key_seq, seq_no from @NHISNSC_database.SEQ_MASTER where source_table='140') a, 
-		@NHISNSC_rawdata.@NHIS_20T b, --@Ã³¸®ÇØÁà¾ßµÊ
+		@NHISNSC_rawdata.@NHIS_20T b, --@ì²˜ë¦¬í•´ì¤˜ì•¼ë¨
 		@NHISNSC_rawdata.@NHIS_40T c,
-		@NHISNSC_database.observation_period d --Ãß°¡
+		@NHISNSC_database.observation_period d --ì¶”ê°€
 	where a.person_id=b.person_id
 	and a.key_seq=b.key_seq
 	and a.key_seq=c.key_seq
 	and a.seq_no=c.seq_no
-	and b.person_id=d.person_id --Ãß°¡
-	and convert(date, c.recu_fr_dt, 112) between d.observation_period_start_date and d.observation_period_end_date) as m --Ãß°¡
+	and b.person_id=d.person_id --ì¶”ê°€
+	and convert(date, c.recu_fr_dt, 112) between d.observation_period_start_date and d.observation_period_end_date) as m --ì¶”ê°€
 where m.sick_sym not in (select source_code from #mapping_table);
 
 

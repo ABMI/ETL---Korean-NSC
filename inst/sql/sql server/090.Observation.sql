@@ -1,6 +1,6 @@
-/**************************************
+ï»¿/**************************************
  --encoding : UTF-8
- --Author: Á¶ÀçÇü
+ --Author: ì¡°ì¬í˜•
  --Date: 2018.09.20
  
  @NHISNSC_rawdata : DB containing NHIS National Sample cohort DB
@@ -17,12 +17,11 @@
  @PROCEDURE_MAPPINGTABLE : mapping table between Korean procedure and OMOP vocabulary
  @DEVICE_MAPPINGTABLE : mapping table between EDI and OMOP vocabulary
  
- --Description: OBSERVATION Å×ÀÌºí »ı¼º
+ --Description: OBSERVATION í…Œì´ë¸” ìƒì„±
  --Generating Table: OBSERVATION
 ***************************************/
-
 /**************************************
- 1. Å×ÀÌºí »ı¼º 
+ 1. í…Œì´ë¸” ìƒì„± 
 ***************************************/ 
 --drop table @ResultDatabaseSchema.OBSERVATION
 --drop table #observation_mapping
@@ -56,7 +55,7 @@ CREATE TABLE @NHISNSC_database.OBSERVATION
 -- Creating Vertical tables
 select hchk_year, person_id, ykiho_gubun_cd, meas_type, meas_value into @NHISNSC_rawdata.GJ_VERTICAL
 from @NHISNSC_rawdata.@NHIS_GJ
-unpivot (meas_value for meas_type in ( -- 47 °ËÁø Ç×¸ñ
+unpivot (meas_value for meas_type in ( -- 47 ê²€ì§„ í•­ëª©
     height, weight, waist, bp_high, bp_lwst,
     blds, tot_chole, triglyceride, hdl_chole, ldl_chole,
     hmg, gly_cd, olig_occu_cd, olig_ph, olig_prote_cd,
@@ -72,7 +71,7 @@ unpivot (meas_value for meas_type in ( -- 47 °ËÁø Ç×¸ñ
 
 select STND_Y as hchk_year, person_id, jk_type, jk_value into @NHISNSC_rawdata.JK_VERTICAL
 from @NHISNSC_rawdata.@NHIS_JK
-unpivot (jk_value for jk_type in ( -- 2°³ ÀÚ°İ Ç×¸ñ
+unpivot (jk_value for jk_type in ( -- 2ê°œ ìê²© í•­ëª©
         CTRB_PT_TYPE_CD, DFAB_GRD_CD
 )) as unpivortn
 
@@ -186,7 +185,7 @@ insert into #observation_mapping (meas_type, id_value, answer, observation_conce
 
 
 /**************************************
- 2. ÄÚµåÇü µ¥ÀÌÅÍ ÀÔ·Â 
+ 2. ì½”ë“œí˜• ë°ì´í„° ì…ë ¥ 
 ***************************************/ 
 INSERT INTO @NHISNSC_database.OBSERVATION (observation_id, person_id, observation_concept_id, observation_date, observation_time, observation_type_concept_id, value_as_number, value_As_string, value_as_concept_id,
 										qualifier_concept_id, unit_concept_id, provider_id, visit_occurrence_id, observation_source_value, observation_source_concept_id, unit_source_value, qualifier_source_value)
@@ -213,7 +212,7 @@ INSERT INTO @NHISNSC_database.OBSERVATION (observation_id, person_id, observatio
 			qualifier_source_Value = null
 
 	from (select hchk_year, person_id, ykiho_gubun_cd, meas_type, 
-				--°¡Á··Â(FMLY_·Î ½ÃÀÛÇÏ´Â º¯¼ö)  À¯¹« º¯¼ö 08³â±îÁø 1, 2·Î ±â·Ï, 09³âºÎÅÍ´Â 0, 1·Î ±â·Ï °í·Á
+				--ê°€ì¡±ë ¥(FMLY_ë¡œ ì‹œì‘í•˜ëŠ” ë³€ìˆ˜)  ìœ ë¬´ ë³€ìˆ˜ 08ë…„ê¹Œì§„ 1, 2ë¡œ ê¸°ë¡, 09ë…„ë¶€í„°ëŠ” 0, 1ë¡œ ê¸°ë¡ ê³ ë ¤
 				case	when substring(meas_type, 1, 30) in('FMLY_LIVER_DISE_PATIEN_YN', 'FMLY_HPRTS_PATIEN_YN', 'FMLY_APOP_PATIEN_YN', 'FMLY_HDISE_PATIEN_YN', 'FMLY_DIABML_PATIEN_YN', 'FMLY_CANCER_PATIEN_YN') 
 							and substring(hchk_year, 1, 4) in ('2002', '2003', '2004', '2005', '2006', '2007', '2008') then cast(cast(meas_value as int)-1 as varchar(50))
 				else meas_value
@@ -236,7 +235,7 @@ INSERT INTO @NHISNSC_database.OBSERVATION (observation_id, person_id, observatio
 
 
 /**************************************
- 2. ¼öÄ¡Çü µ¥ÀÌÅÍ ÀÔ·Â
+ 2. ìˆ˜ì¹˜í˜• ë°ì´í„° ì…ë ¥
 ***************************************/ 
 INSERT INTO @NHISNSC_database.OBSERVATION (observation_id, person_id, observation_concept_id, observation_date, observation_time, observation_type_concept_id, value_as_number, value_As_string, value_as_concept_id,
 										qualifier_concept_id, unit_concept_id, provider_id, visit_occurrence_id, observation_source_value, observation_source_concept_id, unit_source_value, qualifier_source_value)
@@ -277,7 +276,7 @@ INSERT INTO @NHISNSC_database.OBSERVATION (observation_id, person_id, observatio
 
 
 /**************************************
- 2. 09³âºÎÅÍ ÀÀ´äÀÌ ¹Ù²î´Â À½ÁÖ ¼öÄ¡ ÀÔ·Â
+ 2. 09ë…„ë¶€í„° ì‘ë‹µì´ ë°”ë€ŒëŠ” ìŒì£¼ ìˆ˜ì¹˜ ì…ë ¥
 ***************************************/ 
 --temp mapping table
 
@@ -346,7 +345,7 @@ select		cast(concat(c.master_seq, b.id_value) as bigint) as observation_id,
 ;
 
 /**************************************
- 2. 09³âºÎÅÍ ÀÀ´äÀÌ ¹Ù²î´Â À½ÁÖ ÄÚµå ÀÔ·Â
+ 2. 09ë…„ë¶€í„° ì‘ë‹µì´ ë°”ë€ŒëŠ” ìŒì£¼ ì½”ë“œ ì…ë ¥
 ***************************************/ 
 --temp mapping table
 
@@ -389,17 +388,17 @@ INSERT INTO @NHISNSC_database.OBSERVATION (observation_id, person_id, observatio
 ;
 
 /*************************************
- 2. ÀÚ°İ Å×ÀÌºí ÇàÀ» ¿­·Î ÀüÈ¯
+ 2. ìê²© í…Œì´ë¸” í–‰ì„ ì—´ë¡œ ì „í™˜
  *************************************/
 /*
 select STND_Y as hchk_year, person_id, jk_type, jk_value into @NHISNSC_rawdata.JK_VERTICAL
 from @NHISNSC_rawdata.@NHIS_JK
-unpivot (jk_value for jk_type in ( -- 2°³ ÀÚ°İ Ç×¸ñ
+unpivot (jk_value for jk_type in ( -- 2ê°œ ìê²© í•­ëª©
         CTRB_PT_TYPE_CD, DFAB_GRD_CD
 )) as unpivortn
 */
 /**************************************
- 2. ¼ÒµæºĞÀ§ µ¥ÀÌÅÍ ÀÔ·Â
+ 2. ì†Œë“ë¶„ìœ„ ë°ì´í„° ì…ë ¥
 ***************************************/ 
 INSERT INTO @NHISNSC_database.OBSERVATION (observation_id, person_id, observation_concept_id, observation_date, observation_time, observation_type_concept_id, value_as_number, value_As_string, value_as_concept_id,
 										qualifier_concept_id, unit_concept_id, provider_id, visit_occurrence_id, observation_source_value, observation_source_concept_id, unit_source_value, qualifier_source_value)
@@ -440,10 +439,10 @@ drop table #observation_mapping09
 
 
 /*****************************************************
-					Å×ÀÌºí È®ÀÎ
+					í…Œì´ë¸” í™•ì¸
 *****************************************************/
 /*
---------------º¯È¯Àü °Ç¼ö, 29
+--------------ë³€í™˜ì „ ê±´ìˆ˜, 29
 select distinct meas_type, count(meas_type)
 from @NHISNSC_rawdata.@GJ_VERTICAL
 where meas_value != ''  and substring(meas_type, 1, 30) in ('HCHK_PMH_CD1', 'HCHK_PMH_CD2', 'HCHK_PMH_CD3','HCHK_APOP_PMH_YN', 'HCHK_HDISE_PMH_YN', 'HCHK_HPRTS_PMH_YN', 
@@ -457,4 +456,4 @@ order by meas_type
 */
 
 
--- ¸¸¾à¿¡ okay ÇÏ¸é ¿©±â¿¡ Ãß°¡·Î ³Ö±â~!
+-- ë§Œì•½ì— okay í•˜ë©´ ì—¬ê¸°ì— ì¶”ê°€ë¡œ ë„£ê¸°~!

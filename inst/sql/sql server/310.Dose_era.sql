@@ -1,16 +1,16 @@
-/**************************************
+ï»¿/**************************************
  --encoding : UTF-8
  --Author: OHDSI
   
 @NHISNSC_rawdata : DB containing NHIS National Sample cohort DB
 @NHISNSC_database : DB for NHIS-NSC in CDM format
  
- --Description: OHDSI¿¡¼­ »ı¼ºÇÑ dose_era »ı¼º Äõ¸®
+ --Description: OHDSIì—ì„œ ìƒì„±í•œ dose_era ìƒì„± ì¿¼ë¦¬
  --Generating Table: DOSE_ERA
 ***************************************/
 
 /**************************************
- 1. dose_era Å×ÀÌºí »ı¼º
+ 1. dose_era í…Œì´ë¸” ìƒì„±
 ***************************************/ 
 /*
  CREATE TABLE @NHISNSC_database.DOSE_ERA (
@@ -25,9 +25,8 @@
 */
 
 /**************************************
- 2. 1´Ü°è: ÇÊ¿ä µ¥ÀÌÅÍ Á¶È¸
+ 2. 1ë‹¨ê³„: í•„ìš” ë°ì´í„° ì¡°íšŒ
 ***************************************/ 
-
 --------------------------------------------#cteDrugTarget
 SELECT
 	d.drug_exposure_id
@@ -101,7 +100,7 @@ SELECT
 into #cteDoseEraEnds FROM #cteDrugTarget dt
 JOIN #cteEndDates e
 ON dt.person_id = e.person_id AND dt.ingredient_concept_id = e.ingredient_concept_id AND e.end_date >= dt.drug_exposure_start_date
---AND dt.unit_concept_id = e.unit_concept_id AND dt.dose_value = e.dose_value		--unit_concpet_id ¿Í dose_value ´Â ¾çÂÊ Å×ÀÌºí ¸ğµÎ¿¡¼­ ÀüºÎ null ÀÌ±â¿¡ Á¦¿Ü½ÃÅ´
+--AND dt.unit_concept_id = e.unit_concept_id AND dt.dose_value = e.dose_value		--unit_concpet_id ì™€ dose_value ëŠ” ì–‘ìª½ í…Œì´ë¸” ëª¨ë‘ì—ì„œ ì „ë¶€ null ì´ê¸°ì— ì œì™¸ì‹œí‚´
 GROUP BY
 	dt.drug_exposure_id
 	, dt.person_id
@@ -112,10 +111,10 @@ GROUP BY
 	
 	
 /**************************************
- 3. 2´Ü°è: dose_era¿¡ µ¥ÀÌÅÍ ÀÔ·Â
+ 3. 2ë‹¨ê³„: dose_eraì— ë°ì´í„° ì…ë ¥
 ***************************************/ 
 
--- ÀÓ½ÃÅ×ÀÌºíÀ» ¸¸µé ´ç½Ã ÀÌ¹Ì drug exposure ¿¡´Â unit concept id ¿Í dose value °¡ ÀüºÎ null·Î ÀÔ·ÂµÇÀÖ´Âµ¥ ÇöÀç Å×ÀÌºí¿¡¼­´Â not null·Î ¼³Á¤µÇ¾îÀÖ´Ù.
+-- ì„ì‹œí…Œì´ë¸”ì„ ë§Œë“¤ ë‹¹ì‹œ ì´ë¯¸ drug exposure ì—ëŠ” unit concept id ì™€ dose value ê°€ ì „ë¶€ nullë¡œ ì…ë ¥ë˜ìˆëŠ”ë° í˜„ì¬ í…Œì´ë¸”ì—ì„œëŠ” not nullë¡œ ì„¤ì •ë˜ì–´ìˆë‹¤.
 
 INSERT INTO @NHISNSC_database.dose_era (person_id, drug_concept_id, unit_concept_id, dose_value, dose_era_start_date, dose_era_end_date)
 SELECT

@@ -1,6 +1,6 @@
-/**************************************
+ï»¿/**************************************
  --encoding : UTF-8
- --Author: ÀÌ¼º¿ø
+ --Author: ì´ì„±ì›
  --Date: 2018.09.11
  
 @NHISNSC_rawdata : DB containing NHIS National Sample cohort DB
@@ -15,75 +15,74 @@
 @CONDITION_MAPPINGTABLE : mapping table between KCD and OMOP vocabulary
 @DRUG_MAPPINGTABLE : mapping table between EDI and OMOP vocabulary
  
- --Description: Drug_exposure Å×ÀÌºí »ı¼º
-			   * 30T(Áø·á), 60T(Ã³¹æÀü) Å×ÀÌºí¿¡¼­ °¢°¢ ETLÀ» ¼öÇàÇØ¾ß ÇÔ
+ --Description: Drug_exposure í…Œì´ë¸” ìƒì„±
+			   * 30T(ì§„ë£Œ), 60T(ì²˜ë°©ì „) í…Œì´ë¸”ì—ì„œ ê°ê° ETLì„ ìˆ˜í–‰í•´ì•¼ í•¨
  --Generating Table: DRUG_EXPOSURE
 ***************************************/
-
 /**************************************
- 1. »çÀü ÁØºñ
+ 1. ì‚¬ì „ ì¤€ë¹„
 ***************************************/ 
 /*
--- 1) 30TÀÇ Ç×/¸ñ ÄÚµå ÇöÈ² Ã¼Å©¸ÅÇÎ
+-- 1) 30Tì˜ í•­/ëª© ì½”ë“œ í˜„í™© ì²´í¬ë§¤í•‘
 select clause_cd, item_cd, count(clause_cd)
 from @NHISNSC_rawdata.@NHIS_30T
 group by clause_cd, item_cd
---> °á°ú´Â "08. Âü°í) 30T, 60TÀÇ ÄÚµå ºĞ¼®.xlsx" Âü°í
+--> ê²°ê³¼ëŠ” "08. ì°¸ê³ ) 30T, 60Tì˜ ì½”ë“œ ë¶„ì„.xlsx" ì°¸ê³ 
 
 
--- 2) 30TÀÇ °è»ê½Ä¿¡ µé¾î°¥ ¼ıÀÚ µ¥ÀÌÅÍ Á¤ÇÕ¼º Ã¼Å©
--- 1ÀÏ Åõ¿©·® ¶Ç´Â ½Ç½Ã È½¼ö
+-- 2) 30Tì˜ ê³„ì‚°ì‹ì— ë“¤ì–´ê°ˆ ìˆ«ì ë°ì´í„° ì •í•©ì„± ì²´í¬
+-- 1ì¼ íˆ¬ì—¬ëŸ‰ ë˜ëŠ” ì‹¤ì‹œ íšŸìˆ˜
 select dd_mqty_exec_freq, count(dd_mqty_exec_freq) as cnt
 from @NHISNSC_rawdata.@NHIS_30T
 where dd_mqty_exec_freq is not null and ISNUMERIC(dd_mqty_exec_freq) = 0
 group by dd_mqty_exec_freq
 
 
--- ÃÑÅõ¿©ÀÏ¼ö ¶Ç´Â ½Ç½ÃÈ½¼ö
+-- ì´íˆ¬ì—¬ì¼ìˆ˜ ë˜ëŠ” ì‹¤ì‹œíšŸìˆ˜
 select mdcn_exec_freq, count(mdcn_exec_freq) as cnt
 from @NHISNSC_rawdata.@NHIS_30T
 where mdcn_exec_freq is not null and ISNUMERIC(mdcn_exec_freq) = 0
 group by mdcn_exec_freq
 
 
--- 1È¸ Åõ¾à·®
+-- 1íšŒ íˆ¬ì•½ëŸ‰
 select dd_mqty_freq, count(dd_mqty_freq) as cnt
 from @NHISNSC_rawdata.@NHIS_30T
 where dd_mqty_freq is not null and ISNUMERIC(dd_mqty_freq) = 0
 group by dd_mqty_freq
---> °á°ú´Â "08. Âü°í) 30T, 60TÀÇ ÄÚµå ºĞ¼®.xlsx" Âü°í
+--> ê²°ê³¼ëŠ” "08. ì°¸ê³ ) 30T, 60Tì˜ ì½”ë“œ ë¶„ì„.xlsx" ì°¸ê³ 
 
 
--- 3) 60TÀÇ °è»ê½Ä¿¡ µé¾î°¥ ¼ıÀÚ µ¥ÀÌÅÍ Á¤ÇÕ¼º Ã¼Å©
--- 1È¸ Åõ¾à·®
+-- 3) 60Tì˜ ê³„ì‚°ì‹ì— ë“¤ì–´ê°ˆ ìˆ«ì ë°ì´í„° ì •í•©ì„± ì²´í¬
+-- 1íšŒ íˆ¬ì•½ëŸ‰
 select dd_mqty_freq, count(dd_mqty_freq) as cnt
 from @NHISNSC_rawdata.@@NHIS_60T
 where dd_mqty_freq is not null and ISNUMERIC(dd_mqty_freq) = 0
 group by dd_mqty_freq
 
--- 1ÀÏ Åõ¾à·®
+-- 1ì¼ íˆ¬ì•½ëŸ‰
 select dd_exec_freq, count(dd_exec_freq) as cnt
 from @NHISNSC_rawdata.@@NHIS_60T
 where dd_exec_freq is not null and ISNUMERIC(dd_exec_freq) = 0
 group by dd_exec_freq
 
--- ÃÑÅõ¿©ÀÏ¼ö ¶Ç´Â ½Ç½ÃÈ½¼ö
+-- ì´íˆ¬ì—¬ì¼ìˆ˜ ë˜ëŠ” ì‹¤ì‹œíšŸìˆ˜
 select mdcn_exec_freq, count(mdcn_exec_freq) as cnt
 from @NHISNSC_rawdata.@@NHIS_60T
 where mdcn_exec_freq is not null and ISNUMERIC(mdcn_exec_freq) = 0
 group by mdcn_exec_freq
---> °á°ú´Â "08. Âü°í) 30T, 60TÀÇ ÄÚµå ºĞ¼®.xlsx" Âü°í
+--> ê²°ê³¼ëŠ” "08. ì°¸ê³ ) 30T, 60Tì˜ ì½”ë“œ ë¶„ì„.xlsx" ì°¸ê³ 
 
 
--- 4) ¸ÅÇÎ Å×ÀÌºíÀÇ ¾àÄÚµå 1:N °Ç¼ö Ã¼Å©
+-- 4) ë§¤í•‘ í…Œì´ë¸”ì˜ ì•½ì½”ë“œ 1:N ê±´ìˆ˜ ì²´í¬
 select source_code, count(source_code)
 from   (select source_code from @NHISNSC_database.source_to_concept_map where domain_id='Drug' and invalid_reason is null) a
 group by source_code
 having count(source_code)>1
---> 1:N ¸ÅÇÎ ¾àÄÚµå ¾øÀ½
+--> 1:N ë§¤í•‘ ì•½ì½”ë“œ ì—†ìŒ
 
 
---¸î °ÇÀÌ³ª ´Ã¾î³¯Áö ¿¹Ãø
+--ëª‡ ê±´ì´ë‚˜ ëŠ˜ì–´ë‚ ì§€ ì˜ˆì¸¡
 --30T
 select count(*) from @NHISNSC_rawdata.@NHIS_30T
 where div_cd in (select source_code
@@ -97,7 +96,7 @@ where div_cd in (select source_code
 				group by source_code
 				having count(source_code)>1)
 
---ºñ¸ÊÇÎ°Ç¼ö ÆÄ¾Ç
+--ë¹„ë§µí•‘ê±´ìˆ˜ íŒŒì•…
 --30T
 select count(*) from @NHISNSC_rawdata.@NHIS_30T
 where DIV_CD not in (
@@ -113,8 +112,8 @@ where a.DIV_CD=b.source_code
 )
 
 
--- 5) º¯È¯ ¿¹»ó °Ç¼ö ÆÄ¾Ç
---30TÀÇ º¯È¯¿¹»ó °Ç¼ö
+-- 5) ë³€í™˜ ì˜ˆìƒ ê±´ìˆ˜ íŒŒì•…
+--30Tì˜ ë³€í™˜ì˜ˆìƒ ê±´ìˆ˜
 select count(a.key_seq)
 from @NHISNSC_rawdata.@@NHIS_30Ta, 
 	(select source_code
@@ -124,7 +123,7 @@ from @NHISNSC_rawdata.@@NHIS_30Ta,
 where a.div_cd=b.source_code
 and a.key_seq=c.key_seq
 
---60TÀÇ º¯È¯¿¹»ó °Ç¼ö
+--60Tì˜ ë³€í™˜ì˜ˆìƒ ê±´ìˆ˜
 select count(a.key_seq)
 from @NHISNSC_rawdata.@@NHIS_60T a, 
 	(select source_code
@@ -137,9 +136,9 @@ and a.key_seq=c.key_seq
 */
 
 /**************************************
- 1.1. drug_exposure_end_date °è»ê ¹æ¹ıÀ» Á¤ÇÏ±â À§ÇØ ½ÇÇàÇÑ Äõ¸®µé (2017.02.17 by À¯½ÂÂù)
+ 1.1. drug_exposure_end_date ê³„ì‚° ë°©ë²•ì„ ì •í•˜ê¸° ìœ„í•´ ì‹¤í–‰í•œ ì¿¼ë¦¬ë“¤ (2017.02.17 by ìœ ìŠ¹ì°¬)
 ***************************************/ 
--- observation period ¹üÀ§ ¹ÛÀÇ °Ç¼ö
+-- observation period ë²”ìœ„ ë°–ì˜ ê±´ìˆ˜
 /*
 
 select a.person_id, a.drug_exposure_id, a.drug_exposure_start_date, a.drug_exposure_end_date, b.observation_period_start_date, b.observation_period_end_date, c.death_date
@@ -184,7 +183,7 @@ on A.div_cd=b.source_code
  */
 
 /**************************************
- 2. Å×ÀÌºí »ı¼º
+ 2. í…Œì´ë¸” ìƒì„±
 ***************************************/  
 /*
 CREATE TABLE @NHISNSC_database.DRUG_EXPOSURE ( 
@@ -213,7 +212,7 @@ CREATE TABLE @NHISNSC_database.DRUG_EXPOSURE (
 */	
 
 /**************************************
- 2-1. ÀÓ½Ã ¸ÅÇÎ Å×ÀÌºí »ç¿ë
+ 2-1. ì„ì‹œ ë§¤í•‘ í…Œì´ë¸” ì‚¬ìš©
 ***************************************/ 
 select a.source_code, a.target_concept_id, a.domain_id, REPLACE(a.invalid_reason, '', NULL) as invalid_reason
 into #mapping_table
@@ -222,7 +221,7 @@ where a.invalid_reason='' and b.invalid_reason='' and a.domain_id='drug';
 
 
 /**************************************
- 3-1. 30T¸¦ ÀÌ¿ëÇÏ¿© µ¥ÀÌÅÍ ÀÔ·Â
+ 3-1. 30Të¥¼ ì´ìš©í•˜ì—¬ ë°ì´í„° ì…ë ¥
 ***************************************/  
 insert into @NHISNSC_database.DRUG_EXPOSURE 
 (drug_exposure_id, person_id, drug_concept_id, drug_exposure_start_date, drug_exposure_end_date, 
@@ -234,7 +233,7 @@ SELECT convert(bigint, convert(varchar, a.master_seq) + convert(varchar, row_num
 	a.person_id as person_id,
 	b.target_concept_id as drug_concept_id,
 	CONVERT(date, a.recu_fr_dt, 112) as drug_exposure_start_date,
-	--DATEADD(day, CEILING(convert(float, a.mdcn_exec_freq)/convert(float, a.dd_mqty_exec_freq))-1, convert(date, a.recu_fr_dt, 112)) as drug_exposure_end_date, (¼öÁ¤: 2017.02.17 by ÀÌ¼º¿ø)
+	--DATEADD(day, CEILING(convert(float, a.mdcn_exec_freq)/convert(float, a.dd_mqty_exec_freq))-1, convert(date, a.recu_fr_dt, 112)) as drug_exposure_end_date, (ìˆ˜ì •: 2017.02.17 by ì´ì„±ì›)
 	DATEADD(day, convert(float, a.mdcn_exec_freq)-1, convert(date, a.recu_fr_dt, 112)) as drug_exposure_end_date,
 	case when a.FORM_CD in ('02', '2', '04', '06', '10', '12') then 38000180 
 		when a.FORM_CD not in ('02', '2', '04', '06', '10', '12') then 581452 
@@ -281,7 +280,7 @@ where a.div_cd=b.source_code
 ;
 
 /**************************************
- 3-2. 60T¸¦ ÀÌ¿ëÇÏ¿© µ¥ÀÌÅÍ ÀÔ·Â
+ 3-2. 60Të¥¼ ì´ìš©í•˜ì—¬ ë°ì´í„° ì…ë ¥
 ***************************************/
 insert into @NHISNSC_database.DRUG_EXPOSURE 
 (drug_exposure_id, person_id, drug_concept_id, drug_exposure_start_date, drug_exposure_end_date, 
@@ -293,7 +292,7 @@ SELECT convert(bigint, convert(varchar, a.master_seq) + convert(varchar, row_num
 	a.person_id as person_id,
 	b.target_concept_id as drug_concept_id,
 	CONVERT(date, a.recu_fr_dt, 112) as drug_exposure_start_date,
-	-- DATEADD(day, CEILING(convert(float, a.mdcn_exec_freq)/convert(float, a.dd_exec_freq))-1, convert(date, a.recu_fr_dt, 112)) as drug_exposure_end_date, (¼öÁ¤: 2017.02.17 by ÀÌ¼º¿ø)
+	-- DATEADD(day, CEILING(convert(float, a.mdcn_exec_freq)/convert(float, a.dd_exec_freq))-1, convert(date, a.recu_fr_dt, 112)) as drug_exposure_end_date, (ìˆ˜ì •: 2017.02.17 by ì´ì„±ì›)
 	DATEADD(day, convert(float, a.mdcn_exec_freq)-1, convert(date, a.recu_fr_dt, 112)) as drug_exposure_end_date,
 	case when a.FORM_CD in ('02', '2', '04', '06', '10', '12') then 38000180 
 		when a.FORM_CD not in ('02', '2', '04', '06', '10', '12') then 581452 
@@ -331,7 +330,7 @@ where a.div_cd=b.source_code
 ;
 
 /**************************************
- 3-3. ¸ÅÇÎÅ×ÀÌºí°ú Á¶ÀÎµÇÁö ¾Ê´Â 30T µ¥ÀÌÅÍ ÀÔ·Â
+ 3-3. ë§¤í•‘í…Œì´ë¸”ê³¼ ì¡°ì¸ë˜ì§€ ì•ŠëŠ” 30T ë°ì´í„° ì…ë ¥
 ***************************************/  
 insert into @NHISNSC_database.DRUG_EXPOSURE 
 (drug_exposure_id, person_id, drug_concept_id, drug_exposure_start_date, drug_exposure_end_date, 
@@ -343,7 +342,7 @@ SELECT convert(bigint, convert(varchar, a.master_seq) + convert(varchar, row_num
 	a.person_id as person_id,
 	0 as drug_concept_id,
 	CONVERT(date, a.recu_fr_dt, 112) as drug_exposure_start_date,
-	--DATEADD(day, CEILING(convert(float, a.mdcn_exec_freq)/convert(float, a.dd_mqty_exec_freq))-1, convert(date, a.recu_fr_dt, 112)) as drug_exposure_end_date, (¼öÁ¤: 2017.02.17 by ÀÌ¼º¿ø)
+	--DATEADD(day, CEILING(convert(float, a.mdcn_exec_freq)/convert(float, a.dd_mqty_exec_freq))-1, convert(date, a.recu_fr_dt, 112)) as drug_exposure_end_date, (ìˆ˜ì •: 2017.02.17 by ì´ì„±ì›)
 	DATEADD(day, convert(float, a.mdcn_exec_freq)-1, convert(date, a.recu_fr_dt, 112)) as drug_exposure_end_date,
 	case when a.FORM_CD in ('02', '2', '04', '06', '10', '12') then 38000180 
 		when a.FORM_CD not in ('02', '2', '04', '06', '10', '12') then 581452 
@@ -389,7 +388,7 @@ where a.div_cd not in (select source_code from #mapping_table )
 ;
 
 /**************************************
- 3-4. ¸ÅÇÎÅ×ÀÌºí°ú Á¶ÀÎµÇÁö ¾Ê´Â 60T µ¥ÀÌÅÍ ÀÔ·Â
+ 3-4. ë§¤í•‘í…Œì´ë¸”ê³¼ ì¡°ì¸ë˜ì§€ ì•ŠëŠ” 60T ë°ì´í„° ì…ë ¥
 ***************************************/
 insert into @NHISNSC_database.DRUG_EXPOSURE 
 (drug_exposure_id, person_id, drug_concept_id, drug_exposure_start_date, drug_exposure_end_date, 
@@ -401,7 +400,7 @@ SELECT convert(bigint, convert(varchar, a.master_seq) + convert(varchar, row_num
 	a.person_id as person_id,
 	0 as drug_concept_id,
 	CONVERT(date, a.recu_fr_dt, 112) as drug_exposure_start_date,
-	-- DATEADD(day, CEILING(convert(float, a.mdcn_exec_freq)/convert(float, a.dd_exec_freq))-1, convert(date, a.recu_fr_dt, 112)) as drug_exposure_end_date, (¼öÁ¤: 2017.02.17 by ÀÌ¼º¿ø)
+	-- DATEADD(day, CEILING(convert(float, a.mdcn_exec_freq)/convert(float, a.dd_exec_freq))-1, convert(date, a.recu_fr_dt, 112)) as drug_exposure_end_date, (ìˆ˜ì •: 2017.02.17 by ì´ì„±ì›)
 	DATEADD(day, convert(float, a.mdcn_exec_freq)-1, convert(date, a.recu_fr_dt, 112)) as drug_exposure_end_date,
 	case when a.FORM_CD in ('02', '2', '04', '06', '10', '12') then 38000180 
 		when a.FORM_CD not in ('02', '2', '04', '06', '10', '12') then 581452 
@@ -440,7 +439,7 @@ where a.div_cd not in (select source_code from #mapping_table )
 drop table #mapping_table;
 
 /**************************************
- 5. drug_start_date°¡ »ç¸ÁÀÏÀÚ ÀÌÀüÀÎ µ¥ÀÌÅÍ »èÁ¦
+ 5. drug_start_dateê°€ ì‚¬ë§ì¼ì ì´ì „ì¸ ë°ì´í„° ì‚­ì œ
 ***************************************/
 delete from a 
 from @NHISNSC_database.DRUG_EXPOSURE a, @NHISNSC_database.death b
@@ -450,7 +449,7 @@ and b.death_date < a.drug_exposure_start_date
 
 
 /**************************************
- 6. drug_end_date°¡ »çÀåÀÏÀÚ ÀÌÀüÀÎ µ¥ÀÌÅÍÀÇ drug_end_date¸¦ »ç¸ÁÀÏÀÚ·Î º¯°æ
+ 6. drug_end_dateê°€ ì‚¬ì¥ì¼ì ì´ì „ì¸ ë°ì´í„°ì˜ drug_end_dateë¥¼ ì‚¬ë§ì¼ìë¡œ ë³€ê²½
 ***************************************/
 update a
 set drug_exposure_end_date=b.death_date
@@ -461,12 +460,12 @@ or b.death_date < a.drug_exposure_end_date)
 
 /*
 -------------------------------------------
-Âü°í) http://tennesseewaltz.tistory.com/236
+ì°¸ê³ ) http://tennesseewaltz.tistory.com/236
 UPDATE A
       SET A.SEQ     = B.CMT_NO
         , A.CarType = B.CAR_TYPE
      FROM TABLE_AAA A
           JOIN TABLE_BBB B ON A.OPCode = B.OP_CODE
-    WHERE A.LineCode = 'Á¶°Ç'
+    WHERE A.LineCode = 'ì¡°ê±´'
 -------------------------------------------
 */

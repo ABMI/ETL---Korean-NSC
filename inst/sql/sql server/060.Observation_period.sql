@@ -1,6 +1,6 @@
-/**************************************
+ï»¿/**************************************
  --encoding : UTF-8
- --Author: ÀÌ¼º¿ø, Á¶ÀçÇü
+ --Author: ì´ì„±ì›, ì¡°ì¬í˜•
  --Date: 2018.09.10
  
  @NHISNSC_rawdata : DB containing NHIS National Sample cohort DB
@@ -11,25 +11,25 @@
  @NHIS_40T: 40 table in NHIS NSC
  @NHIS_60T: 60 table in NHIS NSC
  @NHIS_GJ: GJ table in NHIS NSC
- --Description: Observation_period Å×ÀÌºí »ı¼º
+ --Description: Observation_period í…Œì´ë¸” ìƒì„±
  --Generating Table: OBSERVATION_PERIOD
 ***************************************/
 
 /**************************************
- 1. µ¥ÀÌÅÍ ÀÔ·Â
-    1) °üÃø½ÃÀÛÀÏ: ÀÚ°İ³âµµ.01.01ÀÌ µğÆúÆ®. Ãâ»ı³âµµ°¡ ±× ÀÌÀüÀÌ¸é Ãâ»ı³âµµ.01.01
-	2) °üÃøÁ¾·áÀÏ: ÀÚ°İ³âµµ.12.31ÀÌ µğÆúÆ®. »ç¸Á³â¿ùÀÌ ±× ÀÌÈÄ¸é »ç¸Á³â.¿ù.¸¶Áö¸·³¯
-	3) »ç¸Á ÀÌÈÄ °¡Áö´Â ÀÚ°İ Á¦¿Ü
+ 1. ë°ì´í„° ì…ë ¥
+    1) ê´€ì¸¡ì‹œì‘ì¼: ìê²©ë…„ë„.01.01ì´ ë””í´íŠ¸. ì¶œìƒë…„ë„ê°€ ê·¸ ì´ì „ì´ë©´ ì¶œìƒë…„ë„.01.01
+	2) ê´€ì¸¡ì¢…ë£Œì¼: ìê²©ë…„ë„.12.31ì´ ë””í´íŠ¸. ì‚¬ë§ë…„ì›”ì´ ê·¸ ì´í›„ë©´ ì‚¬ë§ë…„.ì›”.ë§ˆì§€ë§‰ë‚ 
+	3) ì‚¬ë§ ì´í›„ ê°€ì§€ëŠ” ìê²© ì œì™¸
 ***************************************/ 
 -- step 1
 select
       a.person_id as person_id, 
       case when a.stnd_y >= b.year_of_birth then convert(date, convert(varchar, a.stnd_y) + '0101', 112) 
             else convert(date, convert(varchar, b.year_of_birth) + '0101', 112) 
-      end as observation_period_start_date, --°üÃø½ÃÀÛÀÏ
+      end as observation_period_start_date, --ê´€ì¸¡ì‹œì‘ì¼
       case when convert(date, a.stnd_y + '1231', 112) > c.death_date then c.death_date
             else convert(date, a.stnd_y + '1231', 112)
-      end as observation_period_end_date --°üÃøÁ¾·áÀÏ
+      end as observation_period_end_date --ê´€ì¸¡ì¢…ë£Œì¼
 into #observation_period_temp1
 from @NHISNSC_rawdata.@NHIS_JK a,
       @NHISNSC_database.person b left join @NHISNSC_database.death c
@@ -40,7 +40,8 @@ where a.person_id=b.person_id
 select *, row_number() over(partition by person_id order by observation_period_start_date, observation_period_end_date) AS id
 into #observation_period_temp2
 from #observation_period_temp1
-where observation_period_start_date < observation_period_end_date -- »ç¸Á ÀÌÈÄ °¡Áö´Â ÀÚ°İÀ» Á¦¿Ü½ÃÅ°´Â Äõ¸®
+where observation_period_start_date < observation_period_end_date -- ì‚¬ë§ ì´í›„ ê°€ì§€ëŠ” ìê²©ì„ ì œì™¸ì‹œí‚¤ëŠ” ì¿¼ë¦¬
+
 
 -- step 3
 select 

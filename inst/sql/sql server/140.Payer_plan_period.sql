@@ -1,6 +1,6 @@
-/**************************************
+ï»¿/**************************************
  --encoding : UTF-8
- --Author: Á¶ÀçÇü
+ --Author: ì¡°ì¬í˜•
  --Date: 2018.09.15
  
  @NHISNSC_rawdata : DB containing NHIS National Sample cohort DB
@@ -16,15 +16,15 @@
  @PROCEDURE_MAPPINGTABLE : mapping table between Korean procedure and OMOP vocabulary
  @DEVICE_MAPPINGTABLE : mapping table between EDI and OMOP vocabulary
  
- --Description: PAYER_PLAN_PERIOD Å×ÀÌºí »ı¼º
-			   1) payer_plan_period_id = person_id+¿¬µµ 4ÀÚ·Î Á¤ÀÇ
-			   2) payer_plan_period_start_date = ´çÇØ 01¿ù 01ÀÏ·Î Á¤ÀÇ
-			   3) payer_plan_period_end_date = ´çÇØ 12¿ù 31ÀÏ È¤Àº death date·Î Á¤ÀÇ
+ --Description: PAYER_PLAN_PERIOD í…Œì´ë¸” ìƒì„±
+			   1) payer_plan_period_id = person_id+ì—°ë„ 4ìë¡œ ì •ì˜
+			   2) payer_plan_period_start_date = ë‹¹í•´ 01ì›” 01ì¼ë¡œ ì •ì˜
+			   3) payer_plan_period_end_date = ë‹¹í•´ 12ì›” 31ì¼ í˜¹ì€ death dateë¡œ ì •ì˜
  --Generating Table: PAYER_PLAN_PERIOD
 ***************************************/
 
 /**************************************
- 1. Å×ÀÌºí »ı¼º 
+ 1. í…Œì´ë¸” ìƒì„± 
 ***************************************/ 
 /*
 CREATE TABLE @NHISNSC_database.PAYER_PLAN_PERIOD
@@ -41,7 +41,7 @@ CREATE TABLE @NHISNSC_database.PAYER_PLAN_PERIOD
 */ 
  
 /**************************************
- 2. µ¥ÀÌÅÍ ÀÔ·Â ¹× È®ÀÎ
+ 2. ë°ì´í„° ì…ë ¥ ë° í™•ì¸
 ***************************************/  
 
 INSERT INTO @NHISNSC_databse.PAYER_PLAN_PERIOD (payer_plan_period_id, person_id, payer_plan_period_start_date, payer_plan_period_end_date, payer_source_value, plan_source_value, family_source_value)

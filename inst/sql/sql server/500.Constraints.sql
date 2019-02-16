@@ -1,4 +1,4 @@
-/*********************************************************************************
+﻿/*********************************************************************************
 # Copyright 2014 Observational Health Data Sciences and Informatics
 #
 #
@@ -116,8 +116,6 @@ ALTER TABLE attribute_definition ADD CONSTRAINT fpk_attribute_type_concept FOREI
 Standardized meta-data
 
 ***************************/
-
-
 
 
 

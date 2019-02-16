@@ -1,4 +1,4 @@
-/*
+﻿/*
 Data Cleansing
  @NHISNSC_rawdata : DB containing NHIS National Sample cohort DB
  @NHISNSC_database : DB for NHIS-NSC in CDM format
@@ -9,6 +9,7 @@ Data Cleansing
  @NHIS_60T: 60 table in NHIS NSC
  @NHIS_GJ: GJ table in NHIS NSC
 */
+
 
 /*
 -----Person issue update

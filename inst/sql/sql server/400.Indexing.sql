@@ -1,4 +1,4 @@
-/*********************************************************************************
+﻿/*********************************************************************************
 # Copyright 2014 Observational Health Data Sciences and Informatics
 #
 # 
@@ -77,6 +77,7 @@ CREATE CLUSTERED INDEX idx_drug_strength_id_1 ON @ResultDatabaseSchema.drug_stre
 CREATE INDEX idx_drug_strength_id_2 ON @ResultDatabaseSchema.drug_strength (ingredient_concept_id ASC);
 --CREATE CLUSTERED INDEX idx_cohort_definition_id ON cohort_definition (cohort_definition_id ASC);
 --CREATE CLUSTERED INDEX idx_attribute_definition_id ON attribute_definition (attribute_definition_id ASC);
+
 
 /************************
 

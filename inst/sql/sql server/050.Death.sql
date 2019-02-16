@@ -1,6 +1,6 @@
-/**************************************
+ï»¿/**************************************
  --encoding : UTF-8
- --Author: Á¶ÀçÇü
+ --Author: ì¡°ì¬í˜•
  --Date: 2018.09.10
  
  @NHISNSC_rawdata : DB containing NHIS National Sample cohort DB
@@ -12,19 +12,18 @@
  @NHIS_40T: 40 table in NHIS NSC
  @NHIS_60T: 60 table in NHIS NSC
  @NHIS_GJ: GJ table in NHIS NSC
- --Description: DEATH Å×ÀÌºí »ı¼º
-			   1) Ç¥º»ÄÚÈ£Æ®DB¿¡´Â »ç¸ÁÇÑ ³¯Â¥°¡ ³âµµ, ¿ù±îÁö Ç¥½Ã°¡ µÇ±â ¶§¹®¿¡ ÇØ´ç ¿ùÀÇ 1ÀÏ·Î »ç¸ÁÀÏ Á¤ÀÇ
-			   2) Ç¥º»ÄÚÈ£Æ®DB´Â »ç¸ÁÇÑ ÈÄ¿¡µµ Áø·á±â·ÏÀÌ ÀÖ´Â °æ¿ì°¡ ÀÖÀ½À» °í·Á
-			   3) ¹üÀ§(A00-A15), J46 µî ¸ÅÇÎ ¾ÈµÇ´Â codeµé insert(#death_mapping)
+ --Description: DEATH í…Œì´ë¸” ìƒì„±
+			   1) í‘œë³¸ì½”í˜¸íŠ¸DBì—ëŠ” ì‚¬ë§í•œ ë‚ ì§œê°€ ë…„ë„, ì›”ê¹Œì§€ í‘œì‹œê°€ ë˜ê¸° ë•Œë¬¸ì— í•´ë‹¹ ì›”ì˜ 1ì¼ë¡œ ì‚¬ë§ì¼ ì •ì˜
+			   2) í‘œë³¸ì½”í˜¸íŠ¸DBëŠ” ì‚¬ë§í•œ í›„ì—ë„ ì§„ë£Œê¸°ë¡ì´ ìˆëŠ” ê²½ìš°ê°€ ìˆìŒì„ ê³ ë ¤
+			   3) ë²”ìœ„(A00-A15), J46 ë“± ë§¤í•‘ ì•ˆë˜ëŠ” codeë“¤ insert(#death_mapping)
  --Generating Table: DEATH
 ***************************************/
 
-
 /**************************************
- 1. Å×ÀÌºí »ı¼º
+ 1. í…Œì´ë¸” ìƒì„±
 ***************************************/  
 /*
--- death table »ı¼º
+-- death table ìƒì„±
 CREATE TABLE  @NHISNSC_database.DEATH
 (
     person_id							INTEGER			NOT NULL , 
@@ -37,7 +36,7 @@ CREATE TABLE  @NHISNSC_database.DEATH
 );
 */
 
--- ÀÓ½Ã death mapping table  
+-- ì„ì‹œ death mapping table  
  SELECT	source_code, source_code_description, target_concept_id
 		INTO #DEATH_MAPPINGTABLE
 from @Mapping_database.source_to_concept_map a join @Mapping_database.CONCEPT b on a.target_concept_id=b.concept_id
@@ -48,7 +47,7 @@ set invalid_reason=REPLACE(invalid_reason, '', NULL)
 , concept_invalid_reason=replace(concept_invalid_reason, '', NULL);
 
 --Insert additional death data to temp death mapping table
-insert into #DEATH_MAPPINGTABLE (source_code, target_concept_id, source_code_description) values ('A00-A09', 4134887, 'Infectious disease of digestive tract') -- 104180 Àû¿ëµÊ, ³ª¸ÓÁö´Â 1Çà¾¿ Àû¿ëµÊ
+insert into #DEATH_MAPPINGTABLE (source_code, target_concept_id, source_code_description) values ('A00-A09', 4134887, 'Infectious disease of digestive tract') -- 104180 ì ìš©ë¨, ë‚˜ë¨¸ì§€ëŠ” 1í–‰ì”© ì ìš©ë¨
 insert into #DEATH_MAPPINGTABLE (source_code, target_concept_id, source_code_description) values ('A15-A19', 434557, 'Tuberculosis')
 insert into #DEATH_MAPPINGTABLE (source_code, target_concept_id, source_code_description) values ('A30-A49', 432545, 'Bacterial infectious disease')
 insert into #DEATH_MAPPINGTABLE (source_code, target_concept_id, source_code_description) values ('A50-A64', 440647, 'Sexually transmitted infectious disease')
@@ -97,10 +96,10 @@ insert into #DEATH_MAPPINGTABLE (source_code, target_concept_id, source_code_des
 insert into #DEATH_MAPPINGTABLE (source_code, target_concept_id, source_code_description) values ('T90-T98', 443403, 'Sequela')
 
 /**************************************
- 2. µ¥ÀÌÅÍ ÀÔ·Â ¹× È®ÀÎ
+ 2. ë°ì´í„° ì…ë ¥ ë° í™•ì¸
 ***************************************/  
 
---³¯Â¥¸¦ ÇØ´ç ¿ùÀÇ ¸»ÀÏ·Î Á¤ÀÇ, 55921°³ÀÇ ÇàÀÌ ¿µÇâÀ» ¹ŞÀ½(00:00:01)
+--ë‚ ì§œë¥¼ í•´ë‹¹ ì›”ì˜ ë§ì¼ë¡œ ì •ì˜, 55921ê°œì˜ í–‰ì´ ì˜í–¥ì„ ë°›ìŒ(00:00:01)
 INSERT INTO @NHISNSC_database.DEATH (person_id, death_date, death_type_concept_id, cause_concept_id, 
 cause_source_value, cause_source_concept_id)
 SELECT a.person_id AS PERSON_ID,
@@ -115,7 +114,7 @@ WHERE a.dth_ym IS NOT NULL and a.dth_ym != ''
 ;
 
 
---³¯Â¥ ¾ø´Â °æ¿ì ÇØ´ç ³âÀÇ 12¿ù 31ÀÏ·Î death Á¤ÀÇ, 19°³ÀÇ ÇàÀÌ ¿µÇâÀ» ¹ŞÀ½(00:00:00)
+--ë‚ ì§œ ì—†ëŠ” ê²½ìš° í•´ë‹¹ ë…„ì˜ 12ì›” 31ì¼ë¡œ death ì •ì˜, 19ê°œì˜ í–‰ì´ ì˜í–¥ì„ ë°›ìŒ(00:00:00)
 INSERT INTO @NHISNSC_database.DEATH (person_id, death_date, death_type_concept_id, cause_concept_id, 
 cause_source_value, cause_source_concept_id)
 SELECT a.person_id AS PERSON_ID,
@@ -129,5 +128,5 @@ on a.dth_code1=b.source_code
 WHERE a.dth_ym = '' and a.DTH_CODE1 != ''
 ;
 
---ÀÓ½Ã¸ÅÇÎÅ×ÀÌºí »èÁ¦
+--ì„ì‹œë§¤í•‘í…Œì´ë¸” ì‚­ì œ
 drop table #DEATH_MAPPINGTABLE;

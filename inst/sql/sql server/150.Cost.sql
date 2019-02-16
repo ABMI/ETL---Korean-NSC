@@ -1,6 +1,6 @@
-/**************************************
+ï»¿/**************************************
  --encoding : UTF-8
- --Author: ÀÌ¼º¿ø, ¹ÚÁö¸í
+ --Author: ì´ì„±ì›, ë°•ì§€ëª…
  --Date: 2018.09.20
  
  @NHISNSC_rawdata : DB containing NHIS National Sample cohort DB
@@ -17,12 +17,12 @@
  @PROCEDURE_MAPPINGTABLE : mapping table between Korean procedure and OMOP vocabulary
  @DEVICE_MAPPINGTABLE : mapping table between EDI and OMOP vocabulary
  
- --Description: Cost Å×ÀÌºí »ı¼º
+ --Description: Cost í…Œì´ë¸” ìƒì„±
  --Generating Table: COST
 ***************************************/
 
 /**************************************
- 1. Å×ÀÌºí »ı¼º
+ 1. í…Œì´ë¸” ìƒì„±
 ***************************************/ 
 /*
 CREATE TABLE @NHISNSC_database.COST (
@@ -51,7 +51,7 @@ CREATE TABLE @NHISNSC_database.COST (
 );
 */
 /**************************************
- 1-1. ÀÓ½Ã ¸ÅÇÎ Å×ÀÌºí »ç¿ë
+ 1-1. ì„ì‹œ ë§¤í•‘ í…Œì´ë¸” ì‚¬ìš©
 ***************************************/ 
 select a.source_code, a.target_concept_id, a.domain_id, REPLACE(invalid_reason, '', NULL) as invalid_reason 
 into #mapping_table
@@ -60,7 +60,7 @@ where a.invalid_reason='' and b.invalid_reason='';
 
 
 /**************************************
- 2. µ¥ÀÌÅÍ ÀÔ·Â
+ 2. ë°ì´í„° ì…ë ¥
     1) Visit
 	2) Drug
 	3) Procedure
@@ -106,7 +106,7 @@ and a.person_id=b.person_id;
 ---------------------------------------------------
 -- 2) Drug
 ---------------------------------------------------
--- Drug ¿Í Device ¿¡¼­ Áßº¹µÇ´Â Å°¸¦ È®ÀÎ
+-- Drug ì™€ Device ì—ì„œ ì¤‘ë³µë˜ëŠ” í‚¤ë¥¼ í™•ì¸
 /*
 select * from #mapping_table
 where source_code in (
@@ -116,7 +116,7 @@ where source_code in (
 order by source_code
 */
 
--- ÇØ´çµÇ´Â Å°µéÀ» Drug ¿¡¼­ Á¦°Å
+-- í•´ë‹¹ë˜ëŠ” í‚¤ë“¤ì„ Drug ì—ì„œ ì œê±°
 delete from @NHISNSC_database.DRUG_EXPOSURE
 where drug_source_value in (select source_code from #mapping_table
 							where domain_id='drug' and source_code in (
@@ -126,14 +126,14 @@ where drug_source_value in (select source_code from #mapping_table
 											)
 								)
 
---ÇØ´çµÇ´Â Å°µéÀ» ¸ÅÇÎÅ×ÀÌºí¿¡¼­ Á¦°Å								
+--í•´ë‹¹ë˜ëŠ” í‚¤ë“¤ì„ ë§¤í•‘í…Œì´ë¸”ì—ì„œ ì œê±°								
 delete from #mapping_table where domain_id='drug' and source_code in (
 												select drug_source_value from @NHISNSC_database.DRUG_EXPOSURE a, @NHISNSC_database.DEVICE_EXPOSURE b
 												where a.drug_exposure_id=b.device_exposure_id 
 													and a.person_id=b.person_id )
 
---µ¥ÀÌÅÍ ÀÔ·Â
--- ¿øº» Å×ÀÌºíÀÌ 30TÀÎ °æ¿ì
+--ë°ì´í„° ì…ë ¥
+-- ì›ë³¸ í…Œì´ë¸”ì´ 30Tì¸ ê²½ìš°
 INSERT INTO @NHISNSC_database.COST
 	(cost_id, cost_event_id, cost_domain_id, cost_type_concept_id, currency_concept_id,
 	total_charge, total_cost, total_paid, paid_by_payer, paid_by_patient,
@@ -175,7 +175,7 @@ where left(a.drug_exposure_id, 10)=b.master_seq
 and a.person_id=b.person_id;
 
 
--- ¿øº» Å×ÀÌºíÀÌ 60TÀÎ °æ¿ì
+-- ì›ë³¸ í…Œì´ë¸”ì´ 60Tì¸ ê²½ìš°
 INSERT INTO @NHISNSC_database.COST
 	(cost_id, cost_event_id, cost_domain_id, cost_type_concept_id, currency_concept_id,
 	total_charge, total_cost, total_paid, paid_by_payer, paid_by_patient,
@@ -221,7 +221,7 @@ and a.person_id=b.person_id;
 -- 3) Procedure
 ---------------------------------------------------
 
--- ¿øº» Å×ÀÌºíÀÌ 30TÀÎ °æ¿ì
+-- ì›ë³¸ í…Œì´ë¸”ì´ 30Tì¸ ê²½ìš°
 INSERT INTO @NHISNSC_database.COST
 	(cost_id, cost_event_id, cost_domain_id, cost_type_concept_id, currency_concept_id,
 	total_charge, total_cost, total_paid, paid_by_payer, paid_by_patient,
@@ -261,7 +261,7 @@ where left(a.procedure_occurrence_id, 10)=b.master_seq
 and a.person_id=b.person_id;
 
 
--- ¿øº» Å×ÀÌºíÀÌ 60TÀÎ °æ¿ì
+-- ì›ë³¸ í…Œì´ë¸”ì´ 60Tì¸ ê²½ìš°
 INSERT INTO @NHISNSC_database.COST
 	(cost_id, cost_event_id, cost_domain_id, cost_type_concept_id, currency_concept_id,
 	total_charge, total_cost, total_paid, paid_by_payer, paid_by_patient,
@@ -304,7 +304,7 @@ and a.person_id=b.person_id;
 ---------------------------------------------------
 -- 4) Device
 ---------------------------------------------------
--- ¿øº» Å×ÀÌºíÀÌ 30TÀÎ °æ¿ì
+-- ì›ë³¸ í…Œì´ë¸”ì´ 30Tì¸ ê²½ìš°
 INSERT INTO @NHISNSC_database.COST
 	(cost_id, cost_event_id, cost_domain_id, cost_type_concept_id, currency_concept_id,
 	total_charge, total_cost, total_paid, paid_by_payer, paid_by_patient,
@@ -336,7 +336,7 @@ SELECT
 	null as drg_source_value
 from (select device_exposure_id, person_id, device_exposure_start_date
 	from @NHISNSC_database.DEVICE_EXPOSURE 
-	where device_source_value not in (select source_code from #mapping_table where domain_id='procedure' )) a, --procedure ¿Í device ¿¡ µÑ´Ù º¯È¯µÈ °Ç¼öµé Á¦¿Ü
+	where device_source_value not in (select source_code from #mapping_table where domain_id='procedure' )) a, --procedure ì™€ device ì— ë‘˜ë‹¤ ë³€í™˜ëœ ê±´ìˆ˜ë“¤ ì œì™¸
 	(select m.master_seq, m.key_seq, m.seq_no, m.person_id, n.amt
 	from @NHISNSC_database.SEQ_MASTER m, @NHISNSC_rawdata.@NHIS_30T n
 	where m.source_table='130'
@@ -346,7 +346,7 @@ where left(a.device_exposure_id, 10)=b.master_seq
 and a.person_id=b.person_id;
 
 
--- ¿øº» Å×ÀÌºíÀÌ 60TÀÎ °æ¿ì
+-- ì›ë³¸ í…Œì´ë¸”ì´ 60Tì¸ ê²½ìš°
 INSERT INTO @NHISNSC_database.COST
 	(cost_id, cost_event_id, cost_domain_id, cost_type_concept_id, currency_concept_id,
 	total_charge, total_cost, total_paid, paid_by_payer, paid_by_patient,
@@ -378,7 +378,7 @@ SELECT
 	null as drg_source_value
 from (select device_exposure_id, person_id, device_exposure_start_date
 	from @NHISNSC_database.DEVICE_EXPOSURE 
-	where device_source_value not in (select source_code from #mapping_table where domain_id='procedure' )) a,  --procedure ¿Í device ¿¡ µÑ´Ù º¯È¯µÈ °Ç¼öµé Á¦¿Ü
+	where device_source_value not in (select source_code from #mapping_table where domain_id='procedure' )) a,  --procedure ì™€ device ì— ë‘˜ë‹¤ ë³€í™˜ëœ ê±´ìˆ˜ë“¤ ì œì™¸
 	(select m.master_seq, m.key_seq, m.seq_no, m.person_id, n.amt
 	from (select master_seq, key_seq, seq_no, person_id from @NHISNSC_database.SEQ_MASTER where source_table='160') m, 
 	@NHISNSC_rawdata.@NHIS_60T n

@@ -1,4 +1,4 @@
-/*********************************************************************************
+﻿/*********************************************************************************
 # Copyright 2014 Observational Health Data Sciences and Informatics
 #
 # 
@@ -33,7 +33,6 @@ Notes
 last revised: 26 Nov 2014
 author:  Lee Evans
 *************************/
-
 USE @Mapping_database
 
 TRUNCATE TABLE DRUG_STRENGTH;

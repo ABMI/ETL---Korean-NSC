@@ -9,6 +9,7 @@
  --Description: CDM 버전과 RAW 데이터에 대한 기본 정보
  --Generating Table: CDM_SOURCE
 ***************************************/
+
 Insert into @NHISNSC_database.CDM_SOURCE
 			(cdm_source_name, cdm_source_abbreviation, cdm_holder, source_description, source_document_reference, cdm_etl_reference,
 			 cdm_release_date, cdm_version, vocabulary_version)
