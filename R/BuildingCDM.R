@@ -21,6 +21,7 @@
 #' @export
 #' @example 
 BuildingCDM <- function(){
+                Sys.setlocale(category="LC_CTYPE", locale="C")
                 Getquery()
                 setNames()
                 connectDB()
