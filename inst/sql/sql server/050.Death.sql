@@ -1,6 +1,6 @@
-﻿/**************************************
+/**************************************
  --encoding : UTF-8
- --Author: 조재형
+ --Author: JH Cho, JM Park
  --Date: 2018.09.10
  
  @NHISNSC_rawdata : DB containing NHIS National Sample cohort DB
@@ -12,18 +12,18 @@
  @NHIS_40T: 40 table in NHIS NSC
  @NHIS_60T: 60 table in NHIS NSC
  @NHIS_GJ: GJ table in NHIS NSC
- --Description: DEATH 테이블 생성
-			   1) 표본코호트DB에는 사망한 날짜가 년도, 월까지 표시가 되기 때문에 해당 월의 1일로 사망일 정의
-			   2) 표본코호트DB는 사망한 후에도 진료기록이 있는 경우가 있음을 고려
-			   3) 범위(A00-A15), J46 등 매핑 안되는 code들 insert(#death_mapping)
+ --Description: Create Death table
+ 				1) In sample cohort DB, death dates are recorded with year and month, not date, therefore, define death date as last day of death month
+				2) Consider the cases with clinical diagnosis after death
+			   	3) A00-A15, J46 and other unmapped codes need to be inserted to mapping table(#death mapping)
  --Generating Table: DEATH
 ***************************************/
 
 /**************************************
- 1. 테이블 생성
+ 1. Create table
 ***************************************/  
 /*
--- death table 생성
+-- death table
 CREATE TABLE  @NHISNSC_database.DEATH
 (
     person_id							INTEGER			NOT NULL , 
@@ -36,15 +36,13 @@ CREATE TABLE  @NHISNSC_database.DEATH
 );
 */
 
--- 임시 death mapping table  
+-- temp death mapping table  
  SELECT	source_code, source_code_description, target_concept_id
 		INTO #DEATH_MAPPINGTABLE
 from @Mapping_database.source_to_concept_map a join @Mapping_database.CONCEPT b on a.target_concept_id=b.concept_id
-where invalid_reason is null and concept_invalid_reason is null;
-
-update #mapping_table
-set invalid_reason=REPLACE(invalid_reason, '', NULL)
-, concept_invalid_reason=replace(concept_invalid_reason, '', NULL);
+where a.domain_id='condition' and b.domain_id='condition'
+	and a.target_concept_id=b.concept_id
+	and a.invalid_reason='' and b.invalid_reason='';
 
 --Insert additional death data to temp death mapping table
 insert into #DEATH_MAPPINGTABLE (source_code, target_concept_id, source_code_description) values ('A00-A09', 4134887, 'Infectious disease of digestive tract') -- 104180 적용됨, 나머지는 1행씩 적용됨
@@ -96,10 +94,9 @@ insert into #DEATH_MAPPINGTABLE (source_code, target_concept_id, source_code_des
 insert into #DEATH_MAPPINGTABLE (source_code, target_concept_id, source_code_description) values ('T90-T98', 443403, 'Sequela')
 
 /**************************************
- 2. 데이터 입력 및 확인
+ 2. Insert data
 ***************************************/  
-
---날짜를 해당 월의 말일로 정의, 55921개의 행이 영향을 받음(00:00:01)
+-- Define the last date of death month as death date
 INSERT INTO @NHISNSC_database.DEATH (person_id, death_date, death_type_concept_id, cause_concept_id, 
 cause_source_value, cause_source_concept_id)
 SELECT a.person_id AS PERSON_ID,
@@ -113,8 +110,7 @@ on a.dth_code1=b.source_code
 WHERE a.dth_ym IS NOT NULL and a.dth_ym != ''
 ;
 
-
---날짜 없는 경우 해당 년의 12월 31일로 death 정의, 19개의 행이 영향을 받음(00:00:00)
+-- If there is no death month, define 12.31 as death month and date 
 INSERT INTO @NHISNSC_database.DEATH (person_id, death_date, death_type_concept_id, cause_concept_id, 
 cause_source_value, cause_source_concept_id)
 SELECT a.person_id AS PERSON_ID,
@@ -128,5 +124,5 @@ on a.dth_code1=b.source_code
 WHERE a.dth_ym = '' and a.DTH_CODE1 != ''
 ;
 
---임시매핑테이블 삭제
+--Delete temp death mapping table
 drop table #DEATH_MAPPINGTABLE;

@@ -1,4 +1,4 @@
-﻿/**************************************
+/**************************************
  --encoding : UTF-8
  --Author: 이성원
  --Date: 2018.08.22
@@ -13,15 +13,15 @@
  @NHIS_GJ: GJ table in NHIS NSC
  @NHIS_YK: YK table in NHIS NSC
  
- --Description: Care_site 테이블 생성
-			   1) 표본코호트DB에는 요양기관이 년도별로 중복 입력되어 있음. 지역이동, 설립구분의 변화등이 추적 가능함
-			      하지만, CDM에서는 1개의 기관으로 들어가야 하므로, 최근 요양기관 데이터를 변환함
-			   2) place of service: 한국적 상황을 고려하여 새로운 concept을 생성함 (ETL 정의서 참고할 것)
+ --Description: Create Care_site table
+			   1) In sample cohort DB, medical institution data are inserted as duplicated by years, which makes it possible to track the change of established division, location and etc..
+			    In CDM, however, medical institution should be unique, so the latest medical institution data would be converted
+			   2) place of service: Considering sepciality of South Korea, make new concepts (Ref) ETL definition document)
  --Generating Table: CARE_SITE
 ***************************************/
 
 /**************************************
- 1. 테이블 생성
+ 1. Create table
 ***************************************/  
 /*
 Create table @NHISNSC_database.CARE_SITE (
@@ -35,38 +35,38 @@ Create table @NHISNSC_database.CARE_SITE (
 */
 
 /**************************************
- 2. 데이터 입력
-	: place_of_service_source_value - 요양기관종별코드/요양기관설립구분
-									- 요양기관설립구분이 1자리 숫자인 경우, 앞에 0을 붙여줌		134552, 00:00:01
+ 2. Insert data
+	: place_of_service_source_value - Medical Institution, type code/established division 
+									- If established divisin code is consist with one number then add 0 in front of it.
 ***************************************/  
 
 INSERT INTO @NHISNSC_database.CARE_SITE
 SELECT a.ykiho_id,
 	null as care_site_name,
-	case when a.ykiho_gubun_cd='10' then 4068130 --종합병원(Tertiary care hospital) 
-		 when a.ykiho_gubun_cd between '20' and '27' then 4318944 --일반병원  Hospital
-		 when a.ykiho_gubun_cd='28' then 82020103 --요양병원  
-		 when a.ykiho_gubun_cd='29' then 4268912 --정신요양병원 Psychiatric hospital 
-		 when a.ykiho_gubun_cd between '30' and '39' then 82020105 --의원
-		 when a.ykiho_gubun_cd between '40' and '49' then 82020106 --치과병원
-		 when a.ykiho_gubun_cd between '50' and '59' then 82020107 --치과의원
-		 when a.ykiho_gubun_cd between '60' and '69' then 82020108 --조산원
-		 when a.ykiho_gubun_cd='70' then 82020109 --보건소
-		 when a.ykiho_gubun_cd between '71' and '72' then 82020110 --보건지소
-		 when a.ykiho_gubun_cd between '73' and '74' then 82020111 --보건진료소
-		 when a.ykiho_gubun_cd between '75' and '76' then 82020112 --모자보건센터
-		 when a.ykiho_gubun_cd='77' then 82020113 --보건의료원
-		 when a.ykiho_gubun_cd between '80' and '89' then 4131032 --약국 Pharmacy
-		 when a.ykiho_gubun_cd='91' then 82020115 --한방종합병원
-		 when a.ykiho_gubun_cd='92' then 82020116 --한방병원
-		 when a.ykiho_gubun_cd between '93' and '97' then 82020117 --한의원
-		 when a.ykiho_gubun_cd between '98' and '99' then 82020118 --한약방
+	case when a.ykiho_gubun_cd='10' then 4068130 --(Tertiary care hospital) 
+		 when a.ykiho_gubun_cd between '20' and '27' then 4318944 --Hospital
+		 when a.ykiho_gubun_cd='28' then 82020103 --Nursing home
+		 when a.ykiho_gubun_cd='29' then 4268912 --Psychiatric hospital 
+		 when a.ykiho_gubun_cd between '30' and '39' then 82020105 --clinic
+		 when a.ykiho_gubun_cd between '40' and '49' then 82020106 --dental hospital
+		 when a.ykiho_gubun_cd between '50' and '59' then 82020107 --dental clinic
+		 when a.ykiho_gubun_cd between '60' and '69' then 82020108 --midwife center
+		 when a.ykiho_gubun_cd='70' then 82020109 --public health center
+		 when a.ykiho_gubun_cd between '71' and '72' then 82020110 --public health branch center
+		 when a.ykiho_gubun_cd between '73' and '74' then 82020111 --public health clinic 
+		 when a.ykiho_gubun_cd between '75' and '76' then 82020112 --mother and child health care center
+		 when a.ykiho_gubun_cd='77' then 82020113 --public medical clinic 
+		 when a.ykiho_gubun_cd between '80' and '89' then 4131032 --Pharmacy
+		 when a.ykiho_gubun_cd='91' then 82020115 --traditional medicine tertiary care hospital
+		 when a.ykiho_gubun_cd='92' then 82020116 --traditional medicine hospital
+		 when a.ykiho_gubun_cd between '93' and '97' then 82020117 --traditional medicine clinic
+		 when a.ykiho_gubun_cd between '98' and '99' then 82020118 --traditional pharmacy
 	end as place_of_service_concept_id,
 	a.ykiho_sido as location_id,
 	a.ykiho_id as care_site_source_value,
 	(a.ykiho_gubun_cd + '/' + (case when len(a.org_type) = 1 then '0' + org_type else org_type end)) as place_of_service_source_value
-FROM @NHIS_rawdata.@NHIS_JK a, (select ykiho_id, max(stnd_y) as max_stnd_y
-	from @NHIS_rawdata.@NHIS_YK c
+FROM @NHISNSC_rawdata.@NHIS_YK a, (select ykiho_id, max(stnd_y) as max_stnd_y
+	from @NHISNSC_rawdata.@NHIS_YK c
 	group by ykiho_id) b
 where a.ykiho_id=b.ykiho_id
 and a.stnd_y=b.max_stnd_y

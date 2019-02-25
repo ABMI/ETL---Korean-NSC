@@ -1,6 +1,6 @@
-﻿/**************************************
+/**************************************
  --encoding : UTF-8
- --Author: 이성원, 박지명
+ --Author: SW Lee, JM Park
  --Date: 2018.09.01
  
  @NHISNSC_rawdata : DB containing NHIS National Sample cohort DB
@@ -11,15 +11,15 @@
  @NHIS_40T: 40 table in NHIS NSC
  @NHIS_60T: 60 table in NHIS NSC
  @NHIS_GJ: GJ table in NHIS NSC
- --Description: Person 테이블 생성
-			   1) 표본코호트DB에는 person이 년도별로 중복 입력되어 있음. 사람들의 소득수준 변화지역이동, 설립구분의 변화등이 추적 가능함
-			      하지만, CDM에서는 1개의 person이 들어가야 하므로, 최근 person 데이터를 변환함
-			   2) 출생년도를 5년 간격 연령대 데이터를 이용하여 추정, 입력
+ --Description: Create Person table
+			   1) In sample cohort DB, person data are inserted as duplicated by years, which makes it possible to track the change of income quantiles, location and etc..
+			    In CDM, however, person should be unique, so the latest person data would be converted
+			   2) Assume and insert the birth year by using the 5-year age intervals
  --Generating Table: PERSON
 ***************************************/
 
 /**************************************
- 1. 테이블 생성
+ 1. Create table
 ***************************************/  
 /*
 CREATE TABLE @NHISNSC_database.PERSON (
@@ -28,7 +28,7 @@ CREATE TABLE @NHISNSC_database.PERSON (
      year_of_birth					INTEGER		NOT NULL , 
      month_of_birth					INTEGER		NULL, 
      day_of_birth					INTEGER		NULL, 
-	 time_of_birth					VARCHAR(50)	NULL,
+	 birth_datetime					VARCHAR(50)	NULL,
      race_concept_id				INTEGER		NOT NULL, 
      ethnicity_concept_id			INTEGER		NOT NULL, 
      location_id					integer		NULL, 
@@ -45,16 +45,16 @@ CREATE TABLE @NHISNSC_database.PERSON (
 */
 
 /**************************************
- 2. 데이터 입력
-	: 5년 간격의 연령대를 이용해 출생년도를 추정해야 함.
-	  총 8개의 추정 포인트에 맞춰 8개의 쿼리를 따로 실행
+ 2. Insert data
+	: the birth year should be assumed by using the 5-year age intervals
+	Overall, 8 different queries would be executed by the estimated point
 ***************************************/  
 /**
-	1) 1개 이상 구간 + 5개 풀 구간 있음			
+	1) More than 1 intervals + 5 full interval
 */
 INSERT INTO @NHISNSC_database.PERSON
 	(person_id, gender_concept_id, year_of_birth, month_of_birth, day_of_birth,
-	time_of_birth, race_concept_id, ethnicity_concept_id, location_id, provider_id,
+	birth_datetime, race_concept_id, ethnicity_concept_id, location_id, provider_id,
 	care_site_id, person_source_value, gender_source_value, gender_source_concept_id, race_source_value,
 	race_source_concept_id, ethnicity_source_value, ethnicity_source_concept_id)
 select 
@@ -64,9 +64,9 @@ select
 	m.stnd_y - ((m.age_group-1) * 5) as year_of_birth,
 	null as month_of_birth,
 	null as day_of_birth,
-	null as time_of_birth,
-	38003585 as race_concept_id, --인종
-	38003564 as ethnicity_concept_id, --민족성
+	null as birth_datetime,
+	38003585 as race_concept_id, 
+	38003564 as ethnicity_concept_id, 
 	o.sgg as location_id,
 	null as provider_id,
 	null as care_site_id,
@@ -77,7 +77,7 @@ select
 	null as race_source_concept_id,
 	null as ethnicity_source_value,
 	null as ethnicity_source_concept_id
-from @NHISNSC_rawdata.@NHIS_JK m, --출생년도 추정에 사용되는 person 데이터
+from @NHISNSC_rawdata.@NHIS_JK m, 
 	(select x.person_id, min(x.stnd_y) as stnd_y
 	from @NHISNSC_rawdata.@NHIS_JK x, (
 	select person_id, max(age_group) as age_group
@@ -87,7 +87,7 @@ from @NHISNSC_rawdata.@NHIS_JK m, --출생년도 추정에 사용되는 person �
 		where person_id in (
 			select distinct person_id
 			from (
-				select person_id, age_group, count(age_group) as age_group_cnt, min(stnd_y) as min_year, max(stnd_y) as max_year -- min(), max()의 year는 어디서? => stnd_y로 변경
+				select person_id, age_group, count(age_group) as age_group_cnt, min(stnd_y) as min_year, max(stnd_y) as max_year 
 				from @NHISNSC_rawdata.@NHIS_JK
 				group by person_id, age_group
 			) a
@@ -100,25 +100,25 @@ from @NHISNSC_rawdata.@NHIS_JK m, --출생년도 추정에 사용되는 person �
 	group by person_id) y
 	where x.person_id=y.person_id
 	and x.age_group=y.age_group
-	group by x.person_id, y.person_id, x.age_group, y.age_group) n, --추정포인트 조건에 맞는 person 목록 추출
+	group by x.person_id, y.person_id, x.age_group, y.age_group) n, 
 	(select w.person_id, w.stnd_y, q.sex, q.sgg
 	from @NHISNSC_rawdata.@NHIS_JK q, (
 		select person_id, max(stnd_y) as stnd_y
 		from @NHISNSC_rawdata.@NHIS_JK
 		group by person_id) w
 	where q.person_id=w.person_id
-	and q.stnd_y=w.stnd_y) o --최신 지역 데이터를 가져오기 위해 조인
+	and q.stnd_y=w.stnd_y) o 
 where m.person_id=n.PERSON_ID
 and m.stnd_y=n.stnd_y
 and m.person_id=o.person_id
 ;
 /**
-	2) 1개 이상 구간 + 5개 풀 구간 없음 + 0구간 포함					
-		: 자격 테이블 전체에 0구간이 2개 이상인 사람이 12명 있음. 이에 0구간 중 min(stnd_y)를 기준으로 출생년도를 정함
+	2) More than 1 intervals + 5 full interval + include 0 interval
+		: There are 12 people who have more than two 0 intervals in JK table. Therefore, the birth year should be defined as the min(stnd_y) of 0 intervals
 */
 INSERT INTO @NHISNSC_database.PERSON
 	(person_id, gender_concept_id, year_of_birth, month_of_birth, day_of_birth,
-	time_of_birth, race_concept_id, ethnicity_concept_id, location_id, provider_id,
+	birth_datetime, race_concept_id, ethnicity_concept_id, location_id, provider_id,
 	care_site_id, person_source_value, gender_source_value, gender_source_concept_id, race_source_value,
 	race_source_concept_id, ethnicity_source_value, ethnicity_source_concept_id)
 select 
@@ -128,9 +128,9 @@ select
 	m.stnd_y as year_of_birth,
 	null as month_of_birth,
 	null as day_of_birth,
-	null as time_of_birth,
-	38003585 as race_concept_id, --인종
-	38003564 as ethnicity_concept_id, --민족성
+	null as birth_datetime,
+	38003585 as race_concept_id, 
+	38003564 as ethnicity_concept_id, 
 	o.sgg as location_id,
 	null as provider_id,
 	null as care_site_id,
@@ -141,7 +141,7 @@ select
 	null as race_source_concept_id,
 	null as ethnicity_source_value,
 	null as ethnicity_source_concept_id
-from @NHISNSC_rawdata.@NHIS_JK m, --출생년도 추정에 사용되는 person 데이터
+from @NHISNSC_rawdata.@NHIS_JK m, 
 	(select x.person_id, min(x.stnd_y) as stnd_y
 	from @NHISNSC_rawdata.@NHIS_JK x, (
 		select distinct person_id
@@ -179,27 +179,27 @@ from @NHISNSC_rawdata.@NHIS_JK m, --출생년도 추정에 사용되는 person �
 		) ) y
 	where x.person_id=y.person_id
 	and x.age_group=0
-	group by x.person_id) n, --추정포인트 조건에 맞는 person 목록 추출
+	group by x.person_id) n,
 	(select w.person_id, w.stnd_y, q.sex, q.sgg
 	from @NHISNSC_rawdata.@NHIS_JK q, (
 		select person_id, max(stnd_y) as stnd_y
 		from @NHISNSC_rawdata.@NHIS_JK
 		group by person_id) w
 	where q.person_id=w.person_id
-	and q.stnd_y=w.stnd_y) o --최신 지역 데이터를 가져오기 위해 조인
+	and q.stnd_y=w.stnd_y) o 
 where m.person_id=n.person_id
 and m.stnd_y=n.stnd_y
 and m.person_id=o.person_id
 ;
 
 /**
-	3-1) 1개 이상 구간 + 5개 풀 구간 없음 + 0구간 비포함 + 구간 변경 시점에 년도가 연속			
+	3-1) More than 1 intervals + no 5 full interval + not include 0 interval + the year of interval change point is continuous
 
 */
--- 연속 구간 데이터
+-- continuous interval data
 INSERT INTO @NHISNSC_database.PERSON
 	(person_id, gender_concept_id, year_of_birth, month_of_birth, day_of_birth,
-	time_of_birth, race_concept_id, ethnicity_concept_id, location_id, provider_id,
+	birth_datetime, race_concept_id, ethnicity_concept_id, location_id, provider_id,
 	care_site_id, person_source_value, gender_source_value, gender_source_concept_id, race_source_value,
 	race_source_concept_id, ethnicity_source_value, ethnicity_source_concept_id)
 select 
@@ -209,9 +209,9 @@ select
 	d1.stnd_y - ((d1.age_group-1) * 5) as year_of_birth,
 	null as month_of_birth,
 	null as day_of_birth,
-	null as time_of_birth,
-	38003585 as race_concept_id, --인종
-	38003564 as ethnicity_concept_id, --민족성
+	null as birth_datetime,
+	38003585 as race_concept_id, 
+	38003564 as ethnicity_concept_id, 
 	d3.sgg as location_id,
 	null as provider_id,
 	null as care_site_id,
@@ -222,7 +222,7 @@ select
 	null as race_source_concept_id,
 	null as ethnicity_source_value,
 	null as ethnicity_source_concept_id
-from @NHISNSC_rawdata.@NHIS_JK d1, --출생년도 추정에 사용되는 person 데이터
+from @NHISNSC_rawdata.@NHIS_JK d1, 
 (select x.person_id, min(y.min_stnd_y) as stnd_y
 from 
 
@@ -316,27 +316,27 @@ where x.person_id=y.person_id
 and x.age_group + 1=y.age_group
 and x.max_stnd_y + 1=y.min_stnd_y
 
-group by x.person_id) d2, --추정포인트 조건에 맞는 person 목록 추출
+group by x.person_id) d2, 
 	(select w.person_id, w.stnd_y, q.sex, q.sgg
 	from @NHISNSC_rawdata.@NHIS_JK q, (
 		select person_id, max(stnd_y) as stnd_y
 		from @NHISNSC_rawdata.@NHIS_JK
 		group by person_id) w
 	where q.person_id=w.person_id
-	and q.stnd_y=w.stnd_y) d3 --최신 지역 데이터를 가져오기 위해 조인
+	and q.stnd_y=w.stnd_y) d3
 where d1.person_id=d2.person_id
 and d1.stnd_y=d2.stnd_y
 and d1.person_id=d3.person_id
 ;
 
 /**
-	3-2) 1개 이상 구간 + 5개 풀 구간 없음 + 0구간 비포함 + 구간 변경 시점에 년도가 비연속	
-	: 새 구간 시작년도에 구간대가 시작된 것으로 추정함
+	3-2) More than 1 intervals + no 5 full interval + not include 0 interval + the year of interval change point is non-continuous
+	: Assume that the interval is started at the start year of the new interval
 */
--- 연속 구간 데이터
+-- continuous intercal data
 INSERT INTO @NHISNSC_database.PERSON
 	(person_id, gender_concept_id, year_of_birth, month_of_birth, day_of_birth,
-	time_of_birth, race_concept_id, ethnicity_concept_id, location_id, provider_id,
+	birth_datetime, race_concept_id, ethnicity_concept_id, location_id, provider_id,
 	care_site_id, person_source_value, gender_source_value, gender_source_concept_id, race_source_value,
 	race_source_concept_id, ethnicity_source_value, ethnicity_source_concept_id)
 select 
@@ -346,9 +346,9 @@ select
 	d1.stnd_y - ((d1.age_group-1) * 5) as year_of_birth,
 	null as month_of_birth,
 	null as day_of_birth,
-	null as time_of_birth,
-	38003585 as race_concept_id, --인종
-	38003564 as ethnicity_concept_id, --민족성
+	null as birth_datetime,
+	38003585 as race_concept_id, 
+	38003564 as ethnicity_concept_id, 
 	d3.sgg as location_id,
 	null as provider_id,
 	null as care_site_id,
@@ -359,7 +359,7 @@ select
 	null as race_source_concept_id,
 	null as ethnicity_source_value,
 	null as ethnicity_source_concept_id
-from @NHISNSC_rawdata.@NHIS_JK d1, --출생년도 추정에 사용되는 person 데이터
+from @NHISNSC_rawdata.@NHIS_JK d1,
 	(
 	select s1.person_id, s1.age_group, min(s1.stnd_y) as stnd_y
 	from @NHISNSC_rawdata.@NHIS_JK s1,
@@ -501,7 +501,7 @@ from @NHISNSC_rawdata.@NHIS_JK d1, --출생년도 추정에 사용되는 person 
 	where s1.person_id=s2.person_id
 	and s1.age_group=s2.min_age_group
 	group by s1.person_id, s1.age_group
-	) d2, --추정포인트 조건에 맞는 person 목록 추출
+	) d2, 
 
 	(select w.person_id, w.stnd_y, q.sex, q.sgg
 	from @NHISNSC_rawdata.@NHIS_JK q, (
@@ -509,7 +509,7 @@ from @NHISNSC_rawdata.@NHIS_JK d1, --출생년도 추정에 사용되는 person 
 		from @NHISNSC_rawdata.@NHIS_JK
 		group by person_id) w
 	where q.person_id=w.person_id
-	and q.stnd_y=w.stnd_y) d3 --최신 지역 데이터를 가져오기 위해 조인
+	and q.stnd_y=w.stnd_y) d3 
 
 where d1.person_id=d2.person_id
 and d1.stnd_y=d2.stnd_y
@@ -518,13 +518,13 @@ and d1.person_id=d3.person_id
 
 
 /**
-	4) 1개 이상 구간 + 5개 풀 구간 없음 + 맥스 구간 데이터 건수가 5개보다 많음					
-		: 맥스 구간이 최고령 구간대가 아닌 데이터가 236건
-		: 동일하게 맥스 구간의 min(stnd_y)를 기준으로 출생년도 추정
+	4) More than 1 intervals + no 5 full interval + More than 5 max interval data			
+		: There are 236 of max data which are not in the eldery interval
+		: Identicaly, assume the birth year as min(stnd_y) of Maximun interval
 */
 INSERT INTO	@NHISNSC_database.PERSON
 	(person_id, gender_concept_id, year_of_birth, month_of_birth, day_of_birth,
-	time_of_birth, race_concept_id, ethnicity_concept_id, location_id, provider_id,
+	birth_datetime, race_concept_id, ethnicity_concept_id, location_id, provider_id,
 	care_site_id, person_source_value, gender_source_value, gender_source_concept_id, race_source_value,
 	race_source_concept_id, ethnicity_source_value, ethnicity_source_concept_id)
 select 
@@ -534,9 +534,9 @@ select
 	m.stnd_y - ((m.age_group-1) * 5) as year_of_birth,
 	null as month_of_birth,
 	null as day_of_birth,
-	null as time_of_birth,
-	38003585 as race_concept_id, --인종
-	38003564 as ethnicity_concept_id, --민족성
+	null as birth_datetime,
+	38003585 as race_concept_id, 
+	38003564 as ethnicity_concept_id, 
 	o.sgg as location_id,
 	null as provider_id,
 	null as care_site_id,
@@ -547,7 +547,7 @@ select
 	null as race_source_concept_id,
 	null as ethnicity_source_value,
 	null as ethnicity_source_concept_id
-from @NHISNSC_rawdata.@NHIS_JK m, --출생년도 추정에 사용되는 person 데이터
+from @NHISNSC_rawdata.@NHIS_JK m, 
 	(select x.person_id, min(stnd_y) as stnd_y
 	from @NHISNSC_rawdata.@NHIS_JK x, (
 		select distinct person_id, age_group
@@ -559,7 +559,7 @@ from @NHISNSC_rawdata.@NHIS_JK m, --출생년도 추정에 사용되는 person �
 			from (
 				select distinct person_id
 				from (
-					select person_id, age_group, count(age_group) as age_group_cnt, min(STND_Y) as min_year, max(STND_Y) as max_year	-- min(), max()의 year를 stnd_y로 대체
+					select person_id, age_group, count(age_group) as age_group_cnt, min(STND_Y) as min_year, max(STND_Y) as max_year	
 					from @NHISNSC_rawdata.@NHIS_JK
 					group by person_id, age_group
 				) a
@@ -582,26 +582,26 @@ from @NHISNSC_rawdata.@NHIS_JK m, --출생년도 추정에 사용되는 person �
 	where x.PERSON_ID=y.PERSON_ID
 	and x.age_group=y.age_group
 	group by x.person_id, x.age_group
-	) n, --추정포인트 조건에 맞는 person 목록 추출
+	) n, 
 	(select w.person_id, w.stnd_y, q.sex, q.sgg
 	from @NHISNSC_rawdata.@NHIS_JK q, (
 		select person_id, max(stnd_y) as stnd_y
 		from @NHISNSC_rawdata.@NHIS_JK
 		group by person_id) w
 	where q.person_id=w.person_id
-	and q.stnd_y=w.stnd_y) o --최신 지역 데이터를 가져오기 위해 조인
+	and q.stnd_y=w.stnd_y) o 
 where m.person_id=n.person_id
 and m.stnd_y=n.stnd_y
 and m.person_id=o.person_id
 ;
 
 /**
-	5) 1개 구간 + 5개 풀 구간임
-	: 2002년에 최고령 구간에 포함되어 5년째 사망한 사람 데이터 있음. 정확한 추정 불가능
+	5) 1 interval + 5 full interval
+	: There are data which are included in the elderly interval but recorded death date at 5th year. Not possible to calculate accurate birth year
 */
 INSERT INTO @NHISNSC_database.PERSON
 	(person_id, gender_concept_id, year_of_birth, month_of_birth, day_of_birth,
-	time_of_birth, race_concept_id, ethnicity_concept_id, location_id, provider_id,
+	birth_datetime, race_concept_id, ethnicity_concept_id, location_id, provider_id,
 	care_site_id, person_source_value, gender_source_value, gender_source_concept_id, race_source_value,
 	race_source_concept_id, ethnicity_source_value, ethnicity_source_concept_id)
 select 
@@ -611,9 +611,9 @@ select
 	m.stnd_y - ((m.age_group-1) * 5) as year_of_birth,
 	null as month_of_birth,
 	null as day_of_birth,
-	null as time_of_birth,
-	38003585 as race_concept_id, --인종
-	38003564 as ethnicity_concept_id, --민족성
+	null as birth_datetime,
+	38003585 as race_concept_id, 
+	38003564 as ethnicity_concept_id, 
 	o.sgg as location_id,
 	null as provider_id,
 	null as care_site_id,
@@ -624,13 +624,13 @@ select
 	null as race_source_concept_id,
 	null as ethnicity_source_value,
 	null as ethnicity_source_concept_id
-from @NHISNSC_rawdata.@NHIS_JK m, --출생년도 추정에 사용되는 person 데이터
+from @NHISNSC_rawdata.@NHIS_JK m,
 (select person_id, age_group, min(stnd_y) as stnd_y
 from @NHISNSC_rawdata.@NHIS_JK
 where person_id in (
 	select distinct person_id
 	from (
-		select person_id, age_group, count(age_group) as age_group_cnt, min(STND_Y) as min_year, max(STND_Y) as max_year		-- min(), max()의 year를 stnd_y로 대체
+		select person_id, age_group, count(age_group) as age_group_cnt, min(STND_Y) as min_year, max(STND_Y) as max_year		
 		from @NHISNSC_rawdata.@NHIS_JK
 		group by person_id, age_group
 	) a
@@ -638,26 +638,26 @@ where person_id in (
 	having count(person_id)=1
 )
 group by person_id, age_group
-having count(age_group) = 5) n, --추정포인트 조건에 맞는 person 목록 추출
+having count(age_group) = 5) n,
 (select w.person_id, w.stnd_y, q.sex, q.sgg
 	from @NHISNSC_rawdata.@NHIS_JK q, (
 		select person_id, max(stnd_y) as stnd_y
 		from @NHISNSC_rawdata.@NHIS_JK
 		group by person_id) w
 	where q.person_id=w.person_id
-	and q.stnd_y=w.stnd_y) o --최신 지역 데이터를 가져오기 위해 조인
+	and q.stnd_y=w.stnd_y) o 
 where m.person_id=n.person_id
 and m.stnd_y=n.stnd_y
 and m.person_id=o.person_id
 ;
 
 /**
-	6) 1개 구간 + 5개 풀 구간 아님 + 0구간 포함							
-	: 0 구간 데이터가 2개인 데이터 1건 있음
+	6) 1 interval + not 5 full interval + include 0 interval
+	: There one case which has 2 0 intervals
 */
 INSERT INTO @NHISNSC_database.PERSON
 	(person_id, gender_concept_id, year_of_birth, month_of_birth, day_of_birth,
-	time_of_birth, race_concept_id, ethnicity_concept_id, location_id, provider_id,
+	birth_datetime, race_concept_id, ethnicity_concept_id, location_id, provider_id,
 	care_site_id, person_source_value, gender_source_value, gender_source_concept_id, race_source_value,
 	race_source_concept_id, ethnicity_source_value, ethnicity_source_concept_id)
 select 
@@ -667,9 +667,9 @@ select
 	m.stnd_y as year_of_birth,
 	null as month_of_birth,
 	null as day_of_birth,
-	null as time_of_birth,
-	38003585 as race_concept_id, --인종
-	38003564 as ethnicity_concept_id, --민족성
+	null as birth_datetime,
+	38003585 as race_concept_id, 
+	38003564 as ethnicity_concept_id, 
 	o.sgg as location_id,
 	null as provider_id,
 	null as care_site_id,
@@ -680,7 +680,7 @@ select
 	null as race_source_concept_id,
 	null as ethnicity_source_value,
 	null as ethnicity_source_concept_id
-from @NHISNSC_rawdata.@NHIS_JK m, --출생년도 추정에 사용되는 person 데이터
+from @NHISNSC_rawdata.@NHIS_JK m, 
 	(select person_id, min(stnd_y) as stnd_y
 	from @NHISNSC_rawdata.@NHIS_JK
 	where age_group=0
@@ -694,7 +694,7 @@ from @NHISNSC_rawdata.@NHIS_JK m, --출생년도 추정에 사용되는 person �
 		from (
 			select distinct person_id
 			from (
-				select person_id, age_group, count(age_group) as age_group_cnt, min(STND_Y) as min_year, max(STND_Y) as max_year		-- min(), max()의 year를 stnd_y로 대체
+				select person_id, age_group, count(age_group) as age_group_cnt, min(STND_Y) as min_year, max(STND_Y) as max_year		
 				from @NHISNSC_rawdata.@NHIS_JK
 				group by person_id, age_group
 			) a
@@ -714,27 +714,27 @@ from @NHISNSC_rawdata.@NHIS_JK m, --출생년도 추정에 사용되는 person �
 	group by x.person_id
 	having max(x.age_group_cnt) < 5
 	) 
-	group by person_id) n, --추정포인트 조건에 맞는 person 목록 추출
+	group by person_id) n, 
 	(select w.person_id, w.stnd_y, q.sex, q.sgg
 	from @NHISNSC_rawdata.@NHIS_JK q, (
 		select person_id, max(stnd_y) as stnd_y
 		from @NHISNSC_rawdata.@NHIS_JK
 		group by person_id) w
 	where q.person_id=w.person_id
-	and q.stnd_y=w.stnd_y) o --최신 지역 데이터를 가져오기 위해 조인
+	and q.stnd_y=w.stnd_y) o
 where m.person_id=n.person_id
 and m.stnd_y=n.stnd_y
 and m.person_id=o.person_id
 ;
 
 /**
-	7) 1개 구간 + 5개 풀 구간 아님 + 0구간 비포함
-	: 정확한 추정 불가
-	: 구간 시작 년도에 구간대의 최소값을 갖도록 추정함 (예: 2002년에 20~24세 구간이면, 2002년에 22세로 추정)		
+	7) 1 interval + not 5 full interval + not include 0 interval			
+	: Not possible to calculate the accurate birth year
+	: Assume to have a min value of the start year of the interval(ex) If 20-24 years interval in 2002, then assume as 20)
 */
 INSERT INTO @NHISNSC_database.PERSON
 	(person_id, gender_concept_id, year_of_birth, month_of_birth, day_of_birth,
-	time_of_birth, race_concept_id, ethnicity_concept_id, location_id, provider_id,
+	birth_datetime, race_concept_id, ethnicity_concept_id, location_id, provider_id,
 	care_site_id, person_source_value, gender_source_value, gender_source_concept_id, race_source_value,
 	race_source_concept_id, ethnicity_source_value, ethnicity_source_concept_id)
 select 
@@ -744,9 +744,9 @@ select
 	m.stnd_y - ((m.age_group-1) * 5) as year_of_birth,
 	null as month_of_birth,
 	null as day_of_birth,
-	null as time_of_birth,
-	38003585 as race_concept_id, --인종
-	38003564 as ethnicity_concept_id, --민족성
+	null as birth_datetime,
+	38003585 as race_concept_id, 
+	38003564 as ethnicity_concept_id, 
 	o.sgg as location_id,
 	null as provider_id,
 	null as care_site_id,
@@ -757,7 +757,7 @@ select
 	null as race_source_concept_id,
 	null as ethnicity_source_value,
 	null as ethnicity_source_concept_id
-from @NHISNSC_rawdata.@NHIS_JK m, --출생년도 추정에 사용되는 person 데이터
+from @NHISNSC_rawdata.@NHIS_JK m, 
 	(select x.person_id, x.age_group, min(x.stnd_y) as stnd_y
 	from @NHISNSC_rawdata.@NHIS_JK x,
 	(select person_id, age_group
@@ -771,7 +771,7 @@ from @NHISNSC_rawdata.@NHIS_JK m, --출생년도 추정에 사용되는 person �
 			from (
 				select distinct person_id
 				from (
-					select person_id, age_group, count(age_group) as age_group_cnt, min(STND_Y) as min_year, max(STND_Y) as max_year		-- min(), max()의 year를 stnd_y로 대체
+					select person_id, age_group, count(age_group) as age_group_cnt, min(STND_Y) as min_year, max(STND_Y) as max_year		
 					from @NHISNSC_rawdata.@NHIS_JK
 					group by person_id, age_group
 				) a
@@ -798,27 +798,27 @@ from @NHISNSC_rawdata.@NHIS_JK m, --출생년도 추정에 사용되는 person �
 	and age_group=0)) y
 	where x.person_id=y.person_id
 	and x.age_group=y.age_group
-	group by x.person_id, x.age_group) n, --추정포인트 조건에 맞는 person 목록 추출
+	group by x.person_id, x.age_group) n, 
 	(select w.person_id, w.stnd_y, q.sex, q.sgg
 	from @NHISNSC_rawdata.@NHIS_JK q, (
 		select person_id, max(stnd_y) as stnd_y
 		from @NHISNSC_rawdata.@NHIS_JK
 		group by person_id) w
 	where q.person_id=w.person_id
-	and q.stnd_y=w.stnd_y) o --최신 지역 데이터를 가져오기 위해 조인
+	and q.stnd_y=w.stnd_y) o 
 where m.person_id=n.person_id
 and m.stnd_y=n.stnd_y
 and m.person_id=o.person_id
 ;
 
 /**
-	8) 1개 구간 + 5개 풀 구간 아님 + 구간 건수가 5개보다 많음							
-	: 정확한 추정 불가
-	: 구간 시작 년도에 구간대의 중간값을 갖도록 추정함 (예: 2002년에 20~24세 구간이면, 2002년에 22세로 추정)
+	8) 1 interval + not 5 full interval + More than 5 max interval data			
+	: Not possible to calculate the accurate birth year
+	: Assume to have a mid value of the start year of the interval(ex) If 20-24 years interval in 2002, then assume as 22)
 */
 INSERT INTO @NHISNSC_database.PERSON
 	(person_id, gender_concept_id, year_of_birth, month_of_birth, day_of_birth,
-	time_of_birth, race_concept_id, ethnicity_concept_id, location_id, provider_id,
+	birth_datetime, race_concept_id, ethnicity_concept_id, location_id, provider_id,
 	care_site_id, person_source_value, gender_source_value, gender_source_concept_id, race_source_value,
 	race_source_concept_id, ethnicity_source_value, ethnicity_source_concept_id)
 select 
@@ -828,9 +828,9 @@ select
 	m.stnd_y - ((m.age_group-1) * 5) as year_of_birth,
 	null as month_of_birth,
 	null as day_of_birth,
-	null as time_of_birth,
-	38003585 as race_concept_id, --인종
-	38003564 as ethnicity_concept_id, --민족성
+	null as birth_datetime,
+	38003585 as race_concept_id, 
+	38003564 as ethnicity_concept_id, 
 	o.sgg as location_id,
 	null as provider_id,
 	null as care_site_id,
@@ -841,7 +841,7 @@ select
 	null as race_source_concept_id,
 	null as ethnicity_source_value,
 	null as ethnicity_source_concept_id
-from @NHISNSC_rawdata.@NHIS_JK m, --출생년도 추정에 사용되는 person 데이터
+from @NHISNSC_rawdata.@NHIS_JK m, 
 	(select m.person_id, min(m.age_group) as age_group, min(m.stnd_y) as stnd_y
 	from @NHISNSC_rawdata.@NHIS_JK m,
 		(select distinct person_id
@@ -853,7 +853,7 @@ from @NHISNSC_rawdata.@NHIS_JK m, --출생년도 추정에 사용되는 person �
 			from (
 				select distinct person_id
 				from (
-					select person_id, age_group, count(age_group) as age_group_cnt, min(STND_Y) as min_year, max(STND_Y) as max_year	-- min(), max()의 year를 stnd_y로 대체
+					select person_id, age_group, count(age_group) as age_group_cnt, min(STND_Y) as min_year, max(STND_Y) as max_year	
 					from @NHISNSC_rawdata.@NHIS_JK
 					group by person_id, age_group
 				) a
@@ -873,14 +873,14 @@ from @NHISNSC_rawdata.@NHIS_JK m, --출생년도 추정에 사용되는 person �
 		group by x.person_id
 		having max(x.age_group_cnt) > 5) n
 	where m.person_id=n.person_id
-	group by m.person_id) n, --추정포인트 조건에 맞는 person 목록 추출
+	group by m.person_id) n, 
 	(select w.person_id, w.stnd_y, q.sex, q.sgg
 	from @NHISNSC_rawdata.@NHIS_JK q, (
 		select person_id, max(stnd_y) as stnd_y
 		from @NHISNSC_rawdata.@NHIS_JK
 		group by person_id) w
 	where q.person_id=w.person_id
-	and q.stnd_y=w.stnd_y) o --최신 지역 데이터를 가져오기 위해 조인
+	and q.stnd_y=w.stnd_y) o 
 where m.person_id=n.person_id
 and m.stnd_y=n.stnd_y
 and m.person_id=o.person_id

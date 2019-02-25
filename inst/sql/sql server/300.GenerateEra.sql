@@ -1,4 +1,4 @@
-﻿/*********************************************************************************
+/*********************************************************************************
 # Copyright 2017 Observational Health Data Sciences and Informatics
 #
 #
@@ -45,8 +45,6 @@ OHDSI-SQL File Instructions
 	--{DEFAULT @TARGET_CDMV5 = '[CDM]' } -- The target CDMv5 database name
 	--{DEFAULT @NHISNSC_database = '[CDM].[CDMSCHEMA]' } -- the target CDMv5 database plus schema
 
-USE @NHISNSC_database;
-
 
 /****
 DRUG ERA
@@ -67,8 +65,8 @@ SELECT d.DRUG_EXPOSURE_ID
 	,c.CONCEPT_ID AS INGREDIENT_CONCEPT_ID
 INTO #cteDrugTarget
 FROM @NHISNSC_database.DRUG_EXPOSURE d
-INNER JOIN @NHISNSC_database.CONCEPT_ANCESTOR ca ON ca.DESCENDANT_CONCEPT_ID = d.DRUG_CONCEPT_ID
-INNER JOIN @NHISNSC_database.CONCEPT c ON ca.ANCESTOR_CONCEPT_ID = c.CONCEPT_ID
+INNER JOIN @Mapping_database.CONCEPT_ANCESTOR ca ON ca.DESCENDANT_CONCEPT_ID = d.DRUG_CONCEPT_ID
+INNER JOIN @Mapping_database.CONCEPT c ON ca.ANCESTOR_CONCEPT_ID = c.CONCEPT_ID
 WHERE c.VOCABULARY_ID = 'RxNorm'
 	AND c.CONCEPT_CLASS_ID = 'Ingredient';
 

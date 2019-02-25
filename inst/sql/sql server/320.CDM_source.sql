@@ -1,4 +1,4 @@
-﻿/**************************************
+/**************************************
  --encoding : UTF-8
  --Author: 박지명
  --Date: 2019.02.04
@@ -6,7 +6,7 @@
 @NHISNSC_rawdata : DB containing NHIS National Sample cohort DB
 @NHISNSC_database: DB for NHIS-NSC in CDM format
 
- --Description: CDM 버전과 RAW 데이터에 대한 기본 정보
+ --Description: Basic information of the version of CDM and source data
  --Generating Table: CDM_SOURCE
 ***************************************/
 

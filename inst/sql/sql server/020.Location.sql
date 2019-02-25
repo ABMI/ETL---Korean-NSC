@@ -1,6 +1,6 @@
-﻿/**************************************
+/**************************************
  --encoding : UTF-8
- --Author: 이성원
+ --Author: SW Lee
  --Date: 2018.08.22
  
  @NHISNSC_rawdata : DB containing NHIS National Sample cohort DB
@@ -11,12 +11,12 @@
  @NHIS_40T: 40 table in NHIS NSC
  @NHIS_60T: 60 table in NHIS NSC
  @NHIS_GJ: GJ table in NHIS NSC
- --Description: Location 테이블 생성
+ --Description: Create Location  table
  --Generating Table: LOCATION
 ***************************************/
 
 /**************************************
- 1. 테이블 생성
+ 1. Create table
 ***************************************/  
 /*
 Create table @NHISNSC_database.LOCATION (
@@ -32,7 +32,7 @@ Create table @NHISNSC_database.LOCATION (
 */
 
 /**************************************
- 2. 데이터 입력
+ 2. Insert data
 ***************************************/  
 INSERT INTO @NHISNSC_database.LOCATION
 VALUES

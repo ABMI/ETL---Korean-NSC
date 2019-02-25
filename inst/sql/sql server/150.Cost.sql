@@ -1,6 +1,6 @@
-﻿/**************************************
+/**************************************
  --encoding : UTF-8
- --Author: 이성원, 박지명
+ --Author: SW Lee, JM Park
  --Date: 2018.09.20
  
  @NHISNSC_rawdata : DB containing NHIS National Sample cohort DB
@@ -17,12 +17,12 @@
  @PROCEDURE_MAPPINGTABLE : mapping table between Korean procedure and OMOP vocabulary
  @DEVICE_MAPPINGTABLE : mapping table between EDI and OMOP vocabulary
  
- --Description: Cost 테이블 생성
+ --Description: Create Cost table
  --Generating Table: COST
 ***************************************/
 
 /**************************************
- 1. 테이블 생성
+ 1. Create table
 ***************************************/ 
 /*
 CREATE TABLE @NHISNSC_database.COST (
@@ -51,16 +51,16 @@ CREATE TABLE @NHISNSC_database.COST (
 );
 */
 /**************************************
- 1-1. 임시 매핑 테이블 사용
+ 1-1. Using temp mapping table
 ***************************************/ 
-select a.source_code, a.target_concept_id, a.domain_id, REPLACE(invalid_reason, '', NULL) as invalid_reason 
+select a.source_code, a.target_concept_id, a.domain_id, REPLACE(a.invalid_reason, '', NULL) as invalid_reason 
 into #mapping_table
 from @Mapping_database.source_to_concept_map a join @Mapping_database.CONCEPT b on a.target_concept_id=b.concept_id
 where a.invalid_reason='' and b.invalid_reason='';
 
 
 /**************************************
- 2. 데이터 입력
+ 2. Insert data
     1) Visit
 	2) Drug
 	3) Procedure
@@ -69,10 +69,11 @@ where a.invalid_reason='' and b.invalid_reason='';
 ---------------------------------------------------
 -- 1) Visit
 ---------------------------------------------------
+
 INSERT INTO @NHISNSC_database.COST
 	(cost_id, cost_event_id, cost_domain_id, cost_type_concept_id, currency_concept_id,
 	total_charge, total_cost, total_paid, paid_by_payer, paid_by_patient,
-	paid_patient_copay, paid_patient_coinsurance, paid_patient_deductiable, paid_by_primary, paid_ingredient_cost,
+	paid_patient_copay, paid_patient_coinsurance, paid_patient_deductible, paid_by_primary, paid_ingredient_cost,
 	paid_dispensing_fee, payer_plan_period_id, amount_allowed, revenue_code_concept_id, drg_concept_id,
 	revenue_code_source_value, drg_source_value)
 SELECT 
@@ -88,7 +89,7 @@ SELECT
 	b.edec_sbrdn_amt as paid_by_patient,
 	null as paid_patient_copay,
 	null as paid_patient_coinsurance, 
-	null as paid_patient_deductiable,
+	null as paid_patient_deductible,
 	null as paid_by_primary,
 	null as paid_ingredient_cost,
 	null as paid_dispensing_fee,
@@ -106,7 +107,7 @@ and a.person_id=b.person_id;
 ---------------------------------------------------
 -- 2) Drug
 ---------------------------------------------------
--- Drug 와 Device 에서 중복되는 키를 확인
+-- Check the duplicated IDs from Drug and Device tables
 /*
 select * from #mapping_table
 where source_code in (
@@ -116,7 +117,7 @@ where source_code in (
 order by source_code
 */
 
--- 해당되는 키들을 Drug 에서 제거
+-- Delete duplicated ID keys from Drug_era table
 delete from @NHISNSC_database.DRUG_EXPOSURE
 where drug_source_value in (select source_code from #mapping_table
 							where domain_id='drug' and source_code in (
@@ -126,18 +127,18 @@ where drug_source_value in (select source_code from #mapping_table
 											)
 								)
 
---해당되는 키들을 매핑테이블에서 제거								
+-- Delete duplicated ID keys from temp mapping table
 delete from #mapping_table where domain_id='drug' and source_code in (
 												select drug_source_value from @NHISNSC_database.DRUG_EXPOSURE a, @NHISNSC_database.DEVICE_EXPOSURE b
 												where a.drug_exposure_id=b.device_exposure_id 
 													and a.person_id=b.person_id )
 
---데이터 입력
--- 원본 테이블이 30T인 경우
+--Insert data
+-- Source data: 30T
 INSERT INTO @NHISNSC_database.COST
 	(cost_id, cost_event_id, cost_domain_id, cost_type_concept_id, currency_concept_id,
 	total_charge, total_cost, total_paid, paid_by_payer, paid_by_patient,
-	paid_patient_copay, paid_patient_coinsurance, paid_patient_deductiable, paid_by_primary, paid_ingredient_cost,
+	paid_patient_copay, paid_patient_coinsurance, paid_patient_deductible, paid_by_primary, paid_ingredient_cost,
 	paid_dispensing_fee, payer_plan_period_id, amount_allowed, revenue_code_concept_id, drg_concept_id,
 	revenue_code_source_value, drg_source_value)
 SELECT 
@@ -153,7 +154,7 @@ SELECT
 	null as paid_by_patient,
 	null as paid_patient_copay,
 	null as paid_patient_coinsurance, 
-	null as paid_patient_deductiable,
+	null as paid_patient_deductible,
 	null as paid_by_primary,
 	null as paid_ingredient_cost,
 	null as paid_dispensing_fee,
@@ -175,11 +176,11 @@ where left(a.drug_exposure_id, 10)=b.master_seq
 and a.person_id=b.person_id;
 
 
--- 원본 테이블이 60T인 경우
+-- Sourec data: 60T
 INSERT INTO @NHISNSC_database.COST
 	(cost_id, cost_event_id, cost_domain_id, cost_type_concept_id, currency_concept_id,
 	total_charge, total_cost, total_paid, paid_by_payer, paid_by_patient,
-	paid_patient_copay, paid_patient_coinsurance, paid_patient_deductiable, paid_by_primary, paid_ingredient_cost,
+	paid_patient_copay, paid_patient_coinsurance, paid_patient_deductible, paid_by_primary, paid_ingredient_cost,
 	paid_dispensing_fee, payer_plan_period_id, amount_allowed, revenue_code_concept_id, drg_concept_id,
 	revenue_code_source_value, drg_source_value)
 SELECT 
@@ -195,7 +196,7 @@ SELECT
 	null as paid_by_patient,
 	null as paid_patient_copay,
 	null as paid_patient_coinsurance, 
-	null as paid_patient_deductiable,
+	null as paid_patient_deductible,
 	null as paid_by_primary,
 	null as paid_ingredient_cost,
 	null as paid_dispensing_fee,
@@ -221,11 +222,11 @@ and a.person_id=b.person_id;
 -- 3) Procedure
 ---------------------------------------------------
 
--- 원본 테이블이 30T인 경우
+-- Sourec data: 30T
 INSERT INTO @NHISNSC_database.COST
 	(cost_id, cost_event_id, cost_domain_id, cost_type_concept_id, currency_concept_id,
 	total_charge, total_cost, total_paid, paid_by_payer, paid_by_patient,
-	paid_patient_copay, paid_patient_coinsurance, paid_patient_deductiable, paid_by_primary, paid_ingredient_cost,
+	paid_patient_copay, paid_patient_coinsurance, paid_patient_deductible, paid_by_primary, paid_ingredient_cost,
 	paid_dispensing_fee, payer_plan_period_id, amount_allowed, revenue_code_concept_id, drg_concept_id,
 	revenue_code_source_value, drg_source_value)
 SELECT 
@@ -241,7 +242,7 @@ SELECT
 	null as paid_by_patient,
 	null as paid_patient_copay,
 	null as paid_patient_coinsurance, 
-	null as paid_patient_deductiable,
+	null as paid_patient_deductible,
 	null as paid_by_primary,
 	null as paid_ingredient_cost,
 	null as paid_dispensing_fee,
@@ -261,11 +262,11 @@ where left(a.procedure_occurrence_id, 10)=b.master_seq
 and a.person_id=b.person_id;
 
 
--- 원본 테이블이 60T인 경우
+-- Sourec data: 60T
 INSERT INTO @NHISNSC_database.COST
 	(cost_id, cost_event_id, cost_domain_id, cost_type_concept_id, currency_concept_id,
 	total_charge, total_cost, total_paid, paid_by_payer, paid_by_patient,
-	paid_patient_copay, paid_patient_coinsurance, paid_patient_deductiable, paid_by_primary, paid_ingredient_cost,
+	paid_patient_copay, paid_patient_coinsurance, paid_patient_deductible, paid_by_primary, paid_ingredient_cost,
 	paid_dispensing_fee, payer_plan_period_id, amount_allowed, revenue_code_concept_id, drg_concept_id,
 	revenue_code_source_value, drg_source_value)
 SELECT 
@@ -281,7 +282,7 @@ SELECT
 	null as paid_by_patient,
 	null as paid_patient_copay,
 	null as paid_patient_coinsurance, 
-	null as paid_patient_deductiable,
+	null as paid_patient_deductible,
 	null as paid_by_primary,
 	null as paid_ingredient_cost,
 	null as paid_dispensing_fee,
@@ -304,11 +305,11 @@ and a.person_id=b.person_id;
 ---------------------------------------------------
 -- 4) Device
 ---------------------------------------------------
--- 원본 테이블이 30T인 경우
+-- Sourec data: 30T
 INSERT INTO @NHISNSC_database.COST
 	(cost_id, cost_event_id, cost_domain_id, cost_type_concept_id, currency_concept_id,
 	total_charge, total_cost, total_paid, paid_by_payer, paid_by_patient,
-	paid_patient_copay, paid_patient_coinsurance, paid_patient_deductiable, paid_by_primary, paid_ingredient_cost,
+	paid_patient_copay, paid_patient_coinsurance, paid_patient_deductible, paid_by_primary, paid_ingredient_cost,
 	paid_dispensing_fee, payer_plan_period_id, amount_allowed, revenue_code_concept_id, drg_concept_id,
 	revenue_code_source_value, drg_source_value)
 SELECT 
@@ -324,7 +325,7 @@ SELECT
 	null as paid_by_patient,
 	null as paid_patient_copay,
 	null as paid_patient_coinsurance, 
-	null as paid_patient_deductiable,
+	null as paid_patient_deductible,
 	null as paid_by_primary,
 	null as paid_ingredient_cost,
 	null as paid_dispensing_fee,
@@ -346,11 +347,11 @@ where left(a.device_exposure_id, 10)=b.master_seq
 and a.person_id=b.person_id;
 
 
--- 원본 테이블이 60T인 경우
+-- Sourec data: 60T
 INSERT INTO @NHISNSC_database.COST
 	(cost_id, cost_event_id, cost_domain_id, cost_type_concept_id, currency_concept_id,
 	total_charge, total_cost, total_paid, paid_by_payer, paid_by_patient,
-	paid_patient_copay, paid_patient_coinsurance, paid_patient_deductiable, paid_by_primary, paid_ingredient_cost,
+	paid_patient_copay, paid_patient_coinsurance, paid_patient_deductible, paid_by_primary, paid_ingredient_cost,
 	paid_dispensing_fee, payer_plan_period_id, amount_allowed, revenue_code_concept_id, drg_concept_id,
 	revenue_code_source_value, drg_source_value)
 SELECT 
@@ -366,7 +367,7 @@ SELECT
 	null as paid_by_patient,
 	null as paid_patient_copay,
 	null as paid_patient_coinsurance, 
-	null as paid_patient_deductiable,
+	null as paid_patient_deductible,
 	null as paid_by_primary,
 	null as paid_ingredient_cost,
 	null as paid_dispensing_fee,

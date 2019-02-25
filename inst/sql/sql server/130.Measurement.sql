@@ -1,6 +1,6 @@
-﻿/**************************************
+/**************************************
  --encoding : UTF-8
- --Author: 유승찬
+ --Author: SC You
  --Date: 2018.09.15
  
  @NHISNSC_rawdata : DB containing NHIS National Sample cohort DB
@@ -11,12 +11,12 @@
  @NHIS_40T: 40 table in NHIS NSC
  @NHIS_60T: 60 table in NHIS NSC
  @NHIS_GJ: GJ table in NHIS NSC
- --Description: MEASUREMENT 테이블 생성				
- --생성 Table: MEASUREMENT
+ --Description: Create MEASUREMENT table
+ --Generating Table: MEASUREMENT
 ***************************************/
 
 /**************************************
- 0. 테이블 생성  (33440451)
+ 0. Create table
 ***************************************/ 
 /*
 IF OBJECT_ID('@NHISNSC_database.MEASUREMENT', 'U') IS NULL
@@ -98,7 +98,7 @@ CREATE TABLE #measurement_mapping
 																																																																					
 
 /**************************************																																							   
- 1. 행을 열로 전환
+ 1. Rotate rows to columns 
 ***************************************/ 
 /*
 select hchk_year, person_id, ykiho_gubun_cd, meas_type, meas_value into @NHISNSC_database.GJ_VERTICAL
@@ -119,7 +119,7 @@ unpivot (meas_value for meas_type in ( -- 47 검진 항목
 */
 
 /**************************************
- 2. 수치형 데이터 입력 
+ 2. Insert continuous data
 ***************************************/ 
 INSERT INTO @NHISNSC_database.MEASUREMENT (measurement_id, person_id, measurement_concept_id, measurement_date, measurement_time, measurement_type_concept_id, operator_concept_id, value_as_number, value_as_concept_id,			
 											unit_concept_id, range_low, range_high, provider_id, visit_occurrence_id, measurement_source_value, measurement_source_concept_id, unit_source_value, value_source_value)
@@ -160,7 +160,7 @@ INSERT INTO @NHISNSC_database.MEASUREMENT (measurement_id, person_id, measuremen
 	
 
 /**************************************
- 2. 코드형 데이터 입력 
+ 2. Insert categorical data
 ***************************************/ 
 INSERT INTO @NHISNSC_database.MEASUREMENT (measurement_id, person_id, measurement_concept_id, measurement_date, measurement_time, measurement_type_concept_id, operator_concept_id, value_as_number, value_as_concept_id,			
 											unit_concept_id, range_low, range_high, provider_id, visit_occurrence_id, measurement_source_value, measurement_source_concept_id, unit_source_value, value_source_value)
@@ -198,7 +198,7 @@ INSERT INTO @NHISNSC_database.MEASUREMENT (measurement_id, person_id, measuremen
 ;
 
 /**************************************
- 3.source_value의 값을 value_as_number에도 입력
+ 3.Insert source_value into vlaue_as_number
 ***************************************/
 /* 
 UPDATE @NHISNSC_database.MEASUREMENT
