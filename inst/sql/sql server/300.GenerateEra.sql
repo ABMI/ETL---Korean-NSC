@@ -23,7 +23,7 @@ OHDSI-SQL File Instructions
  1. Set parameter name of schema that contains CDMv4 instance
     (@SOURCE_CDMV4, @SOURCE_CDMV4_SCHEMA)
  2. Set parameter name of schema that contains CDMv5 instance
-    (@TARGET_CDMV5, @NHISNSC_database)
+    (@TARGET_CDMV5, @TARGET_CDMV5_SCHEMA)
  3. Run this script through SqlRender to produce a script that will work in your
     source dialect. SqlRender can be found here: https://github.com/OHDSI/SqlRender
  4. Run the script produced by SQL Render on your target RDBDMS.
@@ -39,13 +39,6 @@ OHDSI-SQL File Instructions
 	 [CDM].[CDMSCHEMA]
 	
 *********************************************************************************/
-/* SCRIPT PARAMETERS */
-
-	
-	--{DEFAULT @TARGET_CDMV5 = '[CDM]' } -- The target CDMv5 database name
-	--{DEFAULT @NHISNSC_database = '[CDM].[CDMSCHEMA]' } -- the target CDMv5 database plus schema
-
-
 /****
 DRUG ERA
 Note: Eras derived from DRUG_EXPOSURE table, using 30d gap
