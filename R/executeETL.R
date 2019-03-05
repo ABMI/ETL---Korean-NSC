@@ -254,16 +254,16 @@ executeETL <- function(CDM_ddl = TRUE,
                                 DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
-                        # if (dose_era == TRUE){
-                        #         sql <- SqlRender::readSql(paste0(sqlFolder,"\\310.Dose_era.sql"))
-                        #         sql <- SqlRender::renderSql(sql
-                        #                                     , NHISNSC_database = paste0(NHISNSC_database, ".dbo")
-                        #                                     , Mapping_database = paste0(Mapping_database, ".dbo")
-                        #                                     )$sql
-                        #         sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
-                        # 
-                        #         DatabaseConnector::executeSql(connection = connection, sql)
-                        # }
+                        if (dose_era == TRUE){
+                                sql <- SqlRender::readSql(paste0(sqlFolder,"\\310.Dose_era.sql"))
+                                sql <- SqlRender::renderSql(sql
+                                                            , NHISNSC_database = paste0(NHISNSC_database, ".dbo")
+                                                            , Mapping_database = paste0(Mapping_database, ".dbo")
+                                                            )$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
+
+                                DatabaseConnector::executeSql(connection = connection, sql)
+                        }
 
                         if (cdm_source == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"\\320.CDM_source.sql"))

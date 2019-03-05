@@ -63,10 +63,13 @@ where measurement_id not in (
 							and (a.measurement_date >= b.observation_period_start_date and a.measurement_date <= b.observation_period_end_date)
 							)
 
-delete from @NHISNSC_database.PAYER_PLAN_PERIOD a, @NHISNSC_database.OBSERVATION_PERIOD b, @NHISNSC_database.DEATH c
-where a.person_id = b.person_id
-	and a.person_id = c.person_id
-	and (a.payer_plan_period_start_date < observation_period_start_date or payer_plan_period_end_date > observation_period_end_date)
+delete from NHIS_NSC_2019.dbo.PAYER_PLAN_PERIOD
+where payer_plan_period_id not in (
+							select payer_plan_period_id
+							from NHIS_NSC_2019.dbo.PAYER_PLAN_PERIOD a, NHIS_NSC_2019.dbo.observation_period b
+							where a.person_id=b.person_id
+								and (a.payer_plan_period_start_date >= b.observation_period_start_date and a.payer_plan_period_end_date <= b.observation_period_end_date)
+							) 
 
 
 /********************************************************

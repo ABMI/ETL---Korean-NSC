@@ -36,7 +36,7 @@ CREATE TABLE @NHISNSC_database.VISIT_OCCURRENCE (
 */
 
 /**************************************
- 2. Insert date
+ 2. Insert data
 ***************************************/ 
 insert into @NHISNSC_database.VISIT_OCCURRENCE (
 	visit_occurrence_id, person_id, visit_concept_id, visit_start_date, visit_start_datetime,
