@@ -153,7 +153,7 @@ executeETL <- function(CDM_ddl = TRUE,
                                                             , NHIS_40T = NHIS_40T)$sql
                                 sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connection, sql)
+                                DatabaseConnector::executeSql(connection = connection, 'sql')
                         }
 
                         if (observation == TRUE){
