@@ -153,7 +153,7 @@ executeETL <- function(CDM_ddl = TRUE,
                                                             , NHIS_40T = NHIS_40T)$sql
                                 sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
-                                DatabaseConnector::executeSql(connection = connection, 'sql')
+                                DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
                         if (observation == TRUE){
@@ -162,7 +162,7 @@ executeETL <- function(CDM_ddl = TRUE,
                                                             , NHISNSC_database = paste0(NHISNSC_database, ".dbo")
                                                             , NHISNSC_rawdata = paste0(NHISNSC_rawdata, ".dbo")
                                                             , NHIS_JK = NHIS_JK
-                                                            , NHIS_GJ = NHIS_GJ)$sql
+                                                            , NHIS_GJ = NHIS_GJ)$sql 
                                 sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
 
                                 DatabaseConnector::executeSql(connection = connection, sql)

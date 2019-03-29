@@ -111,7 +111,7 @@ INSERT INTO @NHISNSC_database.PROCEDURE_OCCURRENCE
 	modifier_concept_id, quantity, provider_id, visit_occurrence_id, procedure_source_value, 
 	procedure_source_concept_id)
 SELECT
-	convert(bigint, convert(bigint, a.master_seq) + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by b.target_concept_id))) as procedure_occurrence_id,
+	convert(bigint, convert(bigint, a.master_seq) * 10 + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by b.target_concept_id))) as procedure_occurrence_id,
 	a.person_id as person_id,
 	CASE WHEN b.target_concept_id IS NOT NULL THEN b.target_concept_id ELSE 0 END as procedure_concept_id,
 	CONVERT(VARCHAR, a.recu_fr_dt, 112) as procedure_date,
@@ -142,7 +142,7 @@ INSERT INTO @NHISNSC_database.PROCEDURE_OCCURRENCE
 	modifier_concept_id, quantity, provider_id, visit_occurrence_id, procedure_source_value, 
 	procedure_source_concept_id)
 SELECT 
-	convert(bigint, convert(bigint, a.master_seq) + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by b.target_concept_id))) as procedure_occurrence_id,
+	convert(bigint, convert(bigint, a.master_seq) * 10 + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by b.target_concept_id))) as procedure_occurrence_id,
 	a.person_id as person_id,
 	CASE WHEN b.target_concept_id IS NOT NULL THEN b.target_concept_id ELSE 0 END as procedure_concept_id,
 	CONVERT(VARCHAR, a.recu_fr_dt, 112) as procedure_date,
@@ -173,7 +173,7 @@ INSERT INTO @NHISNSC_database.PROCEDURE_OCCURRENCE
 	modifier_concept_id, quantity, provider_id, visit_occurrence_id, procedure_source_value, 
 	procedure_source_concept_id)
 SELECT
-	convert(bigint, convert(bigint, a.master_seq) + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by a.div_cd))) as procedure_occurrence_id,
+	convert(bigint,(select max(procedure_occurrence_id) from @NHISNSC_database.procedure_occurrence) + convert(bigint, a.master_seq)*10 + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by a.div_cd))) as procedure_occurrence_id,
 	a.person_id as person_id,
 	0 as procedure_concept_id,
 	CONVERT(VARCHAR, a.recu_fr_dt, 112) as procedure_date,
@@ -204,7 +204,7 @@ INSERT INTO @NHISNSC_database.PROCEDURE_OCCURRENCE
 	modifier_concept_id, quantity, provider_id, visit_occurrence_id, procedure_source_value, 
 	procedure_source_concept_id)
 SELECT 
-	convert(bigint, convert(bigint, a.master_seq) + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by a.div_cd))) as procedure_occurrence_id,
+	convert(bigint, (select max(procedure_occurrence_id) from @NHISNSC_database.procedure_occurrence) + convert(bigint, a.master_seq)*10 + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by a.div_cd))) as procedure_occurrence_id,
 	a.person_id as person_id,
 	0 as procedure_concept_id,
 	CONVERT(VARCHAR, a.recu_fr_dt, 112) as procedure_date,
