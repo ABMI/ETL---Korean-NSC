@@ -56,7 +56,7 @@ Primary key constraints
 Standardized vocabulary
 
 ************************/
-
+/**
 Use @Mapping_database
 
 ALTER TABLE concept ADD CONSTRAINT xpk_concept PRIMARY KEY NONCLUSTERED (concept_id);
@@ -80,7 +80,7 @@ ALTER TABLE drug_strength ADD CONSTRAINT xpk_drug_strength PRIMARY KEY NONCLUSTE
 ALTER TABLE cohort_definition ADD CONSTRAINT xpk_cohort_definition PRIMARY KEY NONCLUSTERED (cohort_definition_id);
 
 ALTER TABLE attribute_definition ADD CONSTRAINT xpk_attribute_definition PRIMARY KEY NONCLUSTERED (attribute_definition_id);
-
+**/
 
 /**************************
 

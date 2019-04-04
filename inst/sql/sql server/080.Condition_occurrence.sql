@@ -155,7 +155,8 @@ from (
 	and a.seq_no=c.seq_no
 	and b.person_id=d.person_id --added
 	and convert(date, c.recu_fr_dt, 112) between d.observation_period_start_date and d.observation_period_end_date) as m --added
-where m.sick_sym not in (select source_code from #mapping_table);
+where m.sick_sym not in (select source_code from #mapping_table)
+;
 
 
 drop table #mapping_table;

@@ -40,7 +40,9 @@ Create table @NHISNSC_database.CARE_SITE (
 									- If established divisin code is consist with one number then add 0 in front of it.
 ***************************************/  
 
-INSERT INTO @NHISNSC_database.CARE_SITE
+IF OBJECT_ID('tempdb..#temp', 'U') IS NOT NULL
+	DROP TABLE #temp;
+
 SELECT a.ykiho_id,
 	null as care_site_name,
 	case when a.ykiho_gubun_cd='10' then 4068130 --(Tertiary care hospital) 
@@ -65,9 +67,18 @@ SELECT a.ykiho_id,
 	a.ykiho_sido as location_id,
 	a.ykiho_id as care_site_source_value,
 	(a.ykiho_gubun_cd + '/' + (case when len(a.org_type) = 1 then '0' + org_type else org_type end)) as place_of_service_source_value
+into #temp
+
 FROM @NHISNSC_rawdata.@NHIS_YK a, (select ykiho_id, max(stnd_y) as max_stnd_y
 	from @NHISNSC_rawdata.@NHIS_YK c
 	group by ykiho_id) b
 where a.ykiho_id=b.ykiho_id
 and a.stnd_y=b.max_stnd_y
 ;
+
+INSERT INTO @NHISNSC_database.CARE_SITE
+select * from #temp
+group by YKIHO_ID, care_site_name, place_of_service_concept_id, location_id, care_site_source_value, place_of_service_source_value
+;
+
+drop table #temp;

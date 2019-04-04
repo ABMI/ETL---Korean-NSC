@@ -370,7 +370,7 @@ CREATE TABLE procedure_occurrence
 CREATE TABLE drug_exposure
 (
   drug_exposure_id				      bigint			  NOT NULL ,
-  person_id						          INTEGER			  NOT NULL ,
+  person_id						          bigint			  NOT NULL ,
   drug_concept_id				        INTEGER			  NOT NULL ,
   drug_exposure_start_date		  DATE			    NOT NULL ,
   drug_exposure_start_datetime  DATETIME2		  NULL ,
