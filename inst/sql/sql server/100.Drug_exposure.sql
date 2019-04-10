@@ -107,7 +107,7 @@ FROM
 			case when x.clause_cd is not null and len(x.clause_cd) = 1 and isnumeric(x.clause_cd)=1 and convert(int, x.clause_cd) between 1 and 9 then '0' + x.clause_cd else x.clause_cd end as clause_cd,
 			case when x.item_cd is not null and len(x.item_cd) = 1 and isnumeric(x.item_cd)=1 and convert(int, x.item_cd) between 1 and 9 then '0' + x.item_cd else x.item_cd end as item_cd,
 			y.master_seq, y.person_id, z.form_cd			
-	FROM (select * from @NHISNSC_rawdata.@NHIS_30T where div_type_cd in ('3', '4', '5')) x, 
+	FROM @NHISNSC_rawdata.@NHIS_30T x, 
 	     (select master_seq, person_id, key_seq, seq_no from @NHISNSC_database.SEQ_MASTER where source_table='130') y
 		, (select form_cd, KEY_SEQ, PERSON_ID from @NHISNSC_rawdata.@NHIS_20T) z
 	WHERE x.key_seq=y.key_seq
@@ -155,7 +155,7 @@ FROM
 			case when x.dd_mqty_freq is not null and isnumeric(x.dd_mqty_freq)=1 and cast(x.dd_mqty_freq as float) > '0' then cast(x.dd_mqty_freq as float) else 1 end as dd_mqty_freq,
 			case when x.dd_exec_freq is not null and isnumeric(x.dd_exec_freq)=1 and cast(x.dd_exec_freq as float) > '0' then cast(x.dd_exec_freq as float) else 1 end as dd_exec_freq,
 			y.master_seq, y.person_id, z.form_cd			
-	FROM (select * from @NHISNSC_rawdata.@NHIS_60T where div_type_cd in ('3', '4', '5')) x, 
+	FROM @NHISNSC_rawdata.@NHIS_60T x, 
 	     (select master_seq, person_id, key_seq, seq_no from @NHISNSC_database.SEQ_MASTER where source_table='160') y
 	, (select form_cd, KEY_SEQ, PERSON_ID from @NHISNSC_rawdata.@NHIS_20T) z
 	WHERE x.key_seq=y.key_seq

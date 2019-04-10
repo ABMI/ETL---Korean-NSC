@@ -87,7 +87,7 @@ FROM
 			case when x.dd_mqty_exec_freq is not null and x.dd_mqty_exec_freq > '0' and isnumeric(x.dd_mqty_exec_freq)=1 then cast(x.dd_mqty_exec_freq as float) else 1 end as dd_mqty_exec_freq,
 			case when x.dd_mqty_freq is not null and x.dd_mqty_freq > '0' and isnumeric(x.dd_mqty_freq)=1 then cast(x.dd_mqty_freq as float) else 1 end as dd_mqty_freq,
 			cast(x.amt as float) as amt , cast(x.un_cost as float) as un_cost, y.master_seq, y.person_id
-	FROM (select * from @NHISNSC_rawdata.@NHIS_30T where div_type_cd in ('7', '8')) x, @NHISNSC_database.SEQ_MASTER y
+	FROM @NHISNSC_rawdata.@NHIS_30T x, @NHISNSC_database.SEQ_MASTER y
 	WHERE y.source_table='130'
 	AND x.key_seq=y.key_seq
 	AND x.seq_no=y.seq_no) a JOIN #mapping_table b 
@@ -123,7 +123,7 @@ FROM
 			case when x.dd_mqty_freq is not null and x.dd_mqty_freq > '0' and isnumeric(x.dd_mqty_freq)=1 then cast(x.dd_mqty_freq as float) else 1 end as dd_mqty_freq,
 			case when x.dd_exec_freq is not null and x.dd_exec_freq > '0' and isnumeric(x.dd_exec_freq)=1 then cast(x.dd_exec_freq as float) else 1 end as dd_exec_freq,
 			cast(x.amt as float) as amt , cast(x.un_cost as float) as un_cost, y.master_seq, y.person_id
-	FROM (select * from @NHISNSC_rawdata.@NHIS_60T where div_type_cd in ('7', '8')) x, @NHISNSC_database.SEQ_MASTER y
+	FROM @NHISNSC_rawdata.@NHIS_60T x, @NHISNSC_database.SEQ_MASTER y
 	WHERE y.source_table='160'
 	AND x.key_seq=y.key_seq
 	AND x.seq_no=y.seq_no) a JOIN #mapping_table b 
