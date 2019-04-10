@@ -79,3 +79,11 @@ Update isuues of Person table of which originated from source data
 update @NHISNSC_database.PERSON
 set gender_concept_id='8507', gender_source_value=1
 where person_id = 95292839
+
+/********************************************************
+Update quantity from 0 to 1
+********************************************************/
+update @NHISNSC_database.DEVICE_EXPOSURE
+set quantity = 1
+where quantity = 0
+;
