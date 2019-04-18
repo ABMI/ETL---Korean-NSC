@@ -170,8 +170,8 @@ from (select person_id, drug_exposure_id, drug_exposure_start_date
 	(select m.master_seq, m.key_seq, m.seq_no, m.person_id, n.amt
 	from @NHISNSC_database.SEQ_MASTER m, @NHISNSC_rawdata.@NHIS_30T n
 	where m.source_table='130'
-	and m.key_seq=n.key_seq
-	and m.seq_no=n.seq_no) b
+		and m.key_seq=n.key_seq
+		and m.seq_no=n.seq_no) b
 where left(a.drug_exposure_id, 10)=b.master_seq
 and a.person_id=b.person_id;
 
