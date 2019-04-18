@@ -229,7 +229,7 @@ executeETL <- function(CDM_ddl = TRUE,
                                 DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
-                        if (cost == TRUE){
+                        if (cost == TRUE){                               
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"\\150.Cost.sql"))
                                 sql <- SqlRender::renderSql(sql
                                                             , NHISNSC_database = paste0(NHISNSC_database, ".dbo")
