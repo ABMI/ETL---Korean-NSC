@@ -65,7 +65,7 @@ insert into @NHISNSC_database.DEVICE_EXPOSURE
 (device_exposure_id, person_id, device_concept_id, device_exposure_start_date, 
 device_exposure_end_date, device_type_concept_id, unique_device_id, quantity, 
 provider_id, visit_occurrence_id, device_source_value, device_source_concept_id)
-select  convert(bigint, convert(bigint, a.master_seq) + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by b.target_concept_id))) as device_exposure_id,
+select  convert(bigint, convert(bigint, a.master_seq) *10 + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by b.target_concept_id))) as device_exposure_id,
 		a.person_id as person_id,
 		b.target_concept_id as device_concept_id ,
 		CONVERT(VARCHAR, a.recu_fr_dt, 23) as device_source_start_date,
@@ -101,7 +101,7 @@ insert into @NHISNSC_database.DEVICE_EXPOSURE
 (device_exposure_id, person_id, device_concept_id, device_exposure_start_date, 
 device_exposure_end_date, device_type_concept_id, unique_device_id, quantity, 
 provider_id, visit_occurrence_id, device_source_value, device_source_concept_id)
-select 	convert(bigint, convert(bigint, a.master_seq) + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by b.target_concept_id))) as device_exposure_id,
+select 	convert(bigint, convert(bigint, a.master_seq) *10 + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by b.target_concept_id))) as device_exposure_id,
 		a.person_id as person_id,
 		b.target_concept_id as device_concept_id ,
 		CONVERT(VARCHAR, a.recu_fr_dt, 23) as device_source_start_date,
@@ -138,7 +138,7 @@ insert into @NHISNSC_database.DEVICE_EXPOSURE
 device_exposure_end_date, device_type_concept_id, unique_device_id, quantity, 
 provider_id, visit_occurrence_id, device_source_value, device_source_concept_id)
 select  
-		convert(bigint, convert(bigint, a.master_seq) + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by a.div_cd))) as device_exposure_id,
+		convert(bigint, convert(bigint, a.master_seq)*10 + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by a.div_cd))) as device_exposure_id,
 		a.person_id as person_id,
 		0 as device_concept_id ,
 		CONVERT(VARCHAR, a.recu_fr_dt, 23) as device_source_start_date,
@@ -175,7 +175,7 @@ insert into @NHISNSC_database.DEVICE_EXPOSURE
 device_exposure_end_date, device_type_concept_id, unique_device_id, quantity, 
 provider_id, visit_occurrence_id, device_source_value, device_source_concept_id)
 select 	
-		convert(bigint, convert(bigint, a.master_seq) + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by a.div_cd))) as device_exposure_id,
+		convert(bigint, convert(bigint, a.master_seq)*10 + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by a.div_cd))) as device_exposure_id,
 		a.person_id as person_id,
 		0 as device_concept_id ,
 		CONVERT(VARCHAR, a.recu_fr_dt, 23) as device_source_start_date,
