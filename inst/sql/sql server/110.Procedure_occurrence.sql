@@ -103,6 +103,10 @@ IF OBJECT_ID('tempdb..#temp', 'U') IS NOT NULL
 	DROP TABLE #temp;
 IF OBJECT_ID('tempdb..#duplicated', 'U') IS NOT NULL
 	DROP TABLE #duplicated;
+IF OBJECT_ID('tempdb..#pro', 'U') IS NOT NULL
+	DROP TABLE #pro;
+IF OBJECT_ID('tempdb..#five', 'U') IS NOT NULL
+	DROP TABLE #five;
 
 select a.source_code, a.target_concept_id, a.domain_id, REPLACE(a.invalid_reason, '', NULL) as invalid_reason
 	into #temp
@@ -112,13 +116,13 @@ where a.invalid_reason='' and b.invalid_reason='' and a.domain_id='procedure';
 select * into #pro from @Mapping_database.source_to_concept_map where domain_id='procedure';
 select * into #five from @Mapping_database.source_to_concept_map where domain_id='device';
 
-select a.source_code
+select a.*
 	into #duplicated
 from #pro a, #five b
 where a.source_code=b.source_code
 	and a.invalid_reason='' and b.invalid_reason='';
 
-select * into #mapping_table table from #temp
+select * into #mapping_table from #temp
 where source_code not in (select source_code from #duplicated);
 
 drop table #pro, #five, #temp;
@@ -193,7 +197,7 @@ INSERT INTO @NHISNSC_database.PROCEDURE_OCCURRENCE
 	modifier_concept_id, quantity, provider_id, visit_occurrence_id, procedure_source_value, 
 	procedure_source_concept_id)
 SELECT
-	convert(bigint,(select max(procedure_occurrence_id) from @NHISNSC_database.procedure_occurrence) + convert(bigint, a.master_seq)*10 + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by a.div_cd))) as procedure_occurrence_id,
+	convert(bigint,(select convert(bigint, a.master_seq)*10 + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by a.div_cd))) as procedure_occurrence_id,
 	a.person_id as person_id,
 	0 as procedure_concept_id,
 	CONVERT(VARCHAR, a.recu_fr_dt, 112) as procedure_date,
@@ -224,7 +228,7 @@ INSERT INTO @NHISNSC_database.PROCEDURE_OCCURRENCE
 	modifier_concept_id, quantity, provider_id, visit_occurrence_id, procedure_source_value, 
 	procedure_source_concept_id)
 SELECT 
-	convert(bigint, (select max(procedure_occurrence_id) from @NHISNSC_database.procedure_occurrence) + convert(bigint, a.master_seq)*10 + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by a.div_cd))) as procedure_occurrence_id,
+	convert(bigint, convert(bigint, a.master_seq)*10 + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by a.div_cd))) as procedure_occurrence_id,
 	a.person_id as person_id,
 	0 as procedure_concept_id,
 	CONVERT(VARCHAR, a.recu_fr_dt, 112) as procedure_date,
