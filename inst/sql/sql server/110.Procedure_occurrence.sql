@@ -197,7 +197,7 @@ INSERT INTO @NHISNSC_database.PROCEDURE_OCCURRENCE
 	modifier_concept_id, quantity, provider_id, visit_occurrence_id, procedure_source_value, 
 	procedure_source_concept_id)
 SELECT
-	convert(bigint,(select convert(bigint, a.master_seq)*10 + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by a.div_cd))) as procedure_occurrence_id,
+	convert(bigint, convert(bigint, a.master_seq)*10 + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by a.div_cd))) as procedure_occurrence_id,
 	a.person_id as person_id,
 	0 as procedure_concept_id,
 	CONVERT(VARCHAR, a.recu_fr_dt, 112) as procedure_date,
@@ -252,7 +252,7 @@ WHERE left(a.div_cd,5) not in (select source_code from #mapping_table)
 ;
 
 /**************************************
- 3-5. Insert data using 30T
+ 3-5. Insert data using 30T duplicated
 ***************************************/
 INSERT INTO @NHISNSC_database.PROCEDURE_OCCURRENCE 
 	(procedure_occurrence_id, person_id, procedure_concept_id, procedure_date, procedure_type_concept_id, 
@@ -283,7 +283,7 @@ WHERE left(a.div_cd,5)=b.source_code
 ;
 
 /**************************************
- 3-6. Insert data using 60T
+ 3-6. Insert data using 60T duplicated
 ***************************************/
 INSERT INTO @NHISNSC_database.PROCEDURE_OCCURRENCE 
 	(procedure_occurrence_id, person_id, procedure_concept_id, procedure_date, procedure_type_concept_id, 
