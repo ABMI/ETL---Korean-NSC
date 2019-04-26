@@ -1,0 +1,36 @@
+DBMS:
+sql server
+
+Error:
+com.microsoft.sqlserver.jdbc.SQLServerException: 테이블 'NHIS_NSC_2019.dbo.dose_era', 열 'unit_concept_id'에 NULL 값을 삽입할 수 없습니다. 열에는 NULL을 사용할 수 없습니다. INSERT이(가) 실패했습니다.
+
+SQL:
+INSERT INTO NHIS_NSC_2019.dbo.dose_era (person_id, drug_concept_id, dose_value, dose_era_start_date, dose_era_end_date)
+SELECT
+	person_id
+	, drug_concept_id
+	, dose_value
+	, MIN(drug_exposure_start_date) AS dose_era_start_date
+	, dose_era_end_date
+	from #cteDoseEraEnds
+GROUP BY person_id, drug_concept_id, unit_concept_id, dose_value, dose_era_end_date
+ORDER BY person_id, drug_concept_id
+
+R version:
+R version 3.5.1 (2018-07-02)
+
+Platform:
+x86_64-w64-mingw32
+
+Attached base packages:
+- stats
+- graphics
+- grDevices
+- utils
+- datasets
+- methods
+- base
+
+Other attached packages:
+- etlKoreanNSC (0.0.0.9000)
+- DatabaseConnector (2.2.1)

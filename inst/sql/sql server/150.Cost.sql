@@ -53,6 +53,9 @@ CREATE TABLE @NHISNSC_database.COST (
 /**************************************
  1-1. Using temp mapping table
 ***************************************/ 
+IF OBJECT_ID('tempdb..#mapping_table', 'U') IS NOT NULL
+	DROP TABLE #mapping_table;
+
 select a.source_code, a.target_concept_id, a.domain_id, REPLACE(a.invalid_reason, '', NULL) as invalid_reason 
 into #mapping_table
 from @Mapping_database.source_to_concept_map a join @Mapping_database.CONCEPT b on a.target_concept_id=b.concept_id
