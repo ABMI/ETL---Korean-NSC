@@ -151,7 +151,7 @@ FROM (SELECt x.key_seq, x.seq_no, x.recu_fr_dt, x.div_cd,
 			case when x.dd_mqty_exec_freq is not null and isnumeric(x.dd_mqty_exec_freq)=1 and cast(x.dd_mqty_exec_freq as float) > '0' then cast(x.dd_mqty_exec_freq as float) else 1 end as dd_mqty_exec_freq,
 			case when x.dd_mqty_freq is not null and isnumeric(x.dd_mqty_freq)=1 and cast(x.dd_mqty_freq as float) > '0' then cast(x.dd_mqty_freq as float) else 1 end as dd_mqty_freq,
 			y.master_seq, y.person_id
-	FROM (select * from @NHISNSC_rawdata.@NHIS_30T where div_type_cd not in ('3','4','5')) x, 
+	FROM (select * from @NHISNSC_rawdata.@NHIS_30T where div_type_cd not in ('3','4','5', '7','8')) x, 
 		 (select master_seq, key_seq, seq_no, person_id from @NHISNSC_database.SEQ_MASTER where source_table='130') y
 	WHERE x.key_seq=y.key_seq
 	AND x.seq_no=y.seq_no) a, #mapping_table b
@@ -182,7 +182,7 @@ FROM (SELECt x.key_seq, x.seq_no, x.recu_fr_dt, x.div_cd,
 			case when x.dd_exec_freq is not null and isnumeric(x.dd_exec_freq)=1 and cast(x.dd_exec_freq as float) > '0' then cast(x.dd_exec_freq as float) else 1 end as dd_exec_freq,
 			case when x.dd_mqty_freq is not null and isnumeric(x.dd_mqty_freq)=1 and cast(x.dd_mqty_freq as float) > '0' then cast(x.dd_mqty_freq as float) else 1 end as dd_mqty_freq,
 			y.master_seq, y.person_id
-	FROM (select * from @NHISNSC_rawdata.@NHIS_60T where div_type_cd not in ('3','4','5')) x, 
+	FROM (select * from @NHISNSC_rawdata.@NHIS_60T where div_type_cd not in ('3','4','5', '7','8')) x, 
 		 (select master_seq, key_seq, seq_no, person_id from @NHISNSC_database.SEQ_MASTER where source_table='160') y
 	WHERE x.key_seq=y.key_seq
 	AND x.seq_no=y.seq_no) a, #mapping_table b
@@ -318,3 +318,11 @@ WHERE left(a.div_cd,5) not in (select source_code from #duplicated union all sel
 
 
 drop table #mapping_table, #duplicated;
+
+-- Delete duplicated keys
+delete from @NHISNSC_database.procedure_occurrence
+where procedure_occurrence_id in (select drug_exposure_id from @NHISNSC_database.drug_exposure)
+
+
+
+
