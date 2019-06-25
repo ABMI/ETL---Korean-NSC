@@ -39,9 +39,9 @@ executeETL <- function(CDM_ddl = TRUE,
                 cost = TRUE,
                 generateEra = TRUE,
                 dose_era = TRUE,
-                # cdm_source = TRUE,
+                cdm_source = TRUE,
                 indexing = TRUE,
-                # constraints = TRUE,
+                constraints = TRUE,
                 data_cleansing = TRUE
                 ){
                         if (CDM_ddl == TRUE){
@@ -229,7 +229,7 @@ executeETL <- function(CDM_ddl = TRUE,
                                 DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
-                        if (cost == TRUE){                               
+                        if (cost == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"\\150.Cost.sql"))
                                 sql <- SqlRender::renderSql(sql
                                                             , NHISNSC_database = paste0(NHISNSC_database, ".dbo")
@@ -265,14 +265,14 @@ executeETL <- function(CDM_ddl = TRUE,
                                 DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
-                        # if (cdm_source == TRUE){
-                        #         sql <- SqlRender::readSql(paste0(sqlFolder,"\\320.CDM_source.sql"))
-                        #         sql <- SqlRender::renderSql(sql
-                        #                                     , NHISNSC_database = paste0(NHISNSC_database, ".dbo"))$sql
-                        #         sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
-                        # 
-                        #         DatabaseConnector::executeSql(connection = connection, sql)
-                        # }
+                        if (cdm_source == TRUE){
+                                sql <- SqlRender::readSql(paste0(sqlFolder,"\\320.CDM_source.sql"))
+                                sql <- SqlRender::renderSql(sql
+                                                            , NHISNSC_database = paste0(NHISNSC_database, ".dbo"))$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
+
+                                DatabaseConnector::executeSql(connection = connection, sql)
+                        }
 
                         if (indexing == TRUE){
                                 sql <- SqlRender::readSql(paste0(sqlFolder,"\\400.Indexing.sql"))
@@ -284,15 +284,15 @@ executeETL <- function(CDM_ddl = TRUE,
                                 DatabaseConnector::executeSql(connection = connection, sql)
                         }
 
-                        # if (constraints == TRUE){
-                        #         sql <- SqlRender::readSql(paste0(sqlFolder,"\\500.Constraints.sql"))
-                        #         sql <- SqlRender::renderSql(sql
-                        #                                     , NHISNSC_database = NHISNSC_database
-                        #                                     , Mapping_database = Mapping_database)$sql
-                        #         sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
-                        # 
-                        #         DatabaseConnector::executeSql(connection = connection, sql)
-                        # }
+                        if (constraints == TRUE){
+                                sql <- SqlRender::readSql(paste0(sqlFolder,"\\500.Constraints.sql"))
+                                sql <- SqlRender::renderSql(sql
+                                                            , NHISNSC_database = NHISNSC_database
+                                                            , Mapping_database = Mapping_database)$sql
+                                sql <- SqlRender::translateSql(sql, targetDialect=attr(connection, "dbms"))$sql
+
+                                DatabaseConnector::executeSql(connection = connection, sql)
+                        }
                     
                         if (data_cleansing == TRUE){
                             sql <- SqlRender::readSql(paste0(sqlFolder,"\\900.data_cleansing.sql"))

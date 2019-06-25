@@ -315,14 +315,10 @@ FROM (SELECt x.key_seq, x.seq_no, x.recu_fr_dt, x.div_cd,
 WHERE left(a.div_cd,5) not in (select source_code from #duplicated union all select source_code from #mapping_table)
 ;
 
-
-
 drop table #mapping_table, #duplicated;
 
 -- Delete duplicated keys
 delete from @NHISNSC_database.procedure_occurrence
 where procedure_occurrence_id in (select drug_exposure_id from @NHISNSC_database.drug_exposure)
-
-
 
 
