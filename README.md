@@ -22,3 +22,17 @@ https://academic.oup.com/ije/article-lookup/doi/10.1093/ije/dyv319
 install.packages("devtools")
 devtools::install_github("ohdsi/ETL---Korean-NSC/etlKoreanNSC")
 ```
+
+## Execution ETL 
+```{r}
+# fill out the connection details---------------------------------------------------------------------------
+connectionDetails <- DatabaseConnector::createConnectionDetails(
+    dbms = 'sql server'
+    , server = Sys.getenv("myCdmServer")
+    , schema = Sys.getenv("myCdmSchema")
+    , user = Sys.getenv("userId")
+    , password = Sys.getenv("password")
+)
+DatabaseConnector::connect(connectionDetails = connectionDetails)
+connection <- DatabaseConnector::connect(connectionDetails)
+```
