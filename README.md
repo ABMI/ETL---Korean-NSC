@@ -25,7 +25,7 @@ devtools::install_github("ohdsi/ETL---Korean-NSC/etlKoreanNSC")
 
 ## Execution ETL 
 ```{r}
-# fill out the connection details---------------------------------------------------------------------------
+# fill out the connection details ---------------------------------------------------------------------------
 connectionDetails <- DatabaseConnector::createConnectionDetails(
     dbms = 'sql server'
     , server = Sys.getenv("myCdmServer")
@@ -35,4 +35,48 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(
 )
 DatabaseConnector::connect(connectionDetails = connectionDetails)
 connection <- DatabaseConnector::connect(connectionDetails)
+
+
+# where should the logs go? --------------------------------------------------------------------------------
+outputFolder <- "output"
+
+
+# run the job ----------------------------------------------------------------------------------------------
+etlKoreanNSC::executeNHISETL(NHISNSC_rawdata <- "nhisnsc2013original.dbo",
+                           NHISNSC_database <- "NHIS_NSC_v5_3_1.dbo",
+                           Mapping_database <- "NHIS_NSC_NEW_MAPPING.dbo",
+                           NHIS_JK <- "NHID_JK",
+                           NHIS_20T <- "NHID_GY20_T1",
+                           NHIS_30T <- "NHID_GY30_T1",
+                           NHIS_40T <- "NHID_GY40_T1",
+                           NHIS_60T <- "NHID_GY60_T1",
+                           NHIS_GJ <- "NHID_GJ",
+                           NHIS_YK <- "NHID_YK",
+                           
+                           connection,
+                           outputFolder,
+                           
+                           CDM_ddl = TRUE,
+                           #import_voca = TRUE,        Importing voca could be unnecessary
+                           master_table = TRUE,
+                           location = TRUE,
+                           care_site = TRUE,
+                           person = TRUE,
+                           death = TRUE,
+                           observation_period = TRUE,
+                           visit_occurrence = TRUE,
+                           condition_occurrence = TRUE,
+                           observation = TRUE,
+                           drug_exposure = TRUE,
+                           procedure_occurrence = TRUE,
+                           device_exposure = TRUE,
+                           measurement = TRUE,
+                           payer_plan_period = TRUE,
+                           cost = TRUE,
+                           generateEra = TRUE,
+                           dose_era = TRUE,
+                           cdm_source = TRUE,
+                           indexing = TRUE,
+                           constraints = TRUE,
+                           data_cleansing = TRUE)
 ```
