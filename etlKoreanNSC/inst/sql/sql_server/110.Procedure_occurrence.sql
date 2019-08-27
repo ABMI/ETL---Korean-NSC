@@ -125,7 +125,7 @@ where a.source_code=b.source_code
 select * into #mapping_table from #temp
 where source_code not in (select source_code from #duplicated);
 
-drop table #pro, #five, #temp;
+drop table #pro, #five;
 
 /**************************************
  3-1. Insert data using 30T
@@ -315,7 +315,45 @@ FROM (SELECt x.key_seq, x.seq_no, x.recu_fr_dt, x.div_cd,
 WHERE left(a.div_cd,5) not in (select source_code from #duplicated union all select source_code from #mapping_table)
 ;
 
-drop table #mapping_table, #duplicated;
+/**************************************
+ 3-2. Insert data using 60T
+***************************************/
+INSERT INTO @NHISNSC_database.PROCEDURE_OCCURRENCE 
+	(procedure_occurrence_id, person_id, procedure_concept_id, procedure_date, procedure_type_concept_id, 
+	modifier_concept_id, quantity, provider_id, visit_occurrence_id, procedure_source_value, 
+	procedure_source_concept_id)
+SELECT
+	convert(bigint, convert(bigint, m.master_seq) * 10 + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by b.target_concept_id))) as procedure_occurrence_id,
+	m.person_id as person_id,
+	CASE WHEN n.target_concept_id IS NOT NULL THEN n.target_concept_id ELSE 0 END as procedure_concept_id,
+	CONVERT(VARCHAR, m.recu_fr_dt, 112) as procedure_date,
+	45756900 as procedure_type_concept_id,
+	NULL as modifier_concept_id,
+	NULL as quantity,
+	NULL as provider_id,
+	m.key_seq as visit_occurrence_id,
+	NULL as procedure_source_value,
+	NULL as procedure_source_concept_id
+FROM   (SELECT a.master_seq, a.person_id, a.key_seq, a.seq_no, b.recu_fr_dt, c.sick_sym 
+        FROM   (SELECT master_seq, person_id, key_seq, seq_no
+                FROM   @NHISNSC_database.seq_master 
+                WHERE  source_table = '140') a, 
+               @NHISNSC_rawdata.@NHIS_20T b, 
+               @NHISNSC_rawdata.@NHIS_40T c, 
+               @NHISNSC_database.observation_period d --added 
+        WHERE  a.person_id = b.person_id 
+               AND a.key_seq = b.key_seq 
+               AND a.key_seq = c.key_seq 
+               AND a.seq_no = c.seq_no 
+               AND b.person_id = d.person_id --added 
+               AND CONVERT(DATE, c.recu_fr_dt, 112) BETWEEN d.observation_period_start_date AND d.observation_period_end_date) AS m,--added 
+       #temp AS n 
+WHERE  m.sick_sym = n.source_code;
+
+
+
+
+drop table #mapping_table, #duplicated, #temp;
 
 -- Delete duplicated keys
 delete from @NHISNSC_database.procedure_occurrence

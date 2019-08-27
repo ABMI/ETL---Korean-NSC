@@ -94,8 +94,18 @@ CREATE TABLE #measurement_mapping
 	insert into #measurement_mapping (meas_type, id_value, answer, measurement_concept_id, measurement_type_concept_id, measurement_unit_concept_id, value_as_concept_id, value_as_number) values ('SGOT_AST',			'17',	0,	2212597,	44818702,	4118000,	NULL,		NULL)
 	insert into #measurement_mapping (meas_type, id_value, answer, measurement_concept_id, measurement_type_concept_id, measurement_unit_concept_id, value_as_concept_id, value_as_number) values ('SGPT_ALT',			'18',	0,	2212598,	44818702,	4118000,	NULL,		NULL)
 	insert into #measurement_mapping (meas_type, id_value, answer, measurement_concept_id, measurement_type_concept_id, measurement_unit_concept_id, value_as_concept_id, value_as_number) values ('GAMMA_GTP',			'19',	0,	4289475,	44818702,	4118000,	NULL,		NULL)
-																																																																					
-																																																																					
+
+
+
+
+select a.source_code, a.target_concept_id, a.domain_id, REPLACE(a.invalid_reason, '', NULL) as invalid_reason
+into #mapping_table2
+from @Mapping_database.source_to_concept_map a join @Mapping_database.CONCEPT b on a.target_concept_id=b.concept_id
+where a.invalid_reason is null and b.invalid_reason is null and a.domain_id='measurement'
+;
+
+
+
 
 /**************************************																																							   
  1. Rotate rows to columns 
@@ -196,6 +206,49 @@ INSERT INTO @NHISNSC_database.MEASUREMENT (measurement_id, person_id, measuremen
 	where (a.meas_value != '' and substring(a.meas_type, 1, 30) in ('GLY_CD', 'OLIG_OCCU_CD', 'OLIG_PROTE_CD')
 			and c.source_table like 'GJT')
 ;
+
+	
+
+/**************************************
+ 2. Insert 40T data
+***************************************/ 
+INSERT INTO @NHISNSC_database.MEASUREMENT (measurement_id, person_id, measurement_concept_id, measurement_date, measurement_time, measurement_type_concept_id, operator_concept_id, value_as_number, value_as_concept_id,			
+											unit_concept_id, range_low, range_high, provider_id, visit_occurrence_id, measurement_source_value, measurement_source_concept_id, unit_source_value, value_source_value)
+
+
+SELECT CONVERT(BIGINT, CONVERT(BIGINT, m.master_seq) * 10 + CONVERT(BIGINT, Row_number() OVER( partition BY key_seq, seq_no ORDER BY target_concept_id DESC))) AS measurement_id, 
+       m.person_id AS person_id, 
+       n.target_concept_id AS measurement_concept_id, 
+       CONVERT(DATE, m.recu_fr_dt, 112) AS measurement_date, 
+       measurement_time = NULL, 
+       32466 AS measurement_type_concept_id, 
+       operator_concept_id = NULL, 
+       value_as_number = NULL, 
+       value_as_concept_id = NULL, 
+       unit_concept_id = NULL, 
+       range_low = NULL, 
+       range_high = NULL, 
+       provider_id = NULL, 
+       m.master_seq AS visit_occurrence_id, 
+       measurement_source_value = NULL, 
+       measurement_source_concept_id =NULL, 
+       unit_source_value = NULL, 
+       value_source_value = NULL 
+FROM   (SELECT a.master_seq, a.person_id, a.key_seq, a.seq_no, b.recu_fr_dt, c.sick_sym 
+        FROM   (SELECT master_seq, person_id, key_seq, seq_no
+                FROM   @NHISNSC_database.seq_master 
+                WHERE  source_table = '140') a, 
+               @NHISNSC_rawdata.@NHIS_20T b, 
+               @NHISNSC_rawdata.@NHIS_40T c, 
+               @NHISNSC_database.observation_period d --added 
+        WHERE  a.person_id = b.person_id 
+               AND a.key_seq = b.key_seq 
+               AND a.key_seq = c.key_seq 
+               AND a.seq_no = c.seq_no 
+               AND b.person_id = d.person_id --added 
+               AND CONVERT(DATE, c.recu_fr_dt, 112) BETWEEN d.observation_period_start_date AND d.observation_period_end_date) AS m,--added 
+       #mapping_table2 AS n 
+WHERE  m.sick_sym = n.source_code;
 
 /**************************************
  3.Insert source_value into vlaue_as_number
