@@ -249,7 +249,7 @@ FROM   (SELECT a.master_seq, a.person_id, a.key_seq, a.seq_no, b.recu_fr_dt, c.s
                AND CONVERT(DATE, c.recu_fr_dt, 112) BETWEEN d.observation_period_start_date AND d.observation_period_end_date) AS m,--added 
        #mapping_table2 AS n 
 WHERE  m.sick_sym = n.source_code;
-
+ 
 /**************************************
  3.Insert source_value into vlaue_as_number
 ***************************************/
