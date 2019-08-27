@@ -20,7 +20,7 @@ https://academic.oup.com/ije/article-lookup/doi/10.1093/ije/dyv319
 ## R Installation
 ```{r}
 install.packages("devtools")
-devtools::install_github("ohdsi/ETL---Korean-NSC/etlKoreanNSC")
+devtools::install_github("ohdsi/ETL--Korean-NSC/etlKoreanNSC")
 ```
 
 ## Execution ETL 
