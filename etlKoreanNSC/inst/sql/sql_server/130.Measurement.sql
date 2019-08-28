@@ -97,7 +97,8 @@ CREATE TABLE #measurement_mapping
 
 
 
-
+IF OBJECT_ID('tempdb..#mapping_table2', 'U') IS NOT NULL
+	DROP TABLE #mapping_table2;
 select a.source_code, a.target_concept_id, a.domain_id, REPLACE(a.invalid_reason, '', NULL) as invalid_reason
 into #mapping_table2
 from @Mapping_database.source_to_concept_map a join @Mapping_database.CONCEPT b on a.target_concept_id=b.concept_id
@@ -249,6 +250,14 @@ FROM   (SELECT a.master_seq, a.person_id, a.key_seq, a.seq_no, b.recu_fr_dt, c.s
                AND CONVERT(DATE, c.recu_fr_dt, 112) BETWEEN d.observation_period_start_date AND d.observation_period_end_date) AS m,--added 
        #mapping_table2 AS n 
 WHERE  m.sick_sym = n.source_code;
+
+
+
+
+DROP TABLE #mapping_table2;
+
+
+
 
 /**************************************
  3.Insert source_value into vlaue_as_number
