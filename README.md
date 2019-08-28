@@ -58,6 +58,7 @@ etlKoreanNSC::executeNHISETL(NHISNSC_rawdata <- "nhisnsc2013original.dbo",
                            
                            CDM_ddl = TRUE,
                            #import_voca = TRUE,        Importing voca could be unnecessary
+                           cdm_source = TRUE,
                            master_table = TRUE,
                            location = TRUE,
                            care_site = TRUE,
@@ -75,7 +76,6 @@ etlKoreanNSC::executeNHISETL(NHISNSC_rawdata <- "nhisnsc2013original.dbo",
                            cost = TRUE,
                            generateEra = TRUE,
                            dose_era = TRUE,
-                           cdm_source = TRUE,
                            indexing = TRUE,
                            constraints = TRUE,
                            data_cleansing = TRUE)
