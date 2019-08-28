@@ -71,6 +71,7 @@ executeNHISETL <- function(NHISNSC_rawdata,
                            
                            CDM_ddl = TRUE,
                            #import_voca = TRUE,        Importing voca could be unnecessary
+                           cdm_source = TRUE,
                            master_table = TRUE,
                            location = TRUE,
                            care_site = TRUE,
@@ -88,7 +89,6 @@ executeNHISETL <- function(NHISNSC_rawdata,
                            cost = TRUE,
                            generateEra = TRUE,
                            dose_era = TRUE,
-                           cdm_source = TRUE,
                            indexing = TRUE,
                            constraints = TRUE,
                            data_cleansing = TRUE
@@ -534,7 +534,9 @@ executeNHISETL <- function(NHISNSC_rawdata,
                                                  NHISNSC_rawdata = NHISNSC_rawdata,
                                                  NHISNSC_database = NHISNSC_database,
                                                  Mapping_database = Mapping_database,
+                                                 NHIS_20T = NHIS_20T,
                                                  NHIS_30T = NHIS_30T,
+                                                 NHIS_40T = NHIS_40T,
                                                  NHIS_60T = NHIS_60T)
         
         DatabaseConnector::executeSql(connection = connection, sql)
@@ -606,7 +608,9 @@ executeNHISETL <- function(NHISNSC_rawdata,
                                                  packageName = "etlKoreanNSC",
                                                  dbms = connectionDetails$dbms,
                                                  NHISNSC_rawdata = NHISNSC_rawdata,
-                                                 NHISNSC_database = NHISNSC_database)
+                                                 NHISNSC_database = NHISNSC_database,
+                                                 NHIS_20T = NHIS_20T,
+                                                 NHIS_40T = NHIS_40T)
         
         DatabaseConnector::executeSql(connection = connection, sql)
         

@@ -323,7 +323,7 @@ INSERT INTO @NHISNSC_database.PROCEDURE_OCCURRENCE
 	modifier_concept_id, quantity, provider_id, visit_occurrence_id, procedure_source_value, 
 	procedure_source_concept_id)
 SELECT
-	convert(bigint, convert(bigint, m.master_seq) * 10 + convert(bigint, row_number() over (partition by a.key_seq, a.seq_no order by b.target_concept_id))) as procedure_occurrence_id,
+	convert(bigint, convert(bigint, m.master_seq) * 10 + convert(bigint, row_number() over (partition by m.key_seq, m.seq_no order by n.target_concept_id))) as procedure_occurrence_id,
 	m.person_id as person_id,
 	CASE WHEN n.target_concept_id IS NOT NULL THEN n.target_concept_id ELSE 0 END as procedure_concept_id,
 	CONVERT(VARCHAR, m.recu_fr_dt, 112) as procedure_date,
