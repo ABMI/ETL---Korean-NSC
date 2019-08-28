@@ -316,7 +316,7 @@ WHERE left(a.div_cd,5) not in (select source_code from #duplicated union all sel
 ;
 
 /**************************************
- 3-2. Insert data using 60T
+ 3-2. Insert data using 40T
 ***************************************/
 INSERT INTO @NHISNSC_database.PROCEDURE_OCCURRENCE 
 	(procedure_occurrence_id, person_id, procedure_concept_id, procedure_date, procedure_type_concept_id, 
