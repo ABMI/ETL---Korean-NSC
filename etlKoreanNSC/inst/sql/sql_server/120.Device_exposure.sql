@@ -73,7 +73,7 @@ select a.*
 	into #duplicated
 from #device a, #five b
 where a.source_code=b.source_code
-	and a.invalid_reason='' and b.invalid_reason='';
+	and a.invalid_reason is null and b.invalid_reason is null;
 
 select * into #mapping_table from #temp
 where source_code not in (select source_code from #duplicated);
