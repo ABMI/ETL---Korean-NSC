@@ -610,7 +610,7 @@ executeNHISETL <- function(NHISNSC_rawdata,
                                                  NHISNSC_rawdata = NHISNSC_rawdata,
                                                  NHISNSC_database = NHISNSC_database,
                                                  Mapping_database = Mapping_database,
-                                                 NHIS_20T = NHIS_20T,
+                                                 NHIS_20T = NHIS_20T, 
                                                  NHIS_40T = NHIS_40T)
         
         DatabaseConnector::executeSql(connection = connection, sql)
