@@ -43,8 +43,8 @@ OHDSI-SQL File Instructions
 DRUG ERA
 Note: Eras derived from DRUG_EXPOSURE table, using 30d gap
  ****/
-IF OBJECT_ID('tempdb..#cteDrugTarget', 'U') IS NOT NULL
-	DROP TABLE #cteDrugTarget;
+IF OBJECT_ID('@Mapping_database.cteDrugTarget', 'U') IS NOT NULL
+	DROP TABLE @Mapping_database.cteDrugTarget;
 
 /* / */
 
@@ -56,7 +56,7 @@ SELECT d.DRUG_EXPOSURE_ID
 	,DRUG_EXPOSURE_START_DATE
 	,COALESCE(DRUG_EXPOSURE_END_DATE, DATEADD(day, DAYS_SUPPLY, DRUG_EXPOSURE_START_DATE), DATEADD(day, 1, DRUG_EXPOSURE_START_DATE)) AS DRUG_EXPOSURE_END_DATE
 	,c.CONCEPT_ID AS INGREDIENT_CONCEPT_ID
-INTO #cteDrugTarget
+INTO @Mapping_database.cteDrugTarget
 FROM @NHISNSC_database.DRUG_EXPOSURE d
 INNER JOIN @Mapping_database.CONCEPT_ANCESTOR ca ON ca.DESCENDANT_CONCEPT_ID = d.DRUG_CONCEPT_ID
 INNER JOIN @Mapping_database.CONCEPT c ON ca.ANCESTOR_CONCEPT_ID = c.CONCEPT_ID
@@ -65,15 +65,15 @@ WHERE c.VOCABULARY_ID in ('RxNorm', 'RxNorm Extension')
 
 /* / */
 
-IF OBJECT_ID('tempdb..#cteEndDates', 'U') IS NOT NULL
-	DROP TABLE #cteEndDates;
+IF OBJECT_ID('@Mapping_database.cteEndDates', 'U') IS NOT NULL
+DROP TABLE @Mapping_database.cteEndDates;
 
 /* / */
 
 SELECT PERSON_ID
 	,INGREDIENT_CONCEPT_ID
 	,DATEADD(day, - 30, EVENT_DATE) AS END_DATE -- unpad the end date
-INTO #cteEndDates
+INTO @Mapping_database.cteEndDates
 FROM (
 	SELECT E1.PERSON_ID
 		,E1.INGREDIENT_CONCEPT_ID
@@ -101,7 +101,7 @@ FROM (
 					PARTITION BY PERSON_ID
 					,INGREDIENT_CONCEPT_ID ORDER BY DRUG_EXPOSURE_START_DATE
 					) AS START_ORDINAL
-			FROM #cteDrugTarget
+			FROM @Mapping_database.cteDrugTarget
 
 			UNION ALL
 
@@ -111,7 +111,7 @@ FROM (
 				,DATEADD(day, 30, DRUG_EXPOSURE_END_DATE)
 				,1 AS EVENT_TYPE
 				,NULL
-			FROM #cteDrugTarget
+			FROM @Mapping_database.cteDrugTarget
 			) RAWDATA
 		) E1
 	INNER JOIN (
@@ -122,7 +122,7 @@ FROM (
 				PARTITION BY PERSON_ID
 				,INGREDIENT_CONCEPT_ID ORDER BY DRUG_EXPOSURE_START_DATE
 				) AS START_ORDINAL
-		FROM #cteDrugTarget
+		FROM @Mapping_database.cteDrugTarget
 		) E2 ON E1.PERSON_ID = E2.PERSON_ID
 		AND E1.INGREDIENT_CONCEPT_ID = E2.INGREDIENT_CONCEPT_ID
 		AND E2.EVENT_DATE <= E1.EVENT_DATE
@@ -136,8 +136,8 @@ WHERE 2 * E.START_ORDINAL - E.OVERALL_ORD = 0;
 
 /* / */
 
-IF OBJECT_ID('tempdb..#cteDrugExpEnds', 'U') IS NOT NULL
-	DROP TABLE #cteDrugExpEnds;
+IF OBJECT_ID('@Mapping_database.cteDrugExpEnds', 'U') IS NOT NULL
+DROP TABLE @Mapping_database.cteDrugExpEnds;
 
 /* / */
 
@@ -146,9 +146,9 @@ SELECT d.PERSON_ID
 	,d.DRUG_TYPE_CONCEPT_ID
 	,d.DRUG_EXPOSURE_START_DATE
 	,MIN(e.END_DATE) AS ERA_END_DATE
-INTO #cteDrugExpEnds
-FROM #cteDrugTarget d
-INNER JOIN #cteEndDates e ON d.PERSON_ID = e.PERSON_ID
+INTO @Mapping_database.cteDrugExpEnds
+FROM @Mapping_database.cteDrugTarget d
+INNER JOIN @Mapping_database.cteEndDates e ON d.PERSON_ID = e.PERSON_ID
 	AND d.INGREDIENT_CONCEPT_ID = e.INGREDIENT_CONCEPT_ID
 	AND e.END_DATE >= d.DRUG_EXPOSURE_START_DATE
 GROUP BY d.PERSON_ID
@@ -168,12 +168,14 @@ SELECT row_number() OVER (
 	,ERA_END_DATE
 	,COUNT(*) AS DRUG_EXPOSURE_COUNT
 	,30 AS gap_days
-FROM #cteDrugExpEnds
+FROM @Mapping_database.cteDrugExpEnds
 GROUP BY person_id
 	,INGREDIENT_CONCEPT_ID
 	,drug_type_concept_id
 	,ERA_END_DATE;
 
+
+declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
 
 
 
@@ -206,13 +208,11 @@ GROUP BY person_id
 CONDITION ERA
 Note: Eras derived from CONDITION_OCCURRENCE table, using 30d gap
  ****/
-IF OBJECT_ID('tempdb..#condition_era_phase_1', 'U') IS NOT NULL
-	DROP TABLE #condition_era_phase_1;
 
 /* / */
 
-IF OBJECT_ID('tempdb..#cteConditionTarget', 'U') IS NOT NULL
-	DROP TABLE #cteConditionTarget;
+IF OBJECT_ID('@Mapping_database.cteConditionTarget', 'U') IS NOT NULL
+DROP TABLE @Mapping_database.cteConditionTarget;
 
 /* / */
 
@@ -221,20 +221,20 @@ SELECT co.PERSON_ID
 	,co.condition_concept_id
 	,co.CONDITION_START_DATE
 	,COALESCE(co.CONDITION_END_DATE, DATEADD(day, 1, CONDITION_START_DATE)) AS CONDITION_END_DATE
-INTO #cteConditionTarget
+INTO @Mapping_database.cteConditionTarget
 FROM @NHISNSC_database.CONDITION_OCCURRENCE co;
 
 /* / */
 
-IF OBJECT_ID('tempdb..#cteCondEndDates', 'U') IS NOT NULL
-	DROP TABLE #cteCondEndDates;
+IF OBJECT_ID('@Mapping_database.cteCondEndDates', 'U') IS NOT NULL
+DROP TABLE @Mapping_database.cteCondEndDates;
 
 /* / */
 
 SELECT PERSON_ID
 	,CONDITION_CONCEPT_ID
 	,DATEADD(day, - 30, EVENT_DATE) AS END_DATE -- unpad the end date
-INTO #cteCondEndDates
+INTO @Mapping_database.cteCondEndDates
 FROM (
 	SELECT E1.PERSON_ID
 		,E1.CONDITION_CONCEPT_ID
@@ -262,7 +262,7 @@ FROM (
 					PARTITION BY PERSON_ID
 					,CONDITION_CONCEPT_ID ORDER BY CONDITION_START_DATE
 					) AS START_ORDINAL
-			FROM #cteConditionTarget
+			FROM @Mapping_database.cteConditionTarget
 
 			UNION ALL
 
@@ -272,7 +272,7 @@ FROM (
 				,DATEADD(day, 30, CONDITION_END_DATE)
 				,1 AS EVENT_TYPE
 				,NULL
-			FROM #cteConditionTarget
+			FROM @Mapping_database.cteConditionTarget
 			) RAWDATA
 		) E1
 	INNER JOIN (
@@ -283,7 +283,7 @@ FROM (
 				PARTITION BY PERSON_ID
 				,CONDITION_CONCEPT_ID ORDER BY CONDITION_START_DATE
 				) AS START_ORDINAL
-		FROM #cteConditionTarget
+		FROM @Mapping_database.cteConditionTarget
 		) E2 ON E1.PERSON_ID = E2.PERSON_ID
 		AND E1.CONDITION_CONCEPT_ID = E2.CONDITION_CONCEPT_ID
 		AND E2.EVENT_DATE <= E1.EVENT_DATE
@@ -297,8 +297,8 @@ WHERE (2 * E.START_ORDINAL) - E.OVERALL_ORD = 0;
 
 /* / */
 
-IF OBJECT_ID('tempdb..#cteConditionEnds', 'U') IS NOT NULL
-	DROP TABLE #cteConditionEnds;
+IF OBJECT_ID('@Mapping_database.cteConditionEnds', 'U') IS NOT NULL
+DROP TABLE @Mapping_database.cteConditionEnds;
 
 /* / */
 
@@ -306,9 +306,9 @@ SELECT c.PERSON_ID
 	,c.CONDITION_CONCEPT_ID
 	,c.CONDITION_START_DATE
 	,MIN(e.END_DATE) AS ERA_END_DATE
-INTO #cteConditionEnds
-FROM #cteConditionTarget c
-INNER JOIN #cteCondEndDates e ON c.PERSON_ID = e.PERSON_ID
+INTO @Mapping_database.cteConditionEnds
+FROM @Mapping_database.cteConditionTarget c
+INNER JOIN @Mapping_database.cteCondEndDates e ON c.PERSON_ID = e.PERSON_ID
 	AND c.CONDITION_CONCEPT_ID = e.CONDITION_CONCEPT_ID
 	AND e.END_DATE >= c.CONDITION_START_DATE
 GROUP BY c.PERSON_ID
@@ -333,7 +333,16 @@ SELECT row_number() OVER (
 	,min(CONDITION_START_DATE) AS CONDITION_ERA_START_DATE
 	,ERA_END_DATE AS CONDITION_ERA_END_DATE
 	,COUNT(*) AS CONDITION_OCCURRENCE_COUNT
-FROM #cteConditionEnds
+FROM @Mapping_database.cteConditionEnds
 GROUP BY person_id
 	,CONDITION_CONCEPT_ID
 	,ERA_END_DATE;
+	
+declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
+dbcc shrinkfile (@db_name,10)
+
+DROP TABLE @Mapping_database.cteDrugTarget, 
+@Mapping_database.cteEndDates, 
+@Mapping_database.cteDrugExpEnds, 
+@Mapping_database.cteConditionTarget, 
+@Mapping_database.cteConditionEnds;

@@ -394,3 +394,6 @@ and a.person_id=b.person_id;
 
 
 drop table #mapping_table;
+
+declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
+dbcc shrinkfile (@db_name,10)

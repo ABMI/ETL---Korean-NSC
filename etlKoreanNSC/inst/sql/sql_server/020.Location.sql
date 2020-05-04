@@ -353,3 +353,6 @@ VALUES
 --('~','값 오류','~ 값 오류','값 오류',null,null,'KOREA','~'),
 --('00000','기타','00000 기타','기타',null,null,'KOREA','00000'),
 --('X00','기타','X00 기타(값없음)','기타',null,null,'KOREA','X00');
+
+declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
+dbcc shrinkfile (@db_name,10)

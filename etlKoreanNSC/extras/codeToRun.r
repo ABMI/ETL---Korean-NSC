@@ -1,6 +1,6 @@
 
-NHISNSC_rawdata <- "nhisnsc2013original.dbo"
-NHISNSC_database <- "NHIS_NSC_v5_3_1.dbo"
+NHISNSC_rawdata <- "NHISNSC2013Original.dbo"
+NHISNSC_database <- "NSC_syc.dbo"
 NHIS_JK <- "NHID_JK"
 NHIS_20T <- "NHID_GY20_T1"
 NHIS_30T <- "NHID_GY30_T1"
@@ -8,26 +8,24 @@ NHIS_40T <- "NHID_GY40_T1"
 NHIS_60T <- "NHID_GY60_T1"
 NHIS_GJ <- "NHID_GJ"
 NHIS_YK <- "NHID_YK"
-Mapping_database <- "NHIS_NSC_NEW_MAPPING.dbo"
-outputFolder <- "/home/youngjin426"
+Mapping_database <- "NHIS_NSC_new_mapping.dbo"
+outputFolder <- "C:/Users/AJOU_MED/Desktop/test_nsc"
 
 #usethis::edit_r_environ()
-Sys.getenv("myCdmSchema")
+#Sys.getenv("myCdmSchema")
 
 connectionDetails <- DatabaseConnector::createConnectionDetails(
     dbms = 'sql server'
-    , server = Sys.getenv("myCdmServer")
-    , schema = Sys.getenv("myCdmSchema")
-    , user = Sys.getenv("userId")
-    , password = Sys.getenv("password")
+    , server = Sys.getenv("server_ip_16")
+    , schema = Sys.getenv("NHIS_NSC_CDM_SCHEMA")
+    , user = Sys.getenv("USER_ID")
+    , password = Sys.getenv("PASSWORD_16")
 )
-DatabaseConnector::connect(connectionDetails = connectionDetails)
+#DatabaseConnector::connect(connectionDetails = connectionDetails)
 connection <- DatabaseConnector::connect(connectionDetails)
 
 
-
-
-executeNHISETL <- function(NHISNSC_rawdata,
+executeNHISETL_syc <- function(NHISNSC_rawdata,
                            NHISNSC_database,
                            Mapping_database,
                            NHIS_JK,
@@ -42,6 +40,7 @@ executeNHISETL <- function(NHISNSC_rawdata,
                            outputFolder,
                            
                            CDM_ddl = TRUE,
+                           concept = TRUE,
                            #import_voca = TRUE,        Importing voca could be unnecessary
                            master_table = TRUE,
                            location = TRUE,
@@ -68,7 +67,7 @@ executeNHISETL <- function(NHISNSC_rawdata,
     
     ParallelLogger::addDefaultFileLogger(file.path(outputFolder, "log.txt"))
     
-    if(CDM_ddl) { ## DDL
+    try(if(CDM_ddl) { ## DDL
         
         SqlFile <- "000.OMOP CDM sql server ddl.sql"
         
@@ -86,11 +85,26 @@ executeNHISETL <- function(NHISNSC_rawdata,
         ParallelLogger::logInfo("Generation of CDM tables were completed")
         
     }
+    )
+    
+    try(if(concept){  ##Need to be modified!!!!!!!!
+        SqlFile <- "015.Concept.sql"
+        sql <- SqlRender::loadRenderTranslateSql(SqlFile,
+                                                 packageName = "etlKoreanNSC",
+                                                 dbms = connectionDetails$dbms
+                                                 )
+        
+        ParallelLogger::logInfo(paste("ETL",SqlFile))
+        
+        DatabaseConnector::executeSql(connection = connection, sql)
+        
+        ParallelLogger::logInfo("concept table has been created")
+    }
+    )
     
     
     
-    
-    if(cdm_source) { ## CDM Source Table
+    try(if(cdm_source) { ## CDM Source Table
         
         SqlFile <- "320.CDM_source.sql"
         
@@ -107,6 +121,7 @@ executeNHISETL <- function(NHISNSC_rawdata,
         cdm_etl_reference <- 'https://github.com/OHDSI/ETL---Korean-NSC'
         cdm_release_date <- Sys.Date()
         cdm_version <- 'v5.3.1'
+        
         vocabulary_version <- DatabaseConnector::querySql(connection,sql)
         
         tb <- data.frame(cdm_source_name, cdm_source_abbreviation, cdm_holder, source_description,
@@ -127,11 +142,11 @@ executeNHISETL <- function(NHISNSC_rawdata,
         ParallelLogger::logInfo(paste("ETL",SqlFile, " was completed"))
         
     }
+    )
+
     
     
-    
-    
-    if(master_table) {
+    try(if(master_table) {
         
         SqlFile <- "010.Master_table.sql"
         
@@ -167,11 +182,11 @@ executeNHISETL <- function(NHISNSC_rawdata,
                                         total of %d row was converted", table, elapsedTime, attributes(elapsedTime)$units, count[1,1]))
         
     } ## end
+    )
     
     
     
-    
-    if(location) {
+    try(if(location) {
         
         SqlFile <- "020.Location.sql"
         
@@ -200,11 +215,11 @@ executeNHISETL <- function(NHISNSC_rawdata,
                                         total of %d row was converted", table, elapsedTime, attributes(elapsedTime)$units, count[1,1]))
         
     } ## end
+    )
     
     
     
-    
-    if(care_site) {
+    try(if(care_site) {
         
         SqlFile <- "030.Care_site.sql"
         
@@ -235,11 +250,11 @@ executeNHISETL <- function(NHISNSC_rawdata,
                                         total of %d row was converted", table, elapsedTime, attributes(elapsedTime)$units, count[1,1]))
         
     } ## end
+    )
     
     
     
-    
-    if(person) {
+    try(if(person) {
         
         SqlFile <- "040.Person.sql"
         
@@ -270,11 +285,11 @@ executeNHISETL <- function(NHISNSC_rawdata,
                                         total of %d row was converted", table, elapsedTime, attributes(elapsedTime)$units, count[1,1]))
         
     } ## end 
+    )
     
     
     
-    
-    if(death) {
+    try(if(death) {
         
         SqlFile <- "050.Death.sql"
         
@@ -306,11 +321,11 @@ executeNHISETL <- function(NHISNSC_rawdata,
                                         total of %d row was converted", table, elapsedTime, attributes(elapsedTime)$units, count[1,1]))
         
     } ## end
+    )
     
     
     
-    
-    if(observation_period) {
+    try(if(observation_period) {
         
         SqlFile <- "060.Observation_period.sql"
         
@@ -341,11 +356,11 @@ executeNHISETL <- function(NHISNSC_rawdata,
                                         total of %d row was converted", table, elapsedTime, attributes(elapsedTime)$units, count[1,1]))
         
     } ## end
+    )
     
     
     
-    
-    if(visit_occurrence) {
+    try(if(visit_occurrence) {
         
         SqlFile <- "070.Visit_occurrence.sql"
         
@@ -378,11 +393,10 @@ executeNHISETL <- function(NHISNSC_rawdata,
                                         total of %d row was converted", table, elapsedTime, attributes(elapsedTime)$units, count[1,1]))
         
     } ## end
+    )
     
     
-    
-    
-    if(condition_occurrence) {
+    try(if(condition_occurrence) {
         
         SqlFile <- "080.Condition_occurrence.sql"
         
@@ -416,11 +430,11 @@ executeNHISETL <- function(NHISNSC_rawdata,
                                         total of %d row was converted", table, elapsedTime, attributes(elapsedTime)$units, count[1,1]))
         
     } ## end
+    )
     
     
     
-    
-    if(observation) {
+    try(if(observation) {
         
         SqlFile <- "090.Observation.sql"
         
@@ -450,11 +464,11 @@ executeNHISETL <- function(NHISNSC_rawdata,
                                         total of %d row was converted", table, elapsedTime, attributes(elapsedTime)$units, count[1,1]))
         
     } ## end
+    )
     
     
     
-    
-    if(drug_exposure) {
+    try(if(drug_exposure) {
         
         SqlFile <- "100.Drug_exposure.sql"
         
@@ -488,11 +502,11 @@ executeNHISETL <- function(NHISNSC_rawdata,
                                         total of %d row was converted", table, elapsedTime, attributes(elapsedTime)$units, count[1,1]))
         
     } ## end
+    )
     
     
     
-    
-    if(procedure_occurrence) {
+    try(if(procedure_occurrence) {
         
         SqlFile <- "110.Procedure_occurrence.sql"
         
@@ -525,11 +539,11 @@ executeNHISETL <- function(NHISNSC_rawdata,
                                         total of %d row was converted", table, elapsedTime, attributes(elapsedTime)$units, count[1,1]))
         
     } ## end
+    )
     
     
     
-    
-    if(device_exposure) {
+    try(if(device_exposure) {
         
         SqlFile <- "120.Device_exposure.sql"
         
@@ -562,11 +576,11 @@ executeNHISETL <- function(NHISNSC_rawdata,
                                         total of %d row was converted", table, elapsedTime, attributes(elapsedTime)$units, count[1,1]))
         
     } ## end
+    )
     
     
     
-    
-    if(measurement) {
+    try(if(measurement) {
         
         SqlFile <- "130.Measurement.sql"
         
@@ -596,11 +610,11 @@ executeNHISETL <- function(NHISNSC_rawdata,
                                         total of %d row was converted", table, elapsedTime, attributes(elapsedTime)$units, count[1,1]))
         
     } ## end
+    )
     
     
     
-    
-    if(payer_plan_period) {
+    try(if(payer_plan_period) {
         
         SqlFile <- "140.Payer_plan_period.sql"
         
@@ -631,11 +645,11 @@ executeNHISETL <- function(NHISNSC_rawdata,
                                         total of %d row was converted", table, elapsedTime, attributes(elapsedTime)$units, count[1,1]))
         
     } ## end
+    )
     
     
     
-    
-    if(cost) {
+    try(if(cost) {
         
         SqlFile <- "150.Cost.sql"
         
@@ -672,11 +686,11 @@ executeNHISETL <- function(NHISNSC_rawdata,
                                         total of %d row was converted", table, elapsedTime, attributes(elapsedTime)$units, count[1,1]))
         
     } ## end
+    )
     
     
     
-    
-    if(generateEra) {
+    try(if(generateEra) {
         
         SqlFile <- "300.GenerateEra.sql"
         
@@ -706,11 +720,11 @@ executeNHISETL <- function(NHISNSC_rawdata,
                                         total of %d row was converted", table, elapsedTime, attributes(elapsedTime)$units, count[1,1]))
         
     } ## end
+    )
     
     
     
-    
-    if(dose_era) {
+    try(if(dose_era) {
         
         SqlFile <- "310.Dose_era.sql"
         
@@ -741,11 +755,11 @@ executeNHISETL <- function(NHISNSC_rawdata,
                                         total of %d row was converted", table, elapsedTime, attributes(elapsedTime)$units, count[1,1]))
         
     } ## end
+    )
     
     
     
-    
-    if(indexing) {
+    try(if(indexing) {
         
         SqlFile <- "400.Indexing.sql"
         
@@ -777,11 +791,11 @@ executeNHISETL <- function(NHISNSC_rawdata,
         ##, attributes(elapsedTime)$units, count[1,1]))
         
     } ## end
+    )
     
     
     
-    
-    if(constraints) {
+    try(if(constraints) {
         
         SqlFile <- "500.Constraints.sql"
         
@@ -813,11 +827,11 @@ executeNHISETL <- function(NHISNSC_rawdata,
         ##, attributes(elapsedTime)$units, count[1,1]))
         
     } ## end
+    )
     
     
     
-    
-    if(data_cleansing) {
+    try(if(data_cleansing) {
         
         SqlFile <- "900.data_cleansing.sql"
         
@@ -855,9 +869,10 @@ executeNHISETL <- function(NHISNSC_rawdata,
         ##, attributes(elapsedTime)$units, count[1,1]))
         
     } ## end
+    )
 }
 
-executeNHISETL(NHISNSC_rawdata,
+executeNHISETL_syc(NHISNSC_rawdata,
                NHISNSC_database,
                Mapping_database,
                NHIS_JK,

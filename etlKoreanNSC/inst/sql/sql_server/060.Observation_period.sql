@@ -76,3 +76,6 @@ group by person_id, sumday
 order by person_id, observation_period_start_date
 
 drop table #observation_period_temp1, #observation_period_temp2, #observation_period_temp3, #observation_period_temp4
+
+declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
+dbcc shrinkfile (@db_name,10)

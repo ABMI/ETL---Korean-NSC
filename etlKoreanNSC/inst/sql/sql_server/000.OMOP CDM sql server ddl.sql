@@ -42,8 +42,7 @@ Standardized vocabulary
 
 ************************/
 
-/*
-CREATE TABLE concept (
+@NHISNSC_database.concept (
   concept_id			    INTEGER			  NOT NULL ,
   concept_name			  VARCHAR(255)	NOT NULL ,
   domain_id				    VARCHAR(20)		NOT NULL ,
@@ -58,7 +57,7 @@ CREATE TABLE concept (
 ;
 
 
-CREATE TABLE vocabulary (
+@NHISNSC_database.vocabulary (
   vocabulary_id			    VARCHAR(20)		NOT NULL,
   vocabulary_name		    VARCHAR(255)	NOT NULL,
   vocabulary_reference	VARCHAR(255)	NOT NULL,
@@ -68,7 +67,7 @@ CREATE TABLE vocabulary (
 ;
 
 
-CREATE TABLE domain (
+@NHISNSC_database.domain (
   domain_id			    VARCHAR(20)		NOT NULL,
   domain_name		    VARCHAR(255)	NOT NULL,
   domain_concept_id	INTEGER			  NOT NULL
@@ -76,7 +75,7 @@ CREATE TABLE domain (
 ;
 
 
-CREATE TABLE concept_class (
+@NHISNSC_database.concept_class (
   concept_class_id			    VARCHAR(20)		NOT NULL,
   concept_class_name		    VARCHAR(255)	NOT NULL,
   concept_class_concept_id	INTEGER			  NOT NULL
@@ -84,7 +83,7 @@ CREATE TABLE concept_class (
 ;
 
 
-CREATE TABLE concept_relationship (
+@NHISNSC_database.concept_relationship (
   concept_id_1			INTEGER			NOT NULL,
   concept_id_2			INTEGER			NOT NULL,
   relationship_id		VARCHAR(20)	NOT NULL,
@@ -95,7 +94,7 @@ CREATE TABLE concept_relationship (
 ;
 
 
-CREATE TABLE relationship (
+@NHISNSC_database.relationship (
   relationship_id			    VARCHAR(20)		NOT NULL,
   relationship_name			  VARCHAR(255)	NOT NULL,
   is_hierarchical			    VARCHAR(1)		NOT NULL,
@@ -106,7 +105,7 @@ CREATE TABLE relationship (
 ;
 
 
-CREATE TABLE concept_synonym (
+@NHISNSC_database.concept_synonym (
   concept_id			      INTEGER			  NOT NULL,
   concept_synonym_name	VARCHAR(1000)	NOT NULL,
   language_concept_id	  INTEGER			  NOT NULL
@@ -114,7 +113,7 @@ CREATE TABLE concept_synonym (
 ;
 
 
-CREATE TABLE concept_ancestor (
+@NHISNSC_database.concept_ancestor (
   ancestor_concept_id		    INTEGER		NOT NULL,
   descendant_concept_id		  INTEGER		NOT NULL,
   min_levels_of_separation	INTEGER		NOT NULL,
@@ -123,7 +122,7 @@ CREATE TABLE concept_ancestor (
 ;
 
 
-CREATE TABLE source_to_concept_map (
+@NHISNSC_database.source_to_concept_map (
   source_code				      VARCHAR(50)		NOT NULL,
   source_concept_id			  INTEGER			  NOT NULL,
   source_vocabulary_id		VARCHAR(20)		NOT NULL,
@@ -139,7 +138,7 @@ CREATE TABLE source_to_concept_map (
 
 
 
-CREATE TABLE drug_strength (
+@NHISNSC_database.drug_strength (
   drug_concept_id				      INTEGER		  NOT NULL,
   ingredient_concept_id			  INTEGER		  NOT NULL,
   amount_value					      FLOAT		    NULL,
@@ -157,7 +156,7 @@ CREATE TABLE drug_strength (
 
 
 
-CREATE TABLE cohort_definition (
+@NHISNSC_database.cohort_definition (
   cohort_definition_id				    INTEGER			  NOT NULL,
   cohort_definition_name			    VARCHAR(255)	NOT NULL,
   cohort_definition_description		VARCHAR(MAX)	NULL,
@@ -169,7 +168,7 @@ CREATE TABLE cohort_definition (
 ;
 
 
-CREATE TABLE attribute_definition (
+@NHISNSC_database.attribute_definition (
   attribute_definition_id		  INTEGER			  NOT NULL,
   attribute_name				      VARCHAR(255)	NOT NULL,
   attribute_description			  VARCHAR(MAX)	NULL,
@@ -178,16 +177,15 @@ CREATE TABLE attribute_definition (
 )
 ;
 
-*/
+
 /**************************
 
 Standardized meta-data
 
 ***************************/
 
-use @NHISNSC_database
 
-CREATE TABLE cdm_source
+@NHISNSC_database.cdm_source
 (
   cdm_source_name					        VARCHAR(255)	NOT NULL ,
   cdm_source_abbreviation			    VARCHAR(25)		NULL ,
@@ -203,7 +201,7 @@ CREATE TABLE cdm_source
 ;
 
 
-CREATE TABLE metadata
+@NHISNSC_database.metadata
 (
   metadata_concept_id       INTEGER       NOT NULL ,
   metadata_type_concept_id  INTEGER       NOT NULL ,
@@ -223,7 +221,7 @@ Standardized clinical data
 ************************/
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-CREATE TABLE person
+@NHISNSC_database.person
 (
   person_id						        INTEGER	  	NOT NULL ,
   gender_concept_id				    INTEGER	  	NOT NULL ,
@@ -248,7 +246,7 @@ CREATE TABLE person
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-CREATE TABLE observation_period
+@NHISNSC_database.observation_period
 (
   observation_period_id				      INTEGER		identity(1,1)		NOT NULL ,
   person_id							            INTEGER		NOT NULL ,
@@ -260,7 +258,7 @@ CREATE TABLE observation_period
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-CREATE TABLE specimen
+@NHISNSC_database.specimen
 (
   specimen_id						      INTEGER			NOT NULL ,
   person_id							      INTEGER			NOT NULL ,
@@ -282,7 +280,7 @@ CREATE TABLE specimen
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-CREATE TABLE death
+@NHISNSC_database.death
 (
   person_id							  INTEGER			NOT NULL ,
   death_date							DATE			  NOT NULL ,
@@ -296,7 +294,7 @@ CREATE TABLE death
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-CREATE TABLE visit_occurrence
+@NHISNSC_database.visit_occurrence
 (
   visit_occurrence_id			      bigint			NOT NULL ,
   person_id						          INTEGER			NOT NULL ,
@@ -320,7 +318,7 @@ CREATE TABLE visit_occurrence
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-CREATE TABLE visit_detail
+@NHISNSC_database.visit_detail
 (
   visit_detail_id                    INTEGER     NOT NULL ,
   person_id                          INTEGER     NOT NULL ,
@@ -346,7 +344,7 @@ CREATE TABLE visit_detail
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-CREATE TABLE procedure_occurrence
+@NHISNSC_database.procedure_occurrence
 (
   procedure_occurrence_id		  bigint			NOT NULL ,
   person_id						        INTEGER			NOT NULL ,
@@ -367,7 +365,7 @@ CREATE TABLE procedure_occurrence
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-CREATE TABLE drug_exposure
+@NHISNSC_database.drug_exposure
 (
   drug_exposure_id				      bigint			  NOT NULL ,
   person_id						          bigint			  NOT NULL ,
@@ -397,7 +395,7 @@ CREATE TABLE drug_exposure
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-CREATE TABLE device_exposure
+@NHISNSC_database.device_exposure
 (
   device_exposure_id			        bigint		  	NOT NULL ,
   person_id						            INTEGER			  NOT NULL ,
@@ -419,7 +417,7 @@ CREATE TABLE device_exposure
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-CREATE TABLE condition_occurrence
+@NHISNSC_database.condition_occurrence
 (
   condition_occurrence_id		    bigint			NOT NULL ,
   person_id						          INTEGER			NOT NULL ,
@@ -442,7 +440,7 @@ CREATE TABLE condition_occurrence
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-CREATE TABLE measurement
+@NHISNSC_database.measurement
 (
   measurement_id				        bigint			NOT NULL ,
   person_id						          INTEGER			NOT NULL ,
@@ -469,7 +467,7 @@ CREATE TABLE measurement
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-CREATE TABLE note
+@NHISNSC_database.note
 (
   note_id						    INTEGER			  NOT NULL ,
   person_id						  INTEGER			  NOT NULL ,
@@ -490,7 +488,7 @@ CREATE TABLE note
 
 
 
-CREATE TABLE note_nlp
+@NHISNSC_database.note_nlp
 (
   note_nlp_id					        INTEGER			  NOT NULL ,
   note_id						          INTEGER			  NOT NULL ,
@@ -511,7 +509,7 @@ CREATE TABLE note_nlp
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-CREATE TABLE observation
+@NHISNSC_database.observation
 (
   observation_id					      bigint			NOT NULL ,
   person_id						          INTEGER			NOT NULL ,
@@ -535,7 +533,7 @@ CREATE TABLE observation
 ;
 
 
-CREATE TABLE fact_relationship
+@NHISNSC_database.fact_relationship
 (
   domain_concept_id_1			INTEGER			NOT NULL ,
   fact_id_1						    INTEGER			NOT NULL ,
@@ -554,7 +552,7 @@ Standardized health system data
 ************************/
 
 
-CREATE TABLE location
+@NHISNSC_database.location
 (
   location_id					  INTEGER			  NOT NULL ,
   address_1						  VARCHAR(50)		NULL ,
@@ -568,7 +566,7 @@ CREATE TABLE location
 ;
 
 
-CREATE TABLE care_site
+@NHISNSC_database.care_site
 (
   care_site_id						      INTEGER			  NOT NULL ,
   care_site_name						    VARCHAR(255)  NULL ,
@@ -580,7 +578,7 @@ CREATE TABLE care_site
 ;
 
 
-CREATE TABLE provider
+@NHISNSC_database.provider
 (
   provider_id					        INTEGER			  NOT NULL ,
   provider_name					      VARCHAR(255)	NULL ,
@@ -607,7 +605,7 @@ Standardized health economics
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-CREATE TABLE payer_plan_period
+@NHISNSC_database.payer_plan_period
 (
   payer_plan_period_id			    bigint			  NOT NULL ,
   person_id						          INTEGER			  NOT NULL ,
@@ -630,7 +628,7 @@ CREATE TABLE payer_plan_period
 ;
 
 
-CREATE TABLE cost
+@NHISNSC_database.cost
 (
   cost_id					          bigint	    NOT NULL ,
   cost_event_id             bigint     NOT NULL ,
@@ -667,7 +665,7 @@ Standardized derived elements
 
 
 --HINT DISTRIBUTE_ON_KEY(subject_id)
-CREATE TABLE cohort
+@NHISNSC_database.cohort
 (
   cohort_definition_id	INTEGER		NOT NULL ,
   subject_id						INTEGER		NOT NULL ,
@@ -678,7 +676,7 @@ CREATE TABLE cohort
 
 
 --HINT DISTRIBUTE_ON_KEY(subject_id)
-CREATE TABLE cohort_attribute
+@NHISNSC_database.cohort_attribute
 (
   cohort_definition_id		INTEGER		NOT NULL ,
   subject_id						  INTEGER		NOT NULL ,
@@ -692,7 +690,7 @@ CREATE TABLE cohort_attribute
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-CREATE TABLE drug_era
+@NHISNSC_database.drug_era
 (
   drug_era_id					INTEGER			NOT NULL ,
   person_id						INTEGER			NOT NULL ,
@@ -706,7 +704,7 @@ CREATE TABLE drug_era
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-CREATE TABLE dose_era
+@NHISNSC_database.dose_era
 (
   dose_era_id					  INTEGER  identity(1,1)	NOT NULL ,
   person_id						  bigint			NOT NULL ,
@@ -720,7 +718,7 @@ CREATE TABLE dose_era
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-CREATE TABLE condition_era
+@NHISNSC_database.condition_era
 (
   condition_era_id				    INTEGER			NOT NULL ,
   person_id						        INTEGER			NOT NULL ,

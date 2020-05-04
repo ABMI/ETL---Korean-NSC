@@ -82,3 +82,6 @@ group by YKIHO_ID, care_site_name, place_of_service_concept_id, location_id, car
 ;
 
 drop table #temp;
+
+declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
+dbcc shrinkfile (@db_name,10)

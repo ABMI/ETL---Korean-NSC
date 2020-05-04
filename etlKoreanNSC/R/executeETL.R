@@ -70,6 +70,7 @@ executeNHISETL <- function(NHISNSC_rawdata,
                            outputFolder,
                            
                            CDM_ddl = FALSE,
+                           
                            #import_voca = TRUE,        Importing voca could be unnecessary
                            master_table = FALSE,
                            location = FALSE,

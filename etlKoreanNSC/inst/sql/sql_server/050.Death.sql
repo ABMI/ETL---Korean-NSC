@@ -126,3 +126,6 @@ WHERE a.dth_ym = '' and a.DTH_CODE1 != ''
 
 --Delete temp death mapping table
 drop table #DEATH_MAPPINGTABLE;
+
+declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
+dbcc shrinkfile (@db_name,10)

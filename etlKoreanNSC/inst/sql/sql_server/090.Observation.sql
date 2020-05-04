@@ -454,3 +454,6 @@ group by meas_type
 order by meas_type 
 
 */
+
+declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
+dbcc shrinkfile (@db_name,10)

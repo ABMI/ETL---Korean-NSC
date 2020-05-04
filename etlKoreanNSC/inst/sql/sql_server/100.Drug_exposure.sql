@@ -303,3 +303,7 @@ UPDATE A
     WHERE A.LineCode = '조건'
 -------------------------------------------
 */
+
+
+declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
+dbcc shrinkfile (@db_name,10)

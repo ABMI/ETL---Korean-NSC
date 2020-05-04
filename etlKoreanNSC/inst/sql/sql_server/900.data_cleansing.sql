@@ -87,3 +87,6 @@ update @NHISNSC_database.DEVICE_EXPOSURE
 set quantity = 1
 where quantity = 0
 ;
+
+declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
+dbcc shrinkfile (@db_name,10)

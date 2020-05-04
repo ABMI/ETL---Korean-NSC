@@ -321,4 +321,5 @@ drop table #mapping_table, #duplicated;
 delete from @NHISNSC_database.procedure_occurrence
 where procedure_occurrence_id in (select drug_exposure_id from @NHISNSC_database.drug_exposure)
 
-
+declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
+dbcc shrinkfile (@db_name,10)

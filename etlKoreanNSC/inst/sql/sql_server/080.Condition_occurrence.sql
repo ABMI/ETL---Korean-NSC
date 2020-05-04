@@ -92,7 +92,7 @@ from (
 			else convert(date, b.recu_fr_dt, 112)
 		end as visit_end_date,
 		c.sick_sym,
-		case when c.SEQ_NO=1 then '44786627'--primary condition
+		case when c.SEQ_NO=1 then '44786628'--primary condition
 			when c.SEQ_NO=2 then '44786629' --secondary condition
 			when c.SEQ_NO=3 then '45756845' --third condition
 			when c.SEQ_NO=4 then '45756846'	-- 4th condition
@@ -166,3 +166,6 @@ where m.sick_sym not in (select source_code from #mapping_table2)
 
 drop table #mapping_table;
 drop table #mapping_table2;
+
+declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
+dbcc shrinkfile (@db_name,10)

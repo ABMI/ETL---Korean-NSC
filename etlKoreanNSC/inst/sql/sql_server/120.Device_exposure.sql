@@ -311,3 +311,6 @@ where quantity = 0
 select * from @ResultDatabaseSchema.device_exposure where quantity=0 -- before -> 6268(Catheterization of vein : 5275) / before -> 0
 select * from @ResultDatabaseSchema.device_exposure where quantity=1 -- after -> 4548117 / after -> 4554385
 *************************************************************************************/
+
+declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
+dbcc shrinkfile (@db_name,10)

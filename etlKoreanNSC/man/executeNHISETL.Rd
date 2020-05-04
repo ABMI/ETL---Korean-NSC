@@ -4,17 +4,42 @@
 \alias{executeNHISETL}
 \title{executeETL Function}
 \usage{
-executeNHISETL(NHISNSC_rawdata, NHISNSC_database, Mapping_database,
-  NHIS_JK, NHIS_20T, NHIS_30T, NHIS_40T, NHIS_60T, NHIS_GJ, NHIS_YK,
-  connection, outputFolder, CDM_ddl = FALSE, master_table = FALSE,
-  location = FALSE, care_site = FALSE, person = FALSE,
-  death = FALSE, observation_period = FALSE,
-  visit_occurrence = FALSE, condition_occurrence = FALSE,
-  observation = FALSE, drug_exposure = TRUE,
-  procedure_occurrence = TRUE, device_exposure = TRUE,
-  measurement = TRUE, payer_plan_period = TRUE, cost = TRUE,
-  generateEra = TRUE, dose_era = TRUE, cdm_source = TRUE,
-  indexing = TRUE, constraints = TRUE, data_cleansing = TRUE)
+executeNHISETL(
+  NHISNSC_rawdata,
+  NHISNSC_database,
+  Mapping_database,
+  NHIS_JK,
+  NHIS_20T,
+  NHIS_30T,
+  NHIS_40T,
+  NHIS_60T,
+  NHIS_GJ,
+  NHIS_YK,
+  connection,
+  outputFolder,
+  CDM_ddl = FALSE,
+  master_table = FALSE,
+  location = FALSE,
+  care_site = FALSE,
+  person = FALSE,
+  death = FALSE,
+  observation_period = FALSE,
+  visit_occurrence = FALSE,
+  condition_occurrence = FALSE,
+  observation = FALSE,
+  drug_exposure = TRUE,
+  procedure_occurrence = TRUE,
+  device_exposure = TRUE,
+  measurement = TRUE,
+  payer_plan_period = TRUE,
+  cost = TRUE,
+  generateEra = TRUE,
+  dose_era = TRUE,
+  cdm_source = TRUE,
+  indexing = TRUE,
+  constraints = TRUE,
+  data_cleansing = TRUE
+)
 }
 \arguments{
 \item{NHISNSC_rawdata}{raw schema}

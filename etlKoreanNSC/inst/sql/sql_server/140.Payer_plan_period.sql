@@ -59,3 +59,14 @@ INSERT INTO @NHISNSC_database.PAYER_PLAN_PERIOD (payer_plan_period_id, person_id
 			(select person_id, STND_Y, IPSN_TYPE_CD, cast(convert(VARCHAR, cast(STND_Y as varchar) + '1231' ,23) as date) as year from @NHISNSC_rawdata.@NHIS_JK) a left join @NHISNSC_database.DEATH b
 	  		on a.person_id=b.person_id
 
+/**************************************
+ 3. Delete rows in case 'payer_plan_period_start_date' is recorded before death date
+***************************************/ 
+delete from a
+from @NHISNSC_database.payer_plan_period  a, @NHISNSC_database.death b
+where a.person_id=b.person_id
+and b.death_date < a. payer_plan_period_start_date;
+
+
+declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
+dbcc shrinkfile (@db_name,10)

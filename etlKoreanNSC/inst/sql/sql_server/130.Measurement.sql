@@ -132,7 +132,7 @@ INSERT INTO @NHISNSC_database.MEASUREMENT (measurement_id, person_id, measuremen
 			measurement_time = null,
 			b.measurement_type_concept_id as measurement_type_concept_id,
 			operator_concept_id = null,
-			b.value_as_number as value_as_number,
+			a.value_as_number as value_as_number,
 			b.value_as_concept_id as value_as_concept_id,
 			b.measurement_unit_concept_id as unit_concept_id ,
 			range_low = null,
@@ -206,3 +206,6 @@ SET value_as_number = measurement_source_value
 where measurement_source_value is not null
 ;
 */
+
+declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
+dbcc shrinkfile (@db_name,10)

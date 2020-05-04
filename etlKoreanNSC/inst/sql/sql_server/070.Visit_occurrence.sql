@@ -1,3 +1,4 @@
+
 /**************************************
  --encoding : UTF-8
  --Author: SW Lee
@@ -41,7 +42,7 @@ CREATE TABLE @NHISNSC_database.VISIT_OCCURRENCE (
 insert into @NHISNSC_database.VISIT_OCCURRENCE (
 	visit_occurrence_id, person_id, visit_concept_id, visit_start_date, visit_start_datetime,
 	visit_end_date, visit_end_datetime, visit_type_concept_id, provider_id, care_site_id,
-	visit_source_value, visit_source_concept_id
+	visit_source_value, visit_source_concept_id, admitting_source_value
 )
 select 
 	cast(key_seq as bigint) as visit_occurrence_id,
@@ -65,7 +66,8 @@ select
 	null as provider_id,
 	ykiho_id as care_site_id,
 	key_seq as visit_source_value,
-	null as visit_source_concept_id
+	null as visit_source_concept_id,
+	form_cd as admitting_source_value
 from @NHISNSC_rawdata.@NHIS_20T
 ;
 
@@ -91,3 +93,5 @@ select
 from @NHISNSC_rawdata.@NHIS_GJ a JOIN @NHISNSC_database.seq_master b on a.person_id=b.person_id and a.hchk_year=b.hchk_year
 ;
 
+declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
+dbcc shrinkfile (@db_name,10)
