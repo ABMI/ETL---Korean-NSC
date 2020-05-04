@@ -167,5 +167,5 @@ where m.sick_sym not in (select source_code from #mapping_table2)
 drop table #mapping_table;
 drop table #mapping_table2;
 
-declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
-dbcc shrinkfile (@db_name,10)
+
+dbcc shrinkfile (@NHISNSC_database_use,10)

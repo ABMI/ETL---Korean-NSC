@@ -427,5 +427,5 @@ Unique constraints
 
 ALTER TABLE @NHISNSC_database.concept_synonym ADD CONSTRAINT uq_concept_synonym UNIQUE (concept_id, concept_synonym_name, language_concept_id);
 
-declare @db_name varchar(100) = concat(left('NSC_syc.dbo', CHARINDEX('.dbo', 'NSC_syc.dbo')-1), '_log');
-dbcc shrinkfile (@db_name,10)
+
+dbcc shrinkfile (@NHISNSC_database_use,10)

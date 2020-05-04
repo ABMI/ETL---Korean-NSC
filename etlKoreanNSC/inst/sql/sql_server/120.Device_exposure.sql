@@ -312,5 +312,5 @@ select * from @ResultDatabaseSchema.device_exposure where quantity=0 -- before -
 select * from @ResultDatabaseSchema.device_exposure where quantity=1 -- after -> 4548117 / after -> 4554385
 *************************************************************************************/
 
-declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
-dbcc shrinkfile (@db_name,10)
+
+dbcc shrinkfile (@NHISNSC_database_use,10)

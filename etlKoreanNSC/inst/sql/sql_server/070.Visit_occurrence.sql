@@ -93,5 +93,5 @@ select
 from @NHISNSC_rawdata.@NHIS_GJ a JOIN @NHISNSC_database.seq_master b on a.person_id=b.person_id and a.hchk_year=b.hchk_year
 ;
 
-declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
-dbcc shrinkfile (@db_name,10)
+
+dbcc shrinkfile (@NHISNSC_database_use,10)

@@ -341,5 +341,5 @@ CREATE CLUSTERED INDEX idx_condition_era_person_id ON @NHISNSC_database.conditio
 CREATE INDEX idx_condition_era_concept_id ON @NHISNSC_database.condition_era (condition_concept_id ASC);
 
 
-declare @db_name varchar(100) = concat(left('NSC_syc.dbo', CHARINDEX('.dbo', 'NSC_syc.dbo')-1), '_log');
-dbcc shrinkfile (@db_name,10)
+
+dbcc shrinkfile (@NHISNSC_database_use,10)

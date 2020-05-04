@@ -114,5 +114,5 @@ GROUP BY STND_Y, person_id;
 DBCC CHECKIDENT('@NHISNSC_database.seq_master', NORESEED);
 
 
-declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
-dbcc shrinkfile (@db_name,10)
+
+dbcc shrinkfile (@NHISNSC_database_use,10)

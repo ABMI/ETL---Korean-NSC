@@ -42,7 +42,7 @@ Standardized vocabulary
 
 ************************/
 
-@NHISNSC_database.concept (
+CREATE TABLE @NHISNSC_database.concept (
   concept_id			    INTEGER			  NOT NULL ,
   concept_name			  VARCHAR(255)	NOT NULL ,
   domain_id				    VARCHAR(20)		NOT NULL ,
@@ -57,7 +57,7 @@ Standardized vocabulary
 ;
 
 
-@NHISNSC_database.vocabulary (
+CREATE TABLE @NHISNSC_database.vocabulary (
   vocabulary_id			    VARCHAR(20)		NOT NULL,
   vocabulary_name		    VARCHAR(255)	NOT NULL,
   vocabulary_reference	VARCHAR(255)	NOT NULL,
@@ -67,7 +67,7 @@ Standardized vocabulary
 ;
 
 
-@NHISNSC_database.domain (
+CREATE TABLE @NHISNSC_database.domain (
   domain_id			    VARCHAR(20)		NOT NULL,
   domain_name		    VARCHAR(255)	NOT NULL,
   domain_concept_id	INTEGER			  NOT NULL
@@ -75,7 +75,7 @@ Standardized vocabulary
 ;
 
 
-@NHISNSC_database.concept_class (
+CREATE TABLE @NHISNSC_database.concept_class (
   concept_class_id			    VARCHAR(20)		NOT NULL,
   concept_class_name		    VARCHAR(255)	NOT NULL,
   concept_class_concept_id	INTEGER			  NOT NULL
@@ -83,7 +83,7 @@ Standardized vocabulary
 ;
 
 
-@NHISNSC_database.concept_relationship (
+CREATE TABLE @NHISNSC_database.concept_relationship (
   concept_id_1			INTEGER			NOT NULL,
   concept_id_2			INTEGER			NOT NULL,
   relationship_id		VARCHAR(20)	NOT NULL,
@@ -94,7 +94,7 @@ Standardized vocabulary
 ;
 
 
-@NHISNSC_database.relationship (
+CREATE TABLE @NHISNSC_database.relationship (
   relationship_id			    VARCHAR(20)		NOT NULL,
   relationship_name			  VARCHAR(255)	NOT NULL,
   is_hierarchical			    VARCHAR(1)		NOT NULL,
@@ -105,7 +105,7 @@ Standardized vocabulary
 ;
 
 
-@NHISNSC_database.concept_synonym (
+CREATE TABLE @NHISNSC_database.concept_synonym (
   concept_id			      INTEGER			  NOT NULL,
   concept_synonym_name	VARCHAR(1000)	NOT NULL,
   language_concept_id	  INTEGER			  NOT NULL
@@ -113,7 +113,7 @@ Standardized vocabulary
 ;
 
 
-@NHISNSC_database.concept_ancestor (
+CREATE TABLE @NHISNSC_database.concept_ancestor (
   ancestor_concept_id		    INTEGER		NOT NULL,
   descendant_concept_id		  INTEGER		NOT NULL,
   min_levels_of_separation	INTEGER		NOT NULL,
@@ -122,7 +122,7 @@ Standardized vocabulary
 ;
 
 
-@NHISNSC_database.source_to_concept_map (
+CREATE TABLE @NHISNSC_database.source_to_concept_map (
   source_code				      VARCHAR(50)		NOT NULL,
   source_concept_id			  INTEGER			  NOT NULL,
   source_vocabulary_id		VARCHAR(20)		NOT NULL,
@@ -138,7 +138,7 @@ Standardized vocabulary
 
 
 
-@NHISNSC_database.drug_strength (
+CREATE TABLE @NHISNSC_database.drug_strength (
   drug_concept_id				      INTEGER		  NOT NULL,
   ingredient_concept_id			  INTEGER		  NOT NULL,
   amount_value					      FLOAT		    NULL,
@@ -156,7 +156,7 @@ Standardized vocabulary
 
 
 
-@NHISNSC_database.cohort_definition (
+CREATE TABLE @NHISNSC_database.cohort_definition (
   cohort_definition_id				    INTEGER			  NOT NULL,
   cohort_definition_name			    VARCHAR(255)	NOT NULL,
   cohort_definition_description		VARCHAR(MAX)	NULL,
@@ -168,7 +168,7 @@ Standardized vocabulary
 ;
 
 
-@NHISNSC_database.attribute_definition (
+CREATE TABLE @NHISNSC_database.attribute_definition (
   attribute_definition_id		  INTEGER			  NOT NULL,
   attribute_name				      VARCHAR(255)	NOT NULL,
   attribute_description			  VARCHAR(MAX)	NULL,
@@ -185,7 +185,7 @@ Standardized meta-data
 ***************************/
 
 
-@NHISNSC_database.cdm_source
+CREATE TABLE @NHISNSC_database.cdm_source
 (
   cdm_source_name					        VARCHAR(255)	NOT NULL ,
   cdm_source_abbreviation			    VARCHAR(25)		NULL ,
@@ -201,7 +201,7 @@ Standardized meta-data
 ;
 
 
-@NHISNSC_database.metadata
+CREATE TABLE @NHISNSC_database.metadata
 (
   metadata_concept_id       INTEGER       NOT NULL ,
   metadata_type_concept_id  INTEGER       NOT NULL ,
@@ -221,7 +221,7 @@ Standardized clinical data
 ************************/
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-@NHISNSC_database.person
+CREATE TABLE @NHISNSC_database.person
 (
   person_id						        INTEGER	  	NOT NULL ,
   gender_concept_id				    INTEGER	  	NOT NULL ,
@@ -246,7 +246,7 @@ Standardized clinical data
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-@NHISNSC_database.observation_period
+CREATE TABLE @NHISNSC_database.observation_period
 (
   observation_period_id				      INTEGER		identity(1,1)		NOT NULL ,
   person_id							            INTEGER		NOT NULL ,
@@ -258,7 +258,7 @@ Standardized clinical data
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-@NHISNSC_database.specimen
+CREATE TABLE @NHISNSC_database.specimen
 (
   specimen_id						      INTEGER			NOT NULL ,
   person_id							      INTEGER			NOT NULL ,
@@ -280,7 +280,7 @@ Standardized clinical data
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-@NHISNSC_database.death
+CREATE TABLE @NHISNSC_database.death
 (
   person_id							  INTEGER			NOT NULL ,
   death_date							DATE			  NOT NULL ,
@@ -294,7 +294,7 @@ Standardized clinical data
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-@NHISNSC_database.visit_occurrence
+CREATE TABLE @NHISNSC_database.visit_occurrence
 (
   visit_occurrence_id			      bigint			NOT NULL ,
   person_id						          INTEGER			NOT NULL ,
@@ -318,7 +318,7 @@ Standardized clinical data
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-@NHISNSC_database.visit_detail
+CREATE TABLE @NHISNSC_database.visit_detail
 (
   visit_detail_id                    INTEGER     NOT NULL ,
   person_id                          INTEGER     NOT NULL ,
@@ -344,7 +344,7 @@ Standardized clinical data
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-@NHISNSC_database.procedure_occurrence
+CREATE TABLE @NHISNSC_database.procedure_occurrence
 (
   procedure_occurrence_id		  bigint			NOT NULL ,
   person_id						        INTEGER			NOT NULL ,
@@ -365,7 +365,7 @@ Standardized clinical data
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-@NHISNSC_database.drug_exposure
+CREATE TABLE @NHISNSC_database.drug_exposure
 (
   drug_exposure_id				      bigint			  NOT NULL ,
   person_id						          bigint			  NOT NULL ,
@@ -395,7 +395,7 @@ Standardized clinical data
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-@NHISNSC_database.device_exposure
+CREATE TABLE @NHISNSC_database.device_exposure
 (
   device_exposure_id			        bigint		  	NOT NULL ,
   person_id						            INTEGER			  NOT NULL ,
@@ -417,7 +417,7 @@ Standardized clinical data
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-@NHISNSC_database.condition_occurrence
+CREATE TABLE @NHISNSC_database.condition_occurrence
 (
   condition_occurrence_id		    bigint			NOT NULL ,
   person_id						          INTEGER			NOT NULL ,
@@ -440,7 +440,7 @@ Standardized clinical data
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-@NHISNSC_database.measurement
+CREATE TABLE @NHISNSC_database.measurement
 (
   measurement_id				        bigint			NOT NULL ,
   person_id						          INTEGER			NOT NULL ,
@@ -467,7 +467,7 @@ Standardized clinical data
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-@NHISNSC_database.note
+CREATE TABLE @NHISNSC_database.note
 (
   note_id						    INTEGER			  NOT NULL ,
   person_id						  INTEGER			  NOT NULL ,
@@ -488,7 +488,7 @@ Standardized clinical data
 
 
 
-@NHISNSC_database.note_nlp
+CREATE TABLE @NHISNSC_database.note_nlp
 (
   note_nlp_id					        INTEGER			  NOT NULL ,
   note_id						          INTEGER			  NOT NULL ,
@@ -509,7 +509,7 @@ Standardized clinical data
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-@NHISNSC_database.observation
+CREATE TABLE @NHISNSC_database.observation
 (
   observation_id					      bigint			NOT NULL ,
   person_id						          INTEGER			NOT NULL ,
@@ -533,7 +533,7 @@ Standardized clinical data
 ;
 
 
-@NHISNSC_database.fact_relationship
+CREATE TABLE @NHISNSC_database.fact_relationship
 (
   domain_concept_id_1			INTEGER			NOT NULL ,
   fact_id_1						    INTEGER			NOT NULL ,
@@ -552,7 +552,7 @@ Standardized health system data
 ************************/
 
 
-@NHISNSC_database.location
+CREATE TABLE @NHISNSC_database.location
 (
   location_id					  INTEGER			  NOT NULL ,
   address_1						  VARCHAR(50)		NULL ,
@@ -566,7 +566,7 @@ Standardized health system data
 ;
 
 
-@NHISNSC_database.care_site
+CREATE TABLE @NHISNSC_database.care_site
 (
   care_site_id						      INTEGER			  NOT NULL ,
   care_site_name						    VARCHAR(255)  NULL ,
@@ -578,7 +578,7 @@ Standardized health system data
 ;
 
 
-@NHISNSC_database.provider
+CREATE TABLE @NHISNSC_database.provider
 (
   provider_id					        INTEGER			  NOT NULL ,
   provider_name					      VARCHAR(255)	NULL ,
@@ -605,7 +605,7 @@ Standardized health economics
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-@NHISNSC_database.payer_plan_period
+CREATE TABLE @NHISNSC_database.payer_plan_period
 (
   payer_plan_period_id			    bigint			  NOT NULL ,
   person_id						          INTEGER			  NOT NULL ,
@@ -628,7 +628,7 @@ Standardized health economics
 ;
 
 
-@NHISNSC_database.cost
+CREATE TABLE @NHISNSC_database.cost
 (
   cost_id					          bigint	    NOT NULL ,
   cost_event_id             bigint     NOT NULL ,
@@ -665,7 +665,7 @@ Standardized derived elements
 
 
 --HINT DISTRIBUTE_ON_KEY(subject_id)
-@NHISNSC_database.cohort
+CREATE TABLE @NHISNSC_database.cohort
 (
   cohort_definition_id	INTEGER		NOT NULL ,
   subject_id						INTEGER		NOT NULL ,
@@ -676,7 +676,7 @@ Standardized derived elements
 
 
 --HINT DISTRIBUTE_ON_KEY(subject_id)
-@NHISNSC_database.cohort_attribute
+CREATE TABLE @NHISNSC_database.cohort_attribute
 (
   cohort_definition_id		INTEGER		NOT NULL ,
   subject_id						  INTEGER		NOT NULL ,
@@ -690,7 +690,7 @@ Standardized derived elements
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-@NHISNSC_database.drug_era
+CREATE TABLE @NHISNSC_database.drug_era
 (
   drug_era_id					INTEGER			NOT NULL ,
   person_id						INTEGER			NOT NULL ,
@@ -704,7 +704,7 @@ Standardized derived elements
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-@NHISNSC_database.dose_era
+CREATE TABLE @NHISNSC_database.dose_era
 (
   dose_era_id					  INTEGER  identity(1,1)	NOT NULL ,
   person_id						  bigint			NOT NULL ,
@@ -718,7 +718,7 @@ Standardized derived elements
 
 
 --HINT DISTRIBUTE_ON_KEY(person_id)
-@NHISNSC_database.condition_era
+CREATE TABLE @NHISNSC_database.condition_era
 (
   condition_era_id				    INTEGER			NOT NULL ,
   person_id						        INTEGER			NOT NULL ,

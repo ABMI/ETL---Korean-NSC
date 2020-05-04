@@ -73,12 +73,10 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
         
         ParallelLogger::logInfo("empty CDM tables are being generated")
         
-        NHISNSC_database_use <- strsplit(NHISNSC_database,fixed=TRUE,".")[[1]][1]
-        
         sql <- SqlRender::loadRenderTranslateSql(SqlFile,
                                                  packageName = "etlKoreanNSC",
                                                  dbms = connectionDetails$dbms,
-                                                 NHISNSC_database = NHISNSC_database_use)
+                                                 NHISNSC_database = NHISNSC_database)
         
         DatabaseConnector::executeSql(connection = connection, sql)
         
@@ -89,9 +87,14 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
     
     try(if(concept){  ##Need to be modified!!!!!!!!
         SqlFile <- "015.Concept.sql"
+        
+        NHISNSC_database_use <- strsplit(NHISNSC_database,fixed=TRUE,".")[[1]][1]
+        
         sql <- SqlRender::loadRenderTranslateSql(SqlFile,
                                                  packageName = "etlKoreanNSC",
-                                                 dbms = connectionDetails$dbms
+                                                 dbms = connectionDetails$dbms,
+                                                 NHISNSC_database = NHISNSC_database,
+                                                 NHISNSC_database_use = NHISNSC_database_use
                                                  )
         
         ParallelLogger::logInfo(paste("ETL",SqlFile))
@@ -154,11 +157,14 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
         table <- "SEQ_MASTER"
         startTime <- Sys.time()
         
+        NHISNSC_database_use <- strsplit(NHISNSC_database,fixed=TRUE,".")[[1]][1]
+        
         sql <- SqlRender::loadRenderTranslateSql(SqlFile,
                                                  packageName = "etlKoreanNSC",
                                                  dbms = connectionDetails$dbms,
                                                  NHISNSC_rawdata = NHISNSC_rawdata,
                                                  NHISNSC_database = NHISNSC_database,
+                                                 NHISNSC_database_use = NHISNSC_database_use,
                                                  NHIS_20T = NHIS_20T,
                                                  NHIS_30T = NHIS_30T,
                                                  NHIS_40T = NHIS_40T,
@@ -227,11 +233,14 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
         table <- "care_site"
         startTime <- Sys.time()
         
+        NHISNSC_database_use <- strsplit(NHISNSC_database,fixed=TRUE,".")[[1]][1]
+        
         sql <- SqlRender::loadRenderTranslateSql(SqlFile,
                                                  packageName = "etlKoreanNSC",
                                                  dbms = connectionDetails$dbms,
                                                  NHISNSC_rawdata = NHISNSC_rawdata,
                                                  NHISNSC_database = NHISNSC_database,
+                                                 NHISNSC_database_use = NHISNSC_database_use,
                                                  NHIS_YK = NHIS_YK)
         
         DatabaseConnector::executeSql(connection = connection, sql)
@@ -262,11 +271,14 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
         table <- "person"
         startTime <- Sys.time()
         
+        NHISNSC_database_use <- strsplit(NHISNSC_database,fixed=TRUE,".")[[1]][1]
+        
         sql <- SqlRender::loadRenderTranslateSql(SqlFile,
                                                  packageName = "etlKoreanNSC",
                                                  dbms = connectionDetails$dbms,
                                                  NHISNSC_rawdata = NHISNSC_rawdata,
                                                  NHISNSC_database = NHISNSC_database,
+                                                 NHISNSC_database_use = NHISNSC_database_use,
                                                  NHIS_JK = NHIS_JK)
         
         DatabaseConnector::executeSql(connection = connection, sql)
@@ -297,11 +309,14 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
         table <- "death"
         startTime <- Sys.time()
         
+        NHISNSC_database_use <- strsplit(NHISNSC_database,fixed=TRUE,".")[[1]][1]
+        
         sql <- SqlRender::loadRenderTranslateSql(SqlFile,
                                                  packageName = "etlKoreanNSC",
                                                  dbms = connectionDetails$dbms,
                                                  NHISNSC_rawdata = NHISNSC_rawdata,
                                                  NHISNSC_database = NHISNSC_database,
+                                                 NHISNSC_database_use = NHISNSC_database_use,
                                                  Mapping_database = Mapping_database,
                                                  NHIS_JK = NHIS_JK)
         
@@ -333,11 +348,14 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
         table <- "observation_period"
         startTime <- Sys.time()
         
+        NHISNSC_database_use <- strsplit(NHISNSC_database,fixed=TRUE,".")[[1]][1]
+        
         sql <- SqlRender::loadRenderTranslateSql(SqlFile,
                                                  packageName = "etlKoreanNSC",
                                                  dbms = connectionDetails$dbms,
                                                  NHISNSC_rawdata = NHISNSC_rawdata,
                                                  NHISNSC_database = NHISNSC_database,
+                                                 NHISNSC_database_use = NHISNSC_database_use,
                                                  NHIS_JK = NHIS_JK)
         
         DatabaseConnector::executeSql(connection = connection, sql)
@@ -368,11 +386,14 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
         table <- "visit_occurrence"
         startTime <- Sys.time()
         
+        NHISNSC_database_use <- strsplit(NHISNSC_database,fixed=TRUE,".")[[1]][1]
+        
         sql <- SqlRender::loadRenderTranslateSql(SqlFile,
                                                  packageName = "etlKoreanNSC",
                                                  dbms = connectionDetails$dbms,
                                                  NHISNSC_rawdata = NHISNSC_rawdata,
                                                  NHISNSC_database = NHISNSC_database,
+                                                 NHISNSC_database_use = NHISNSC_database_use,
                                                  NHIS_JK = NHIS_JK,
                                                  NHIS_20T = NHIS_20T,
                                                  NHIS_GJ = NHIS_GJ)
@@ -404,11 +425,14 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
         table <- "condition_occurrence"
         startTime <- Sys.time()
         
+        NHISNSC_database_use <- strsplit(NHISNSC_database,fixed=TRUE,".")[[1]][1]
+        
         sql <- SqlRender::loadRenderTranslateSql(SqlFile,
                                                  packageName = "etlKoreanNSC",
                                                  dbms = connectionDetails$dbms,
                                                  NHISNSC_rawdata = NHISNSC_rawdata,
                                                  NHISNSC_database = NHISNSC_database,
+                                                 NHISNSC_database_use = NHISNSC_database_use,
                                                  Mapping_database = Mapping_database,
                                                  NHIS_JK = NHIS_JK,
                                                  NHIS_20T = NHIS_20T,
@@ -442,10 +466,13 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
         table <- "observation"
         startTime <- Sys.time()
         
+        NHISNSC_database_use <- strsplit(NHISNSC_database,fixed=TRUE,".")[[1]][1]
+        
         sql <- SqlRender::loadRenderTranslateSql(SqlFile,
                                                  packageName = "etlKoreanNSC",
                                                  dbms = connectionDetails$dbms,
                                                  NHISNSC_rawdata = NHISNSC_rawdata,
+                                                 NHISNSC_database_use = NHISNSC_database_use,
                                                  NHISNSC_database = NHISNSC_database)
         
         DatabaseConnector::executeSql(connection = connection, sql)
@@ -476,11 +503,14 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
         table <- "drug_exposure"
         startTime <- Sys.time()
         
+        NHISNSC_database_use <- strsplit(NHISNSC_database,fixed=TRUE,".")[[1]][1]
+        
         sql <- SqlRender::loadRenderTranslateSql(SqlFile,
                                                  packageName = "etlKoreanNSC",
                                                  dbms = connectionDetails$dbms,
                                                  NHISNSC_rawdata = NHISNSC_rawdata,
                                                  NHISNSC_database = NHISNSC_database,
+                                                 NHISNSC_database_use = NHISNSC_database_use,
                                                  Mapping_database = Mapping_database,
                                                  NHIS_20T = NHIS_20T,
                                                  NHIS_30T = NHIS_30T,
@@ -514,11 +544,14 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
         table <- "procedure_occurrence"
         startTime <- Sys.time()
         
+        NHISNSC_database_use <- strsplit(NHISNSC_database,fixed=TRUE,".")[[1]][1]
+        
         sql <- SqlRender::loadRenderTranslateSql(SqlFile,
                                                  packageName = "etlKoreanNSC",
                                                  dbms = connectionDetails$dbms,
                                                  NHISNSC_rawdata = NHISNSC_rawdata,
                                                  NHISNSC_database = NHISNSC_database,
+                                                 NHISNSC_database_use = NHISNSC_database_use,
                                                  Mapping_database = Mapping_database,
                                                  NHIS_30T = NHIS_30T,
                                                  NHIS_60T = NHIS_60T)
@@ -551,11 +584,14 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
         table <- "device_exposure"
         startTime <- Sys.time()
         
+        NHISNSC_database_use <- strsplit(NHISNSC_database,fixed=TRUE,".")[[1]][1]
+        
         sql <- SqlRender::loadRenderTranslateSql(SqlFile,
                                                  packageName = "etlKoreanNSC",
                                                  dbms = connectionDetails$dbms,
                                                  NHISNSC_rawdata = NHISNSC_rawdata,
                                                  NHISNSC_database = NHISNSC_database,
+                                                 NHISNSC_database_use = NHISNSC_database_use,
                                                  Mapping_database = Mapping_database,
                                                  NHIS_30T = NHIS_30T,
                                                  NHIS_60T = NHIS_60T)
@@ -588,11 +624,14 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
         table <- "measurement"
         startTime <- Sys.time()
         
+        NHISNSC_database_use <- strsplit(NHISNSC_database,fixed=TRUE,".")[[1]][1]
+        
         sql <- SqlRender::loadRenderTranslateSql(SqlFile,
                                                  packageName = "etlKoreanNSC",
                                                  dbms = connectionDetails$dbms,
                                                  NHISNSC_rawdata = NHISNSC_rawdata,
-                                                 NHISNSC_database = NHISNSC_database)
+                                                 NHISNSC_database = NHISNSC_database,
+                                                 NHISNSC_database_use = NHISNSC_database_use)
         
         DatabaseConnector::executeSql(connection = connection, sql)
         
@@ -622,11 +661,14 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
         table <- "payer_plan_period"
         startTime <- Sys.time()
         
+        NHISNSC_database_use <- strsplit(NHISNSC_database,fixed=TRUE,".")[[1]][1]
+        
         sql <- SqlRender::loadRenderTranslateSql(SqlFile,
                                                  packageName = "etlKoreanNSC",
                                                  dbms = connectionDetails$dbms,
                                                  NHISNSC_rawdata = NHISNSC_rawdata,
                                                  NHISNSC_database = NHISNSC_database,
+                                                 NHISNSC_database_use = NHISNSC_database_use,
                                                  NHIS_JK = NHIS_JK)
         
         DatabaseConnector::executeSql(connection = connection, sql)
@@ -657,11 +699,14 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
         table <- "cost"
         startTime <- Sys.time()
         
+        NHISNSC_database_use <- strsplit(NHISNSC_database,fixed=TRUE,".")[[1]][1]
+        
         sql <- SqlRender::loadRenderTranslateSql(SqlFile,
                                                  packageName = "etlKoreanNSC",
                                                  dbms = connectionDetails$dbms,
                                                  NHISNSC_rawdata = NHISNSC_rawdata,
                                                  NHISNSC_database = NHISNSC_database,
+                                                 NHISNSC_database_use = NHISNSC_database_use,
                                                  Mapping_database = Mapping_database,
                                                  NHIS_JK = NHIS_JK,
                                                  NHIS_20T = NHIS_20T,
@@ -698,10 +743,13 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
         table <- "condition_era"
         startTime <- Sys.time()
         
+        NHISNSC_database_use <- strsplit(NHISNSC_database,fixed=TRUE,".")[[1]][1]
+        
         sql <- SqlRender::loadRenderTranslateSql(SqlFile,
                                                  packageName = "etlKoreanNSC",
                                                  dbms = connectionDetails$dbms,
                                                  Mapping_database = Mapping_database,
+                                                 NHISNSC_database_use = NHISNSC_database_use,
                                                  NHISNSC_database = NHISNSC_database)
         
         DatabaseConnector::executeSql(connection = connection, sql)
@@ -732,11 +780,14 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
         table <- "dose_era"
         startTime <- Sys.time()
         
+        NHISNSC_database_use <- strsplit(NHISNSC_database,fixed=TRUE,".")[[1]][1]
+        
         sql <- SqlRender::loadRenderTranslateSql(SqlFile,
                                                  packageName = "etlKoreanNSC",
                                                  dbms = connectionDetails$dbms,
                                                  NHISNSC_rawdata = NHISNSC_rawdata,
                                                  NHISNSC_database = NHISNSC_database,
+                                                 NHISNSC_database_use = NHISNSC_database_use,
                                                  Mapping_database = Mapping_database)
         
         DatabaseConnector::executeSql(connection = connection, sql)

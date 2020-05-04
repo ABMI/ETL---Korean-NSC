@@ -175,7 +175,7 @@ GROUP BY person_id
 	,ERA_END_DATE;
 
 
-declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
+
 
 
 
@@ -338,8 +338,8 @@ GROUP BY person_id
 	,CONDITION_CONCEPT_ID
 	,ERA_END_DATE;
 	
-declare @db_name varchar(100) = concat(left('@NHISNSC_database', CHARINDEX('.dbo', '@NHISNSC_database')-1), '_log');
-dbcc shrinkfile (@db_name,10)
+
+dbcc shrinkfile (@NHISNSC_database_use,10)
 
 DROP TABLE @Mapping_database.cteDrugTarget, 
 @Mapping_database.cteEndDates, 
