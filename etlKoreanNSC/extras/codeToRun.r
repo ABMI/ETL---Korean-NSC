@@ -1,4 +1,5 @@
 
+
 NHISNSC_rawdata <- "NHISNSC2013Original.dbo"
 NHISNSC_database <- "NSC_syc.dbo"
 NHIS_JK <- "NHID_JK"
@@ -60,9 +61,9 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
                            generateEra = TRUE,
                            dose_era = TRUE,
                            cdm_source = TRUE,
-                           indexing = TRUE,
-                           constraints = TRUE,
-                           data_cleansing = TRUE
+                           indexing = F,
+                           constraints = F,
+                           data_cleansing = F
 ) {
     
     ParallelLogger::addDefaultFileLogger(file.path(outputFolder, "log.txt"))
@@ -204,6 +205,7 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
                                                  packageName = "etlKoreanNSC",
                                                  dbms = connectionDetails$dbms,
                                                  NHISNSC_database = NHISNSC_database)
+        Encoding(sql)<-"UTF-8"
         
         DatabaseConnector::executeSql(connection = connection, sql)
         
@@ -748,7 +750,6 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
         sql <- SqlRender::loadRenderTranslateSql(SqlFile,
                                                  packageName = "etlKoreanNSC",
                                                  dbms = connectionDetails$dbms,
-                                                 Mapping_database = Mapping_database,
                                                  NHISNSC_database_use = NHISNSC_database_use,
                                                  NHISNSC_database = NHISNSC_database)
         

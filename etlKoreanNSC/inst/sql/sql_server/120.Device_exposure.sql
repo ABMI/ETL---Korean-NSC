@@ -50,35 +50,35 @@ CREATE TABLE @NHISNSC_database.DEVICE_EXPOSURE (
 /**************************************
  1-1. Using temp mapping table
 ***************************************/ 
-IF OBJECT_ID('tempdb..#mapping_table', 'U') IS NOT NULL
-	DROP TABLE #mapping_table;
-IF OBJECT_ID('tempdb..#temp', 'U') IS NOT NULL
-	DROP TABLE #temp;
-IF OBJECT_ID('tempdb..#duplicated', 'U') IS NOT NULL
-	DROP TABLE #duplicated;
-IF OBJECT_ID('tempdb..#device', 'U') IS NOT NULL
-	DROP TABLE #device;
-IF OBJECT_ID('tempdb..#five', 'U') IS NOT NULL
-	DROP TABLE #five;
+IF OBJECT_ID('@NHISNSC_database.dvc_exps_map', 'U') IS NOT NULL
+	DROP TABLE  @NHISNSC_database.dvc_exps_map;
+IF OBJECT_ID('@NHISNSC_database.dvc_exps_temp', 'U') IS NOT NULL
+	DROP TABLE  @NHISNSC_database.dvc_exps_temp;
+IF OBJECT_ID('@NHISNSC_database.dvc_exps_dup', 'U') IS NOT NULL
+	DROP TABLE  @NHISNSC_database.dvc_exps_dup;
+IF OBJECT_ID('@NHISNSC_database.dvc_exps_dvc', 'U') IS NOT NULL
+	DROP TABLE  @NHISNSC_database.dvc_exps_dvc;
+IF OBJECT_ID('@NHISNSC_database.dvc_exps_five', 'U') IS NOT NULL
+	DROP TABLE  @NHISNSC_database.dvc_exps_five;
 
 select a.source_code, a.target_concept_id, a.domain_id, REPLACE(a.invalid_reason, '', NULL) as invalid_reason
-	into #temp
+	into  @NHISNSC_database.dvc_exps_temp
 from @Mapping_database.source_to_concept_map a join @Mapping_database.CONCEPT b on a.target_concept_id=b.concept_id
 where a.invalid_reason is null and b.invalid_reason is null and a.domain_id='device';
 
-select * into #device from @Mapping_database.source_to_concept_map where domain_id='device';
-select * into #five from @Mapping_database.source_to_concept_map where domain_id='procedure';
+select * into  @NHISNSC_database.dvc_exps_dvc from @Mapping_database.source_to_concept_map where domain_id='device';
+select * into  @NHISNSC_database.dvc_exps_five from @Mapping_database.source_to_concept_map where domain_id='procedure';
 
 select a.*
-	into #duplicated
-from #device a, #five b
+	into  @NHISNSC_database.dvc_exps_dup
+from  @NHISNSC_database.dvc_exps_dvc a,  @NHISNSC_database.dvc_exps_five b
 where a.source_code=b.source_code
 	and a.invalid_reason='' and b.invalid_reason='';
 
-select * into #mapping_table from #temp
-where source_code not in (select source_code from #duplicated);
+select * into  @NHISNSC_database.dvc_exps_map from  @NHISNSC_database.dvc_exps_temp
+where source_code not in (select source_code from  @NHISNSC_database.dvc_exps_dup);
 
-drop table #device, #five, #temp;
+drop table  @NHISNSC_database.dvc_exps_dvc,  @NHISNSC_database.dvc_exps_five,  @NHISNSC_database.dvc_exps_temp;
 
 /**************************************
  2-1. Insert data using 30T
@@ -112,7 +112,7 @@ FROM
 	FROM (select * from @NHISNSC_rawdata.@NHIS_30T where div_type_cd not in ('1', '2', '3', '4', '5')) x, @NHISNSC_database.SEQ_MASTER y
 	WHERE y.source_table='130'
 	AND x.key_seq=y.key_seq
-	AND x.seq_no=y.seq_no) a JOIN #mapping_table b 
+	AND x.seq_no=y.seq_no) a JOIN  @NHISNSC_database.dvc_exps_map b 
 ON a.div_cd=b.source_code
 ;
 
@@ -148,7 +148,7 @@ FROM
 	FROM (select * from @NHISNSC_rawdata.@NHIS_60T where div_type_cd not in ('1', '2', '3', '4', '5')) x, @NHISNSC_database.SEQ_MASTER y
 	WHERE y.source_table='160'
 	AND x.key_seq=y.key_seq
-	AND x.seq_no=y.seq_no) a JOIN #mapping_table b 
+	AND x.seq_no=y.seq_no) a JOIN  @NHISNSC_database.dvc_exps_map b 
 	on a.div_cd=b.source_code
 ;
 
@@ -184,7 +184,7 @@ FROM
 	FROM (select * from @NHISNSC_rawdata.@NHIS_30T where div_type_cd in ('7', '8')) x, @NHISNSC_database.SEQ_MASTER y
 	WHERE y.source_table='130'
 	AND x.key_seq=y.key_seq
-	AND x.seq_no=y.seq_no) a JOIN #duplicated b 
+	AND x.seq_no=y.seq_no) a JOIN  @NHISNSC_database.dvc_exps_dup b 
 ON a.div_cd=b.source_code
 ;
 
@@ -220,7 +220,7 @@ FROM
 	FROM (select * from @NHISNSC_rawdata.@NHIS_60T where div_type_cd in ('7', '8')) x, @NHISNSC_database.SEQ_MASTER y
 	WHERE y.source_table='160'
 	AND x.key_seq=y.key_seq
-	AND x.seq_no=y.seq_no) a JOIN #duplicated b 
+	AND x.seq_no=y.seq_no) a JOIN  @NHISNSC_database.dvc_exps_dup b 
 	on a.div_cd=b.source_code
 
 /**************************************
@@ -257,7 +257,7 @@ FROM
 	WHERE y.source_table='130'
 	AND x.key_seq=y.key_seq
 	AND x.seq_no=y.seq_no) a  
-where a.div_cd not in (select source_code from #duplicated union all select source_code from #mapping_table);
+where a.div_cd not in (select source_code from  @NHISNSC_database.dvc_exps_dup union all select source_code from  @NHISNSC_database.dvc_exps_map);
 
 
 /**************************************
@@ -294,10 +294,10 @@ FROM
 	WHERE y.source_table='160'
 	AND x.key_seq=y.key_seq
 	AND x.seq_no=y.seq_no) a  
-where a.div_cd not in (select source_code from #duplicated union all select source_code from #mapping_table)
+where a.div_cd not in (select source_code from  @NHISNSC_database.dvc_exps_dup union all select source_code from  @NHISNSC_database.dvc_exps_map)
 ;
 
-drop table #mapping_table, #duplicated;
+drop table  @NHISNSC_database.dvc_exps_map,  @NHISNSC_database.dvc_exps_dup;
 
 
 /*
@@ -312,5 +312,5 @@ select * from @ResultDatabaseSchema.device_exposure where quantity=0 -- before -
 select * from @ResultDatabaseSchema.device_exposure where quantity=1 -- after -> 4548117 / after -> 4554385
 *************************************************************************************/
 
-
-dbcc shrinkfile (@NHISNSC_database_use,10)
+declare @log_file varchar(100) =  concat('@NHISNSC_database_use', '_log')
+dbcc shrinkfile (@log_file,10)

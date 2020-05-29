@@ -24,8 +24,8 @@
  1. Create table
 ***************************************/ 
 --drop table @ResultDatabaseSchema.OBSERVATION
---drop table #observation_mapping
---drop table #observation_mapping09
+--drop table @NHISNSC_database.obs_map_temp
+--drop table @NHISNSC_database.obs_map_temp09
 
 --IF OBJECT_ID(@ResultDatabaseSchema.OBSERVATION', 'U') IS NULL
 /*
@@ -82,7 +82,7 @@ unpivot (jk_value for jk_type in ( -- 2 JK items
 */
 
 -- observation mapping table(temp)
-CREATE TABLE #observation_mapping
+CREATE TABLE @NHISNSC_database.obs_map_temp
     (
      meas_type						varchar(50)					NULL , 
      id_value						varchar(50)					NULL ,
@@ -96,95 +96,95 @@ CREATE TABLE #observation_mapping
 ;
 	
 -- insert mapping data
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD1', '20', 1, 4058267, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD1', '20', 2, 43021368, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD1', '20', 3, 4058725, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD1', '20', 4, 4058286, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD1', '20', 5, 4077352, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD1', '20', 6, 4077982, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD1', '20', 7, 4058709, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD1', '20', 8, 4144289, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD1', '20', 9, 4195979, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD2', '21', 1, 4058267, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD2', '21', 2, 43021368, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD2', '21', 3, 4058725, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD2', '21', 4, 4058286, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD2', '21', 5, 4077352, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD2', '21', 6, 4077982, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD2', '21', 7, 4058709, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD2', '21', 8, 4144289, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD2', '21', 9, 4195979, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD3', '22', 1, 4058267, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD3', '22', 2, 43021368, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD3', '22', 3, 4058725, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD3', '22', 4, 4058286, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD3', '22', 5, 4077352, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD3', '22', 6, 4077982, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD3', '22', 7, 4058709, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD3', '22', 8, 4144289, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD3', '22', 9, 4195979, 44814721, null, null, null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_APOP_PMH_YN',		'23',	1,		4077982,		44814721,	null,		null,		null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_HDISE_PMH_YN',		'24',	1,		4077352,		44814721,	null,		null,		null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_HPRTS_PMH_YN',		'25',	1,		4058286,		44814721,	null,		null,		null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_DIABML_PMH_YN',	'26',	1,		4058709,		44814721,	null,		null,		null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_HPLPDM_PMH_YN',	'27',	1,		4058275,		44814721,	null,		null,		null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_ETCDSE_PMH_YN',	'28',	1,		44834226,		44814721,	null,		null,		null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PHSS_PMH_YN',		'29',	1,		4058267,		44814721,	null,		null,		null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_LIVER_DISE_PATIEN_YN', '30', 1,	4144266,		44814721,	null,		null,		null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_HPRTS_PATIEN_YN',	'31',	0,		4053372,		44814721,	null,		null,		null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_HPRTS_PATIEN_YN',	'31',	1,		4050816,		44814721,	null,		null,		null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_APOP_PATIEN_YN',	'32',	0,		4175587,		44814721,	null,		null,		null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_APOP_PATIEN_YN',	'32',	1,		4169009,		44814721,	null,		null,		null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_HDISE_PATIEN_YN',	'33',	0,		4050792,		44814721,	null,		null,		null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_HDISE_PATIEN_YN',	'33',	1,		4173498,		44814721,	null,		null,		null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_DIABML_PATIEN_YN',	'34',	0,		4051106,		44814721,	null,		null,		null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_DIABML_PATIEN_YN',	'34',	1,		4051114,		44814721,	null,		null,		null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_CANCER_PATIEN_YN',	'35',	0,		4051100,		44814721,	null,		null,		null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_CANCER_PATIEN_YN',	'35',	1,		4171594,		44814721,	null,		null,		null);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('SMK_STAT_TYPE_RSPS_CD',	'36',	1,		4222303,		44814721,	NULL,		NULL,		NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('SMK_STAT_TYPE_RSPS_CD',	'36',	2,		4310250,		44814721,	NULL,		NULL,		NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('SMK_STAT_TYPE_RSPS_CD',	'36',	3,		4276526,		44814721,	NULL,		NULL,		NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('SMK_TERM_RSPS_CD',		'37',	1,		40766364,		44818704,	NULL,		NULL,		2.5) ;
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('SMK_TERM_RSPS_CD',		'37',	2,		40766364,		44818704,	NULL,		NULL,		7.5) ;
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('SMK_TERM_RSPS_CD',		'37',	3,		40766364,		44818704,	NULL,		NULL,		15) ;
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('SMK_TERM_RSPS_CD',		'37',	4,		40766364,		44818704,	NULL,		NULL,		25) ;
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('SMK_TERM_RSPS_CD',		'37',	5,		40766364,		44818704,	NULL,		NULL,		30) ;
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CUR_SMK_TERM_RSPS_CD',	'38',	0,		40766364,		44818704,	9448,		NULL,		NULL); 
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CUR_DSQTY_RSPS_CD',		'39',	0,		40766929,		44818704,	45756923,	NULL,		NULL) ;
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('PAST_SMK_TERM_RSPS_CD',	'40',	0,		40766364,		44818704,	9448,		NULL,		NULL) ;
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('PAST_DSQTY_RSPS_CD',	'41',	0,		40766930,		44818704,	45756923,	NULL,		NULL) ;
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DSQTY_RSPS_CD',			'42',	1,		40766929,		44818704,	45756954,	NULL,		0.25) ;
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DSQTY_RSPS_CD',			'42',	2,		40766929,		44818704,	45756954,	NULL,		0.75) ;
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DSQTY_RSPS_CD',			'42',	3,		40766929,		44818704,	45756954,	NULL,		1.5) ;
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DSQTY_RSPS_CD',			'42',	4,		40766929,		44818704,	45756954,	NULL,		2) ;
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	1,		40771103,		44818704,	NULL,		45882527,	NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	2,		40771103,		44818704,	NULL,		45885249,	NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	3,		40771103,		44818704,	NULL,		45881653,	NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	4,		40771103,		44818704,	NULL,		45885248,	NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	5,		40771103,		44818704,	NULL,		45879676,	NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('TM1_DRKQTY_RSPS_CD',	'44',	1,		3037705,		44818704,	4045131,	NULL,		3.5) ;
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('TM1_DRKQTY_RSPS_CD',	'44',	2,		3037705,		44818704,	4045131,	NULL,		7)	;	
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('TM1_DRKQTY_RSPS_CD',	'44',	3,		3037705,		44818704,	4045131,	NULL,		10.5);	
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('TM1_DRKQTY_RSPS_CD',	'44',	4,		3037705,		44818704,	4045131,	NULL,		14)	;
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('EXERCI_FREQ_RSPS_CD',	'45',	1,		4036426,		44818704,	NULL,		45882527,	NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('EXERCI_FREQ_RSPS_CD',	'45',	2,		4036426,		44818704,	NULL,		45881653,	NULL);																						   
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('EXERCI_FREQ_RSPS_CD',	'45',	3,		4036426,		44818704,	NULL,		45885248,	NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('EXERCI_FREQ_RSPS_CD',	'45',	4,		4036426,		44818704,	NULL,		45883166,	NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('EXERCI_FREQ_RSPS_CD',	'45',	5,		4036426,		44818704,	NULL,		45879676,	NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('MOV20_WEK_FREQ_ID',		'46',	0,		82020119,		44818704,	NULL,		NULL,		NULL) ;
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('MOV30_WEK_FREQ_ID',		'47',	0,		82020120,		44818704,	NULL,		NULL,		NULL) ;
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('WLK30_WEK_FREQ_ID',		'48',	0,		82020121,		44818704,	NULL,		NULL,		NULL) ;
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	0,		3004572,		44814721,	4155146,	NULL,		NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	1,		3004572,		44814721,	4155146,	NULL,		NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	2,		3004572,		44814721,	4155146,	NULL,		NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	3,		3004572,		44814721,	4155146,	NULL,		NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	4,		3004572,		44814721,	4155146,	NULL,		NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	5,		3004572,		44814721,	4155146,	NULL,		NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	6,		3004572,		44814721,	4155146,	NULL,		NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	7,		3004572,		44814721,	4155146,	NULL,		NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	8,		3004572,		44814721,	4155146,	NULL,		NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	9,		3004572,		44814721,	4155146,	NULL,		NULL);
-insert into #observation_mapping (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	10,		3004572,		44814721,	4155146,	NULL,		NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD1', '20', 1, 4058267, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD1', '20', 2, 43021368, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD1', '20', 3, 4058725, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD1', '20', 4, 4058286, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD1', '20', 5, 4077352, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD1', '20', 6, 4077982, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD1', '20', 7, 4058709, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD1', '20', 8, 4144289, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD1', '20', 9, 4195979, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD2', '21', 1, 4058267, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD2', '21', 2, 43021368, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD2', '21', 3, 4058725, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD2', '21', 4, 4058286, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD2', '21', 5, 4077352, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD2', '21', 6, 4077982, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD2', '21', 7, 4058709, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD2', '21', 8, 4144289, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD2', '21', 9, 4195979, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD3', '22', 1, 4058267, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD3', '22', 2, 43021368, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD3', '22', 3, 4058725, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD3', '22', 4, 4058286, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD3', '22', 5, 4077352, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD3', '22', 6, 4077982, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD3', '22', 7, 4058709, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD3', '22', 8, 4144289, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PMH_CD3', '22', 9, 4195979, 44814721, null, null, null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_APOP_PMH_YN',		'23',	1,		4077982,		44814721,	null,		null,		null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_HDISE_PMH_YN',		'24',	1,		4077352,		44814721,	null,		null,		null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_HPRTS_PMH_YN',		'25',	1,		4058286,		44814721,	null,		null,		null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_DIABML_PMH_YN',	'26',	1,		4058709,		44814721,	null,		null,		null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_HPLPDM_PMH_YN',	'27',	1,		4058275,		44814721,	null,		null,		null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_ETCDSE_PMH_YN',	'28',	1,		44834226,		44814721,	null,		null,		null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('HCHK_PHSS_PMH_YN',		'29',	1,		4058267,		44814721,	null,		null,		null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_LIVER_DISE_PATIEN_YN', '30', 1,	4144266,		44814721,	null,		null,		null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_HPRTS_PATIEN_YN',	'31',	0,		4053372,		44814721,	null,		null,		null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_HPRTS_PATIEN_YN',	'31',	1,		4050816,		44814721,	null,		null,		null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_APOP_PATIEN_YN',	'32',	0,		4175587,		44814721,	null,		null,		null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_APOP_PATIEN_YN',	'32',	1,		4169009,		44814721,	null,		null,		null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_HDISE_PATIEN_YN',	'33',	0,		4050792,		44814721,	null,		null,		null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_HDISE_PATIEN_YN',	'33',	1,		4173498,		44814721,	null,		null,		null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_DIABML_PATIEN_YN',	'34',	0,		4051106,		44814721,	null,		null,		null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_DIABML_PATIEN_YN',	'34',	1,		4051114,		44814721,	null,		null,		null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_CANCER_PATIEN_YN',	'35',	0,		4051100,		44814721,	null,		null,		null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('FMLY_CANCER_PATIEN_YN',	'35',	1,		4171594,		44814721,	null,		null,		null);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('SMK_STAT_TYPE_RSPS_CD',	'36',	1,		4222303,		44814721,	NULL,		NULL,		NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('SMK_STAT_TYPE_RSPS_CD',	'36',	2,		4310250,		44814721,	NULL,		NULL,		NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('SMK_STAT_TYPE_RSPS_CD',	'36',	3,		4276526,		44814721,	NULL,		NULL,		NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('SMK_TERM_RSPS_CD',		'37',	1,		40766364,		44818704,	NULL,		NULL,		2.5) ;
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('SMK_TERM_RSPS_CD',		'37',	2,		40766364,		44818704,	NULL,		NULL,		7.5) ;
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('SMK_TERM_RSPS_CD',		'37',	3,		40766364,		44818704,	NULL,		NULL,		15) ;
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('SMK_TERM_RSPS_CD',		'37',	4,		40766364,		44818704,	NULL,		NULL,		25) ;
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('SMK_TERM_RSPS_CD',		'37',	5,		40766364,		44818704,	NULL,		NULL,		30) ;
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CUR_SMK_TERM_RSPS_CD',	'38',	0,		40766364,		44818704,	9448,		NULL,		NULL); 
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CUR_DSQTY_RSPS_CD',		'39',	0,		40766929,		44818704,	45756923,	NULL,		NULL) ;
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('PAST_SMK_TERM_RSPS_CD',	'40',	0,		40766364,		44818704,	9448,		NULL,		NULL) ;
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('PAST_DSQTY_RSPS_CD',	'41',	0,		40766930,		44818704,	45756923,	NULL,		NULL) ;
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DSQTY_RSPS_CD',			'42',	1,		40766929,		44818704,	45756954,	NULL,		0.25) ;
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DSQTY_RSPS_CD',			'42',	2,		40766929,		44818704,	45756954,	NULL,		0.75) ;
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DSQTY_RSPS_CD',			'42',	3,		40766929,		44818704,	45756954,	NULL,		1.5) ;
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DSQTY_RSPS_CD',			'42',	4,		40766929,		44818704,	45756954,	NULL,		2) ;
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	1,		40771103,		44818704,	NULL,		45882527,	NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	2,		40771103,		44818704,	NULL,		45885249,	NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	3,		40771103,		44818704,	NULL,		45881653,	NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	4,		40771103,		44818704,	NULL,		45885248,	NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	5,		40771103,		44818704,	NULL,		45879676,	NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('TM1_DRKQTY_RSPS_CD',	'44',	1,		3037705,		44818704,	4045131,	NULL,		3.5) ;
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('TM1_DRKQTY_RSPS_CD',	'44',	2,		3037705,		44818704,	4045131,	NULL,		7)	;	
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('TM1_DRKQTY_RSPS_CD',	'44',	3,		3037705,		44818704,	4045131,	NULL,		10.5);	
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('TM1_DRKQTY_RSPS_CD',	'44',	4,		3037705,		44818704,	4045131,	NULL,		14)	;
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('EXERCI_FREQ_RSPS_CD',	'45',	1,		4036426,		44818704,	NULL,		45882527,	NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('EXERCI_FREQ_RSPS_CD',	'45',	2,		4036426,		44818704,	NULL,		45881653,	NULL);																						   
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('EXERCI_FREQ_RSPS_CD',	'45',	3,		4036426,		44818704,	NULL,		45885248,	NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('EXERCI_FREQ_RSPS_CD',	'45',	4,		4036426,		44818704,	NULL,		45883166,	NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('EXERCI_FREQ_RSPS_CD',	'45',	5,		4036426,		44818704,	NULL,		45879676,	NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('MOV20_WEK_FREQ_ID',		'46',	0,		82020119,		44818704,	NULL,		NULL,		NULL) ;
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('MOV30_WEK_FREQ_ID',		'47',	0,		82020120,		44818704,	NULL,		NULL,		NULL) ;
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('WLK30_WEK_FREQ_ID',		'48',	0,		82020121,		44818704,	NULL,		NULL,		NULL) ;
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	0,		3004572,		44814721,	4155146,	NULL,		NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	1,		3004572,		44814721,	4155146,	NULL,		NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	2,		3004572,		44814721,	4155146,	NULL,		NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	3,		3004572,		44814721,	4155146,	NULL,		NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	4,		3004572,		44814721,	4155146,	NULL,		NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	5,		3004572,		44814721,	4155146,	NULL,		NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	6,		3004572,		44814721,	4155146,	NULL,		NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	7,		3004572,		44814721,	4155146,	NULL,		NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	8,		3004572,		44814721,	4155146,	NULL,		NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	9,		3004572,		44814721,	4155146,	NULL,		NULL);
+insert into @NHISNSC_database.obs_map_temp (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('CTRB_PT_TYPE_CD',		'49',	10,		3004572,		44814721,	4155146,	NULL,		NULL);
 
 																																	 
 
@@ -223,7 +223,7 @@ INSERT INTO @NHISNSC_database.OBSERVATION (observation_id, person_id, observatio
 				else meas_value
 				end as meas_value 			
 			from @NHISNSC_rawdata.GJ_VERTICAL) a
-		JOIN #observation_mapping b 
+		JOIN @NHISNSC_database.obs_map_temp b 
 		on isnull(a.meas_type,'') = isnull(b.meas_type,'') 
 			and isnull(a.meas_value,'0') = isnull(cast(b.answer as char),'0')
 		JOIN @NHISNSC_database.SEQ_MASTER c
@@ -268,7 +268,7 @@ INSERT INTO @NHISNSC_database.OBSERVATION (observation_id, person_id, observatio
 
 	from (select hchk_year, person_id, ykiho_gubun_cd, meas_type, meas_value
 			from @NHISNSC_rawdata.GJ_VERTICAL) a
-		JOIN #observation_mapping b 
+		JOIN @NHISNSC_database.obs_map_temp b 
 		on isnull(a.meas_type,'') = isnull(b.meas_type,'') 
 			and isnull(a.meas_value,'0') >= isnull(cast(b.answer as char),'0')
 		JOIN @NHISNSC_database.SEQ_MASTER c
@@ -287,7 +287,7 @@ INSERT INTO @NHISNSC_database.OBSERVATION (observation_id, person_id, observatio
 
 
 
-CREATE TABLE #observation_mapping09
+CREATE TABLE @NHISNSC_database.obs_map_temp09
     (
      meas_type						varchar(50)					NULL , 
      id_value						varchar(50)					NULL ,
@@ -301,15 +301,15 @@ CREATE TABLE #observation_mapping09
 ;
 
 
-insert into #observation_mapping09 (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	1,		40771103,		44818704,	45881908,		NULL,		0);
-insert into #observation_mapping09 (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	2,		40771103,		44818704,	45881908,		NULL,		1);
-insert into #observation_mapping09 (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	3,		40771103,		44818704,	45881908,		NULL,		2);
-insert into #observation_mapping09 (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	4,		40771103,		44818704,	45881908,		NULL,		3);
-insert into #observation_mapping09 (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	5,		40771103,		44818704,	45881908,		NULL,		4);
-insert into #observation_mapping09 (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	6,		40771103,		44818704,	45881908,		NULL,		5);
-insert into #observation_mapping09 (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	7,		40771103,		44818704,	45881908,		NULL,		6);
-insert into #observation_mapping09 (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	8,		40771103,		44818704,	45881908,		NULL,		7);
-insert into #observation_mapping09 (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('TM1_DRKQTY_RSPS_CD',	'44',	0,		3037705,		44818704,	4045131,		NULL,		NULL) ;
+insert into @NHISNSC_database.obs_map_temp09 (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	1,		40771103,		44818704,	45881908,		NULL,		0);
+insert into @NHISNSC_database.obs_map_temp09 (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	2,		40771103,		44818704,	45881908,		NULL,		1);
+insert into @NHISNSC_database.obs_map_temp09 (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	3,		40771103,		44818704,	45881908,		NULL,		2);
+insert into @NHISNSC_database.obs_map_temp09 (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	4,		40771103,		44818704,	45881908,		NULL,		3);
+insert into @NHISNSC_database.obs_map_temp09 (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	5,		40771103,		44818704,	45881908,		NULL,		4);
+insert into @NHISNSC_database.obs_map_temp09 (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	6,		40771103,		44818704,	45881908,		NULL,		5);
+insert into @NHISNSC_database.obs_map_temp09 (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	7,		40771103,		44818704,	45881908,		NULL,		6);
+insert into @NHISNSC_database.obs_map_temp09 (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('DRNK_HABIT_RSPS_CD',	'43',	8,		40771103,		44818704,	45881908,		NULL,		7);
+insert into @NHISNSC_database.obs_map_temp09 (meas_type, id_value, answer, observation_concept_id, observation_type_concept_id, observation_unit_concept_id, value_as_concept_id, value_as_number) values ('TM1_DRKQTY_RSPS_CD',	'44',	0,		3037705,		44818704,	4045131,		NULL,		NULL) ;
 
 
 
@@ -339,7 +339,7 @@ select		cast(concat(c.master_seq, b.id_value) as bigint) as observation_id,
 
 	from (select hchk_year, person_id, ykiho_gubun_cd, meas_type, meas_value
 			from @NHISNSC_rawdata.GJ_VERTICAL) a
-		JOIN #observation_mapping09 b 
+		JOIN @NHISNSC_database.obs_map_temp09 b 
 		on isnull(a.meas_type,'') = isnull(b.meas_type,'') 
 			and isnull(a.meas_value,'0') >= isnull(cast(b.answer as char),'0')
 		JOIN @NHISNSC_database.SEQ_MASTER c
@@ -378,7 +378,7 @@ INSERT INTO @NHISNSC_database.OBSERVATION (observation_id, person_id, observatio
 
 	from (select hchk_year, person_id, ykiho_gubun_cd, meas_type, meas_value
 			from @NHISNSC_rawdata.GJ_VERTICAL) a
-		JOIN #observation_mapping09 b 
+		JOIN @NHISNSC_database.obs_map_temp09 b 
 		on isnull(a.meas_type,'') = isnull(b.meas_type,'') 
 			and isnull(a.meas_value,'0') = isnull(cast(b.answer as char),'0')
 		JOIN @NHISNSC_database.SEQ_MASTER c
@@ -425,7 +425,7 @@ select			cast(concat(c.master_seq, b.id_value) as bigint) as observation_id,
 				unit_source_value = null,
 				qualifier_source_Value = null
 	from (select * from @NHISNSC_rawdata.JK_VERTICAL where jk_type='CTRB_PT_TYPE_CD') a
-				JOIN #observation_mapping b 
+				JOIN @NHISNSC_database.obs_map_temp b 
 				on isnull(a.jk_value,'') = isnull(b.answer,'') 
 				JOIN @NHISNSC_database.SEQ_MASTER c
 				on a.person_id = cast(c.person_id as char)
@@ -434,8 +434,8 @@ select			cast(concat(c.master_seq, b.id_value) as bigint) as observation_id,
 			and c.source_table='JKT'
 ;
 
-drop table #observation_mapping;
-drop table #observation_mapping09;
+drop table @NHISNSC_database.obs_map_temp;
+drop table @NHISNSC_database.obs_map_temp09;
 
 
 /*****************************************************
@@ -455,5 +455,5 @@ order by meas_type
 
 */
 
-
-dbcc shrinkfile (@NHISNSC_database_use,10)
+declare @log_file varchar(100) =  concat('@NHISNSC_database_use', '_log')
+dbcc shrinkfile (@log_file,10)

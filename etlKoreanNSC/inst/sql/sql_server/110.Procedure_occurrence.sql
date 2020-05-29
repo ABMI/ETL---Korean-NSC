@@ -97,35 +97,35 @@ CREATE TABLE @NHISNSC_database.PROCEDURE_OCCURRENCE (
 /**************************************
  2-1. Using temp mapping table
 ***************************************/ 
-IF OBJECT_ID('tempdb..#mapping_table', 'U') IS NOT NULL
-	DROP TABLE #mapping_table;
-IF OBJECT_ID('tempdb..#temp', 'U') IS NOT NULL
-	DROP TABLE #temp;
-IF OBJECT_ID('tempdb..#duplicated', 'U') IS NOT NULL
-	DROP TABLE #duplicated;
-IF OBJECT_ID('tempdb..#pro', 'U') IS NOT NULL
-	DROP TABLE #pro;
-IF OBJECT_ID('tempdb..#five', 'U') IS NOT NULL
-	DROP TABLE #five;
+IF OBJECT_ID('@NHISNSC_database.prcd_occ_map', 'U') IS NOT NULL
+	DROP TABLE @NHISNSC_database.prcd_occ_map;
+IF OBJECT_ID('@NHISNSC_database.prcd_occ_tmp1', 'U') IS NOT NULL
+	DROP TABLE @NHISNSC_database.prcd_occ_tmp1;
+IF OBJECT_ID('@NHISNSC_database.prcd_occ_dup', 'U') IS NOT NULL
+	DROP TABLE @NHISNSC_database.prcd_occ_dup;
+IF OBJECT_ID('@NHISNSC_database.prcd_occ_pro', 'U') IS NOT NULL
+	DROP TABLE @NHISNSC_database.prcd_occ_pro;
+IF OBJECT_ID('@NHISNSC_database.prcd_occ_five', 'U') IS NOT NULL
+	DROP TABLE @NHISNSC_database.prcd_occ_five;
 
 select a.source_code, a.target_concept_id, a.domain_id, REPLACE(a.invalid_reason, '', NULL) as invalid_reason
-	into #temp
+	into @NHISNSC_database.prcd_occ_tmp1
 from @Mapping_database.source_to_concept_map a join @Mapping_database.CONCEPT b on a.target_concept_id=b.concept_id
 where a.invalid_reason is null and b.invalid_reason is null and a.domain_id='procedure';
 
-select * into #pro from @Mapping_database.source_to_concept_map where domain_id='procedure';
-select * into #five from @Mapping_database.source_to_concept_map where domain_id='device';
+select * into @NHISNSC_database.prcd_occ_pro from @Mapping_database.source_to_concept_map where domain_id='procedure';
+select * into @NHISNSC_database.prcd_occ_five from @Mapping_database.source_to_concept_map where domain_id='device';
 
 select a.*
-	into #duplicated
-from #pro a, #five b
+	into @NHISNSC_database.prcd_occ_dup
+from @NHISNSC_database.prcd_occ_pro a, @NHISNSC_database.prcd_occ_five b
 where a.source_code=b.source_code
 	and a.invalid_reason is null and b.invalid_reason is null;
 
-select * into #mapping_table from #temp
-where source_code not in (select source_code from #duplicated);
+select * into @NHISNSC_database.prcd_occ_map from @NHISNSC_database.prcd_occ_tmp1
+where source_code not in (select source_code from @NHISNSC_database.prcd_occ_dup);
 
-drop table #pro, #five, #temp;
+drop table @NHISNSC_database.prcd_occ_pro, @NHISNSC_database.prcd_occ_five, @NHISNSC_database.prcd_occ_tmp1;
 
 /**************************************
  3-1. Insert data using 30T
@@ -154,7 +154,7 @@ FROM (SELECt x.key_seq, x.seq_no, x.recu_fr_dt, x.div_cd,
 	FROM (select * from @NHISNSC_rawdata.@NHIS_30T where div_type_cd not in ('3','4','5', '7','8')) x, 
 		 (select master_seq, key_seq, seq_no, person_id from @NHISNSC_database.SEQ_MASTER where source_table='130') y
 	WHERE x.key_seq=y.key_seq
-	AND x.seq_no=y.seq_no) a, #mapping_table b
+	AND x.seq_no=y.seq_no) a, @NHISNSC_database.prcd_occ_map b
 WHERE left(a.div_cd,5)=b.source_code
 ;
 
@@ -185,7 +185,7 @@ FROM (SELECt x.key_seq, x.seq_no, x.recu_fr_dt, x.div_cd,
 	FROM (select * from @NHISNSC_rawdata.@NHIS_60T where div_type_cd not in ('3','4','5', '7','8')) x, 
 		 (select master_seq, key_seq, seq_no, person_id from @NHISNSC_database.SEQ_MASTER where source_table='160') y
 	WHERE x.key_seq=y.key_seq
-	AND x.seq_no=y.seq_no) a, #mapping_table b
+	AND x.seq_no=y.seq_no) a, @NHISNSC_database.prcd_occ_map b
 WHERE left(a.div_cd,5)=b.source_code
 ;
 
@@ -217,7 +217,7 @@ FROM (SELECt x.key_seq, x.seq_no, x.recu_fr_dt, x.div_cd,
 	FROM (select * from @NHISNSC_rawdata.@NHIS_30T where div_type_cd in ('1','2')) x, 
 		 (select master_seq, key_seq, seq_no, person_id from @NHISNSC_database.SEQ_MASTER where source_table='130') y
 	WHERE x.key_seq=y.key_seq
-	AND x.seq_no=y.seq_no) a, #duplicated b
+	AND x.seq_no=y.seq_no) a, @NHISNSC_database.prcd_occ_dup b
 WHERE left(a.div_cd,5)=b.source_code
 ;
 
@@ -248,7 +248,7 @@ FROM (SELECt x.key_seq, x.seq_no, x.recu_fr_dt, x.div_cd,
 	FROM (select * from @NHISNSC_rawdata.@NHIS_60T where div_type_cd in ('1', '2')) x, 
 		 (select master_seq, key_seq, seq_no, person_id from @NHISNSC_database.SEQ_MASTER where source_table='160') y
 	WHERE x.key_seq=y.key_seq
-	AND x.seq_no=y.seq_no) a, #duplicated b
+	AND x.seq_no=y.seq_no) a, @NHISNSC_database.prcd_occ_dup b
 WHERE left(a.div_cd,5)=b.source_code
 ;
 
@@ -281,7 +281,7 @@ FROM (SELECt x.key_seq, x.seq_no, x.recu_fr_dt, x.div_cd,
 		 (select master_seq, key_seq, seq_no, person_id from @NHISNSC_database.SEQ_MASTER where source_table='130') y
 	WHERE x.key_seq=y.key_seq
 	AND x.seq_no=y.seq_no) a 
-WHERE left(a.div_cd,5) not in (select source_code from #duplicated union all select source_code from #mapping_table )
+WHERE left(a.div_cd,5) not in (select source_code from @NHISNSC_database.prcd_occ_dup union all select source_code from @NHISNSC_database.prcd_occ_map )
 ;
 
 /**************************************
@@ -312,14 +312,14 @@ FROM (SELECt x.key_seq, x.seq_no, x.recu_fr_dt, x.div_cd,
 		 (select master_seq, key_seq, seq_no, person_id from @NHISNSC_database.SEQ_MASTER where source_table='160') y
 	WHERE x.key_seq=y.key_seq
 	AND x.seq_no=y.seq_no) a 
-WHERE left(a.div_cd,5) not in (select source_code from #duplicated union all select source_code from #mapping_table)
+WHERE left(a.div_cd,5) not in (select source_code from @NHISNSC_database.prcd_occ_dup union all select source_code from @NHISNSC_database.prcd_occ_map)
 ;
 
-drop table #mapping_table, #duplicated;
+drop table @NHISNSC_database.prcd_occ_map, @NHISNSC_database.prcd_occ_dup;
 
 -- Delete duplicated keys
 delete from @NHISNSC_database.procedure_occurrence
 where procedure_occurrence_id in (select drug_exposure_id from @NHISNSC_database.drug_exposure)
 
-
-dbcc shrinkfile (@NHISNSC_database_use,10)
+declare @log_file varchar(100) =  concat('@NHISNSC_database_use', '_log')
+dbcc shrinkfile (@log_file,10)

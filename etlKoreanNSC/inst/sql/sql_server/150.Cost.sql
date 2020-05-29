@@ -53,10 +53,10 @@ CREATE TABLE @NHISNSC_database.COST (
 /**************************************
  1-1. Using temp mapping table
 ***************************************/ 
-IF OBJECT_ID('tempdb..#mapping_table', 'U') IS NOT NULL
-	DROP TABLE #mapping_table;
+IF OBJECT_ID('@NHISNSC_database.cost_map', 'U') IS NOT NULL
+	DROP TABLE @NHISNSC_database.cost_map;
 select a.source_code, a.target_concept_id, a.domain_id, REPLACE(a.invalid_reason, '', NULL) as invalid_reason 
-into #mapping_table
+into @NHISNSC_database.cost_map
 from @Mapping_database.source_to_concept_map a join @Mapping_database.CONCEPT b on a.target_concept_id=b.concept_id
 where a.invalid_reason is null and b.invalid_reason is null;
 
@@ -111,7 +111,7 @@ and a.person_id=b.person_id;
 ---------------------------------------------------
 -- Check the duplicated IDs from Drug and Device tables
 /*
-select * from #mapping_table
+select * from @NHISNSC_database.cost_map
 where source_code in (
 					select drug_source_value from @NHISNSC_database.DRUG_EXPOSURE a, @NHISNSC_database.DEVICE_EXPOSURE b
 					where a.drug_exposure_id=b.device_exposure_id and a.person_id=b.person_id
@@ -122,7 +122,7 @@ order by source_code
 /*
 -- Delete duplicated ID keys from Drug_era table
 delete from @NHISNSC_database.DRUG_EXPOSURE
-where drug_source_value in (select source_code from #mapping_table
+where drug_source_value in (select source_code from @NHISNSC_database.cost_map
 							where domain_id='drug' and source_code in (
 												select drug_source_value from @NHISNSC_database.DRUG_EXPOSURE a, @NHISNSC_database.DEVICE_EXPOSURE b
 												where a.drug_exposure_id=b.device_exposure_id 
@@ -131,7 +131,7 @@ where drug_source_value in (select source_code from #mapping_table
 								)
 
 -- Delete duplicated ID keys from temp mapping table
-delete from #mapping_table where domain_id='drug' and source_code in (
+delete from @NHISNSC_database.cost_map where domain_id='drug' and source_code in (
 												select drug_source_value from @NHISNSC_database.DRUG_EXPOSURE a, @NHISNSC_database.DEVICE_EXPOSURE b
 												where a.drug_exposure_id=b.device_exposure_id 
 													and a.person_id=b.person_id )
@@ -341,7 +341,7 @@ SELECT
 	null as drg_source_value
 from (select device_exposure_id, person_id, device_exposure_start_date
 	from @NHISNSC_database.DEVICE_EXPOSURE 
-	where device_source_value not in (select source_code from #mapping_table where domain_id='procedure' )) a, --procedure 와 device 에 둘다 변환된 건수들 제외
+	where device_source_value not in (select source_code from @NHISNSC_database.cost_map where domain_id='procedure' )) a, --procedure 와 device 에 둘다 변환된 건수들 제외
 	(select m.master_seq, m.key_seq, m.seq_no, m.person_id, n.amt
 	from @NHISNSC_database.SEQ_MASTER m, @NHISNSC_rawdata.@NHIS_30T n
 	where m.source_table='130'
@@ -383,7 +383,7 @@ SELECT
 	null as drg_source_value
 from (select device_exposure_id, person_id, device_exposure_start_date
 	from @NHISNSC_database.DEVICE_EXPOSURE 
-	where device_source_value not in (select source_code from #mapping_table where domain_id='procedure' )) a,  --procedure 와 device 에 둘다 변환된 건수들 제외
+	where device_source_value not in (select source_code from @NHISNSC_database.cost_map where domain_id='procedure' )) a,  --procedure 와 device 에 둘다 변환된 건수들 제외
 	(select m.master_seq, m.key_seq, m.seq_no, m.person_id, n.amt
 	from (select master_seq, key_seq, seq_no, person_id from @NHISNSC_database.SEQ_MASTER where source_table='160') m, 
 	@NHISNSC_rawdata.@NHIS_60T n
@@ -393,7 +393,7 @@ where left(a.device_exposure_id, 10)=b.master_seq
 and a.person_id=b.person_id;
 
 
-drop table #mapping_table;
+drop table @NHISNSC_database.cost_map;
 
-
-dbcc shrinkfile (@NHISNSC_database_use,10)
+declare @log_file varchar(100) =  concat('@NHISNSC_database_use', '_log')
+dbcc shrinkfile (@log_file,10)

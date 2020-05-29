@@ -134,5 +134,5 @@ ERRORFILE = '@vocaFolder\DOMAIN.bad',
 TABLOCK
 );
 
-
-dbcc shrinkfile (@NHISNSC_database_use,10)
+declare @log_file varchar(100) =  concat('@NHISNSC_database_use', '_log')
+dbcc shrinkfile (@log_file,10)

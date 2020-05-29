@@ -27,13 +27,13 @@
 /**************************************
  2. Step 1, Check the required data
 ***************************************/ 
---------------------------------------------@Mapping_database.cteDrugTarget
-IF OBJECT_ID('@Mapping_database.cteDrugTarget', 'U') IS NOT NULL
-	DROP TABLE @Mapping_database.cteDrugTarget;
-IF OBJECT_ID('@Mapping_database.cteEndDates', 'U') IS NOT NULL
-	DROP TABLE @Mapping_database.cteEndDates;
-IF OBJECT_ID('@Mapping_database.cteDoseEraEnds', 'U') IS NOT NULL
-	DROP TABLE @Mapping_database.cteDoseEraEnds;
+--------------------------------------------@NHISNSC_database.cteDrugTarget
+IF OBJECT_ID('@NHISNSC_database.cteDrugTarget', 'U') IS NOT NULL
+	DROP TABLE @NHISNSC_database.cteDrugTarget;
+IF OBJECT_ID('@NHISNSC_database.cteEndDates', 'U') IS NOT NULL
+	DROP TABLE @NHISNSC_database.cteEndDates;
+IF OBJECT_ID('@NHISNSC_database.cteDoseEraEnds', 'U') IS NOT NULL
+	DROP TABLE @NHISNSC_database.cteDoseEraEnds;
 
 SELECT
 	d.drug_exposure_id
@@ -44,22 +44,22 @@ SELECT
 	, d.drug_exposure_start_date
 	, d.days_supply AS days_supply
 	, COALESCE(d.drug_exposure_end_date, DATEADD(DAY, d.days_supply, d.drug_exposure_start_date), DATEADD(DAY, 1, drug_exposure_start_date)) AS drug_exposure_end_date
-INTO @Mapping_database.cteDrugTarget 
+INTO @NHISNSC_database.cteDrugTarget 
 FROM @NHISNSC_database.DRUG_EXPOSURE d
-	 JOIN @Mapping_database.CONCEPT_ANCESTOR ca ON ca.descendant_concept_id = d.drug_concept_id
-	 JOIN @Mapping_database.CONCEPT c ON ca.ancestor_concept_id = c.concept_id
+	 JOIN @NHISNSC_database.CONCEPT_ANCESTOR ca ON ca.descendant_concept_id = d.drug_concept_id
+	 JOIN @NHISNSC_database.CONCEPT c ON ca.ancestor_concept_id = c.concept_id
 	 WHERE c.vocabulary_id in ('RxNorm', 'RxNorm Extension') 
 	 AND c.concept_class_ID = 'Ingredient';
 	
 	
---------------------------------------------@Mapping_database.cteEndDates
+--------------------------------------------@NHISNSC_database.cteEndDates
 SELECT
 	person_id
 	, ingredient_concept_id
 	, unit_concept_id
 	, dose_value
 	, DATEADD( DAY, -30, event_date) AS end_date
-INTO @Mapping_database.cteEndDates FROM
+INTO @NHISNSC_database.cteEndDates FROM
 (
 	SELECT
 		person_id
@@ -79,7 +79,7 @@ INTO @Mapping_database.cteEndDates FROM
 			, dose_value
 			, drug_exposure_start_date AS event_date
 			, -1 AS event_type, ROW_NUMBER() OVER(PARTITION BY person_id, ingredient_concept_id, unit_concept_id, dose_value ORDER BY drug_exposure_start_date) AS start_ordinal
-		FROM @Mapping_database.cteDrugTarget 
+		FROM @NHISNSC_database.cteDrugTarget 
 
 		UNION ALL
 
@@ -91,12 +91,12 @@ INTO @Mapping_database.cteEndDates FROM
 			, DATEADD(DAY, 30, drug_exposure_end_date) AS drug_exposure_end_date
 			, 1 AS event_type
 			, NULL
-		FROM @Mapping_database.cteDrugTarget
+		FROM @NHISNSC_database.cteDrugTarget
 	) RAWDATA
 ) e
 WHERE (2 * e.start_ordinal) - e.overall_ord = 0;
 
---------------------------------------------@Mapping_database.cteDoseEraEnds
+--------------------------------------------@NHISNSC_database.cteDoseEraEnds
 SELECT
 	dt.person_id
 	, dt.ingredient_concept_id as drug_concept_id
@@ -104,8 +104,8 @@ SELECT
 	, dt.dose_value
 	, dt.drug_exposure_start_date
 	, MIN(e.end_date) AS dose_era_end_date
-into @Mapping_database.cteDoseEraEnds FROM @Mapping_database.cteDrugTarget dt
-JOIN @Mapping_database.cteEndDates e
+into @NHISNSC_database.cteDoseEraEnds FROM @NHISNSC_database.cteDrugTarget dt
+JOIN @NHISNSC_database.cteEndDates e
 ON dt.person_id = e.person_id AND dt.ingredient_concept_id = e.ingredient_concept_id AND e.end_date >= dt.drug_exposure_start_date
 --AND dt.unit_concept_id = e.unit_concept_id AND dt.dose_value = e.dose_value		--Both unit_concpet_id and dose_value are excluded in both tables because of NULLs
 GROUP BY
@@ -127,11 +127,11 @@ SELECT
 	, dose_value
 	, MIN(drug_exposure_start_date) AS dose_era_start_date
 	, dose_era_end_date
-	from @Mapping_database.cteDoseEraEnds
+	from @NHISNSC_database.cteDoseEraEnds
 GROUP BY person_id, drug_concept_id, unit_concept_id, dose_value, dose_era_end_date
 ORDER BY person_id, drug_concept_id;
 
-drop table @Mapping_database.cteDrugTarget, @Mapping_database.cteEndDates, @Mapping_database.cteDoseEraEnds;
+drop table @NHISNSC_database.cteDrugTarget, @NHISNSC_database.cteEndDates, @NHISNSC_database.cteDoseEraEnds;
 
-
-dbcc shrinkfile (@NHISNSC_database_use,10)
+declare @log_file varchar(100) =  concat('@NHISNSC_database_use', '_log')
+dbcc shrinkfile (@log_file,10)

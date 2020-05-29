@@ -40,8 +40,8 @@ Create table @NHISNSC_database.CARE_SITE (
 									- If established divisin code is consist with one number then add 0 in front of it.
 ***************************************/  
 
-IF OBJECT_ID('tempdb..#temp', 'U') IS NOT NULL
-	DROP TABLE #temp;
+IF OBJECT_ID('@NHISNSC_database.cate_site_temp', 'U') IS NOT NULL
+	DROP TABLE @NHISNSC_database.cate_site_temp;
 
 SELECT a.ykiho_id,
 	null as care_site_name,
@@ -67,7 +67,7 @@ SELECT a.ykiho_id,
 	a.ykiho_sido as location_id,
 	a.ykiho_id as care_site_source_value,
 	(a.ykiho_gubun_cd + '/' + (case when len(a.org_type) = 1 then '0' + org_type else org_type end)) as place_of_service_source_value
-into #temp
+into @NHISNSC_database.cate_site_temp
 
 FROM @NHISNSC_rawdata.@NHIS_YK a, (select ykiho_id, max(stnd_y) as max_stnd_y
 	from @NHISNSC_rawdata.@NHIS_YK c
@@ -77,11 +77,11 @@ and a.stnd_y=b.max_stnd_y
 ;
 
 INSERT INTO @NHISNSC_database.CARE_SITE
-select * from #temp
+select * from @NHISNSC_database.cate_site_temp
 group by YKIHO_ID, care_site_name, place_of_service_concept_id, location_id, care_site_source_value, place_of_service_source_value
 ;
 
-drop table #temp;
+drop table @NHISNSC_database.cate_site_temp;
 
-
-dbcc shrinkfile (@NHISNSC_database_use,10)
+declare @log_file varchar(100) =  concat('@NHISNSC_database_use', '_log')
+dbcc shrinkfile (@log_file,10)

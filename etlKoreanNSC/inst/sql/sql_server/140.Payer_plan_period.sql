@@ -68,5 +68,5 @@ where a.person_id=b.person_id
 and b.death_date < a. payer_plan_period_start_date;
 
 
-
-dbcc shrinkfile (@NHISNSC_database_use,10)
+declare @log_file varchar(100) =  concat('@NHISNSC_database_use', '_log')
+dbcc shrinkfile (@log_file,10)

@@ -52,11 +52,11 @@ CREATE TABLE @NHISNSC_database.DRUG_EXPOSURE (
 /**************************************
  2-1. Create temp mapping table
 ***************************************/ 
-IF OBJECT_ID('tempdb..#mapping_table', 'U') IS NOT NULL
-	DROP TABLE #mapping_table;
+IF OBJECT_ID('tempdb..@NHISNSC_database.drg_exps_map_temp', 'U') IS NOT NULL
+	DROP TABLE @NHISNSC_database.drg_exps_map_temp;
 
 select a.source_code, a.target_concept_id, a.domain_id, REPLACE(a.invalid_reason, '', NULL) as invalid_reason
-into #mapping_table
+into @NHISNSC_database.drg_exps_map_temp
 from @Mapping_database.source_to_concept_map a join @Mapping_database.CONCEPT b on a.target_concept_id=b.concept_id
 where a.invalid_reason is null and b.invalid_reason is null and a.domain_id='drug';
 
@@ -114,7 +114,7 @@ FROM
 	AND x.seq_no=y.seq_no
 	and y.key_seq=z.KEY_SEQ
 	and y.person_id=z.PERSON_ID	) a,
-	#mapping_table  b
+	@NHISNSC_database.drg_exps_map_temp  b
 where a.div_cd=b.source_code
 ;
 
@@ -162,7 +162,7 @@ FROM
 	AND x.seq_no=y.seq_no
 	and y.key_seq=z.KEY_SEQ
 	and y.person_id=z.PERSON_ID	) a,
-	#mapping_table b
+	@NHISNSC_database.drg_exps_map_temp b
 where a.div_cd=b.source_code
 ;
 
@@ -220,7 +220,7 @@ FROM
 	AND x.seq_no=y.seq_no
 	and y.key_seq=z.KEY_SEQ
 	and y.person_id=z.PERSON_ID	) a
-where a.div_cd not in (select source_code from #mapping_table )
+where a.div_cd not in (select source_code from @NHISNSC_database.drg_exps_map_temp )
 ;
 
 /**************************************
@@ -267,10 +267,10 @@ FROM
 	AND x.seq_no=y.seq_no
 	and y.key_seq=z.KEY_SEQ
 	and y.person_id=z.PERSON_ID	) a
-where a.div_cd not in (select source_code from #mapping_table )
+where a.div_cd not in (select source_code from @NHISNSC_database.drg_exps_map_temp )
 ;
 
-drop table #mapping_table;
+drop table @NHISNSC_database.drg_exps_map_temp;
 
 /**************************************
  5. Delete data of which drug_start_data are recorded before death date
@@ -305,5 +305,5 @@ UPDATE A
 */
 
 
-
-dbcc shrinkfile (@NHISNSC_database_use,10)
+declare @log_file varchar(100) =  concat('@NHISNSC_database_use', '_log')
+dbcc shrinkfile (@log_file,10)

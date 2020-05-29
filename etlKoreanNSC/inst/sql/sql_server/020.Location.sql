@@ -34,7 +34,7 @@ Create table @NHISNSC_database.LOCATION (
 /**************************************
  2. Insert data
 ***************************************/  
-INSERT INTO @NHISNSC_database.LOCATION
+INSERT INTO NSC_syc.dbo.LOCATION
 VALUES
 ('11110','서울특별시','11110 종로구','서울특별시',null,null,'KOREA','11110'),
 ('11140','서울특별시','11140 중구','서울특별시',null,null,'KOREA','11140'),
@@ -354,5 +354,3 @@ VALUES
 --('00000','기타','00000 기타','기타',null,null,'KOREA','00000'),
 --('X00','기타','X00 기타(값없음)','기타',null,null,'KOREA','X00');
 
-
-dbcc shrinkfile (@NHISNSC_database_use,10)
