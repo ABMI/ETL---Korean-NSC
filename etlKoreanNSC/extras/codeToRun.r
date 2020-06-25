@@ -1,5 +1,3 @@
-
-
 NHISNSC_rawdata <- "NHISNSC2013Original.dbo"
 NHISNSC_database <- "NSC_syc.dbo"
 NHIS_JK <- "NHID_JK"
@@ -10,7 +8,7 @@ NHIS_60T <- "NHID_GY60_T1"
 NHIS_GJ <- "NHID_GJ"
 NHIS_YK <- "NHID_YK"
 Mapping_database <- "NHIS_NSC_new_mapping.dbo"
-outputFolder <- "C:/Users/AJOU_MED/Desktop/test_nsc"
+outputFolder <- "C:/Users/AJOU_MED/Desktop/yc/test_nsc"
 
 #usethis::edit_r_environ()
 #Sys.getenv("myCdmSchema")
@@ -26,7 +24,7 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(
 connection <- DatabaseConnector::connect(connectionDetails)
 
 
-executeNHISETL_syc <- function(NHISNSC_rawdata,
+executeNHISETL <- function(NHISNSC_rawdata,
                            NHISNSC_database,
                            Mapping_database,
                            NHIS_JK,
@@ -50,7 +48,7 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
                            death = TRUE,
                            observation_period = TRUE,
                            visit_occurrence = TRUE,
-                           condition_occurrence = TRUE,
+                           condition_occurrence = F,
                            observation = TRUE,
                            drug_exposure = TRUE,
                            procedure_occurrence = TRUE,
@@ -63,7 +61,7 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
                            cdm_source = TRUE,
                            indexing = F,
                            constraints = F,
-                           data_cleansing = F
+                           data_cleansing = T
 ) {
     
     ParallelLogger::addDefaultFileLogger(file.path(outputFolder, "log.txt"))
@@ -201,10 +199,13 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
         table <- "location"
         startTime <- Sys.time()
         
-        sql <- SqlRender::loadRenderTranslateSql(SqlFile,
-                                                 packageName = "etlKoreanNSC",
-                                                 dbms = connectionDetails$dbms,
-                                                 NHISNSC_database = NHISNSC_database)
+        sql<-SqlRender::readSql(system.file(paste("sql/", gsub(" ", "_", "sql server"),sep = ""), SqlFile, package = "etlKoreanNSC"))
+        
+        Encoding(sql)<-"UTF-8"
+        
+        sql <- SqlRender::render(sql,
+                                 NHISNSC_database = NHISNSC_database)
+        
         Encoding(sql)<-"UTF-8"
         
         DatabaseConnector::executeSql(connection = connection, sql)
@@ -215,6 +216,7 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
         sql <- SqlRender::render(sql,
                                  NHISNSC_database = NHISNSC_database,
                                  table = table)
+        
         sql <- SqlRender::translate(sql,  targetDialect=attr(connection, "dbms"))
         count <- DatabaseConnector::querySql(connection,sql)
         
@@ -896,6 +898,7 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
                                                  dbms = connectionDetails$dbms,
                                                  NHISNSC_rawdata = NHISNSC_rawdata,
                                                  NHISNSC_database = NHISNSC_database,
+                                                 NHISNSC_database_use = NHISNSC_database_use,
                                                  NHIS_JK = NHIS_JK,
                                                  NHIS_20T = NHIS_20T,
                                                  NHIS_30T = NHIS_30T,
@@ -924,7 +927,7 @@ executeNHISETL_syc <- function(NHISNSC_rawdata,
     )
 }
 
-executeNHISETL_syc(NHISNSC_rawdata,
+executeNHISETL(NHISNSC_rawdata,
                NHISNSC_database,
                Mapping_database,
                NHIS_JK,

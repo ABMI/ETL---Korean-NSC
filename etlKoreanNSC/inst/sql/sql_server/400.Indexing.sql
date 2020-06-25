@@ -153,8 +153,8 @@ Standardized health economics
 
 ALTER TABLE  @NHISNSC_database.payer_plan_period ADD CONSTRAINT xpk_payer_plan_period PRIMARY KEY NONCLUSTERED ( payer_plan_period_id ) ;
 
-ALTER TABLE  @NHISNSC_database.cost ADD CONSTRAINT xpk_visit_cost PRIMARY KEY NONCLUSTERED ( cost_id ) ;
-
+--ALTER TABLE  @NHISNSC_database.cost ADD CONSTRAINT xpk_visit_cost PRIMARY KEY NONCLUSTERED ( cost_id ) ;
+--ม฿บน
 
 /************************
 

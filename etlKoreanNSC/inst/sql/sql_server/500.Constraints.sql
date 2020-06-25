@@ -57,9 +57,9 @@ Standardized vocabulary
 
 --use @Mapping_database
 
-ALTER TABLE @NHISNSC_database.concept ADD CONSTRAINT fpk_concept_domain FOREIGN KEY (domain_id)  REFERENCES domain (domain_id);
+--ALTER TABLE @NHISNSC_database.concept ADD CONSTRAINT fpk_concept_domain FOREIGN KEY (domain_id)  REFERENCES domain (domain_id);
 
-ALTER TABLE @NHISNSC_database.concept ADD CONSTRAINT fpk_concept_class FOREIGN KEY (concept_class_id)  REFERENCES concept_class (concept_class_id);
+--ALTER TABLE @NHISNSC_database.concept ADD CONSTRAINT fpk_concept_class FOREIGN KEY (concept_class_id)  REFERENCES concept_class (concept_class_id);
 
 ALTER TABLE @NHISNSC_database.concept ADD CONSTRAINT fpk_concept_vocabulary FOREIGN KEY (vocabulary_id)  REFERENCES vocabulary (vocabulary_id);
 
@@ -182,13 +182,13 @@ ALTER TABLE @NHISNSC_database.visit_occurrence ADD CONSTRAINT fpk_visit_provider
 
 ALTER TABLE @NHISNSC_database.visit_occurrence ADD CONSTRAINT fpk_visit_care_site FOREIGN KEY (care_site_id)  REFERENCES care_site (care_site_id);
 
-ALTER TABLE @NHISNSC_database.visit_occurrence ADD CONSTRAINT fpk_ visit_concept_s FOREIGN KEY (visit_source_concept_id)  REFERENCES concept (concept_id);
+ALTER TABLE @NHISNSC_database.visit_occurrence ADD CONSTRAINT fpk_visit_concept_s FOREIGN KEY (visit_source_concept_id)  REFERENCES concept (concept_id);
 
 ALTER TABLE @NHISNSC_database.visit_occurrence ADD CONSTRAINT fpk_visit_admitting_s FOREIGN KEY (admitting_source_concept_id) REFERENCES concept (concept_id);
 
 ALTER TABLE @NHISNSC_database.visit_occurrence ADD CONSTRAINT fpk_visit_discharge FOREIGN KEY (discharge_to_concept_id) REFERENCES concept (concept_id);
 
-ALTER TABLE @NHISNSC_database.visit_occurrence ADD CONSTRAINT fpk_visit_preceding FOREIGN KEY (preceding_visit_occurrence_id) REFERENCES visit_occurrence (visit_occurrence_id);
+--ALTER TABLE @NHISNSC_database.visit_occurrence ADD CONSTRAINT fpk_visit_preceding FOREIGN KEY (preceding_visit_occurrence_id) REFERENCES visit_occurrence (visit_occurrence_id);
 
 
 ALTER TABLE @NHISNSC_database.visit_detail ADD CONSTRAINT fpk_v_detail_person FOREIGN KEY (person_id)  REFERENCES person (person_id);
@@ -222,12 +222,12 @@ ALTER TABLE @NHISNSC_database.procedure_occurrence ADD CONSTRAINT fpk_procedure_
 
 ALTER TABLE @NHISNSC_database.procedure_occurrence ADD CONSTRAINT fpk_procedure_provider FOREIGN KEY (provider_id)  REFERENCES provider (provider_id);
 
-ALTER TABLE @NHISNSC_database.procedure_occurrence ADD CONSTRAINT fpk_procedure_visit FOREIGN KEY (visit_occurrence_id)  REFERENCES visit_occurrence (visit_occurrence_id);
+--ALTER TABLE @NHISNSC_database.procedure_occurrence ADD CONSTRAINT fpk_procedure_visit FOREIGN KEY (visit_occurrence_id)  REFERENCES visit_occurrence (visit_occurrence_id);
 
 ALTER TABLE @NHISNSC_database.procedure_occurrence ADD CONSTRAINT fpk_procedure_concept_s FOREIGN KEY (procedure_source_concept_id)  REFERENCES concept (concept_id);
 
 
-ALTER TABLE @NHISNSC_database.drug_exposure ADD CONSTRAINT fpk_drug_person FOREIGN KEY (person_id)  REFERENCES person (person_id);
+--ALTER TABLE @NHISNSC_database.drug_exposure ADD CONSTRAINT fpk_drug_person FOREIGN KEY (person_id)  REFERENCES person (person_id);
 
 ALTER TABLE @NHISNSC_database.drug_exposure ADD CONSTRAINT fpk_drug_concept FOREIGN KEY (drug_concept_id)  REFERENCES concept (concept_id);
 
@@ -235,9 +235,9 @@ ALTER TABLE @NHISNSC_database.drug_exposure ADD CONSTRAINT fpk_drug_type_concept
 
 ALTER TABLE @NHISNSC_database.drug_exposure ADD CONSTRAINT fpk_drug_route_concept FOREIGN KEY (route_concept_id)  REFERENCES concept (concept_id);
 
-ALTER TABLE @NHISNSC_database.drug_exposure ADD CONSTRAINT fpk_drug_provider FOREIGN KEY (provider_id)  REFERENCES provider (provider_id);
+--ALTER TABLE @NHISNSC_database.drug_exposure ADD CONSTRAINT fpk_drug_provider FOREIGN KEY (provider_id)  REFERENCES provider (provider_id);
 
-ALTER TABLE @NHISNSC_database.drug_exposure ADD CONSTRAINT fpk_drug_visit FOREIGN KEY (visit_occurrence_id)  REFERENCES visit_occurrence (visit_occurrence_id);
+--ALTER TABLE @NHISNSC_database.drug_exposure ADD CONSTRAINT fpk_drug_visit FOREIGN KEY (visit_occurrence_id)  REFERENCES visit_occurrence (visit_occurrence_id);
 
 ALTER TABLE @NHISNSC_database.drug_exposure ADD CONSTRAINT fpk_drug_concept_s FOREIGN KEY (drug_source_concept_id)  REFERENCES concept (concept_id);
 
@@ -250,7 +250,7 @@ ALTER TABLE @NHISNSC_database.device_exposure ADD CONSTRAINT fpk_device_type_con
 
 ALTER TABLE @NHISNSC_database.device_exposure ADD CONSTRAINT fpk_device_provider FOREIGN KEY (provider_id)  REFERENCES provider (provider_id);
 
-ALTER TABLE @NHISNSC_database.device_exposure ADD CONSTRAINT fpk_device_visit FOREIGN KEY (visit_occurrence_id)  REFERENCES visit_occurrence (visit_occurrence_id);
+--ALTER TABLE @NHISNSC_database.device_exposure ADD CONSTRAINT fpk_device_visit FOREIGN KEY (visit_occurrence_id)  REFERENCES visit_occurrence (visit_occurrence_id);
 
 ALTER TABLE @NHISNSC_database.device_exposure ADD CONSTRAINT fpk_device_concept_s FOREIGN KEY (device_source_concept_id)  REFERENCES concept (concept_id);
 
@@ -314,7 +314,7 @@ ALTER TABLE @NHISNSC_database.note_nlp ADD CONSTRAINT fpk_note_nlp_concept FOREI
 
 ALTER TABLE @NHISNSC_database.observation ADD CONSTRAINT fpk_observation_person FOREIGN KEY (person_id)  REFERENCES person (person_id);
 
-ALTER TABLE @NHISNSC_database.observation ADD CONSTRAINT fpk_observation_concept FOREIGN KEY (observation_concept_id)  REFERENCES concept (concept_id);
+--ALTER TABLE @NHISNSC_database.observation ADD CONSTRAINT fpk_observation_concept FOREIGN KEY (observation_concept_id)  REFERENCES concept (concept_id);
 
 ALTER TABLE @NHISNSC_database.observation ADD CONSTRAINT fpk_observation_type_concept FOREIGN KEY (observation_type_concept_id)  REFERENCES concept (concept_id);
 
@@ -345,9 +345,9 @@ Standardized health system data
 
 ************************/
 
-ALTER TABLE @NHISNSC_database.care_site ADD CONSTRAINT fpk_care_site_location FOREIGN KEY (location_id)  REFERENCES location (location_id);
+--ALTER TABLE @NHISNSC_database.care_site ADD CONSTRAINT fpk_care_site_location FOREIGN KEY (location_id)  REFERENCES location (location_id);
 
-ALTER TABLE @NHISNSC_database.care_site ADD CONSTRAINT fpk_care_site_place FOREIGN KEY (place_of_service_concept_id)  REFERENCES concept (concept_id);
+--ALTER TABLE @NHISNSC_database.care_site ADD CONSTRAINT fpk_care_site_place FOREIGN KEY (place_of_service_concept_id)  REFERENCES concept (concept_id);
 
 
 ALTER TABLE @NHISNSC_database.provider ADD CONSTRAINT fpk_provider_specialty FOREIGN KEY (specialty_concept_id)  REFERENCES concept (concept_id);
@@ -373,7 +373,7 @@ ALTER TABLE @NHISNSC_database.payer_plan_period ADD CONSTRAINT fpk_payer_plan_pe
 
 ALTER TABLE @NHISNSC_database.cost ADD CONSTRAINT fpk_visit_cost_currency FOREIGN KEY (currency_concept_id)  REFERENCES concept (concept_id);
 
-ALTER TABLE @NHISNSC_database.cost ADD CONSTRAINT fpk_visit_cost_period FOREIGN KEY (payer_plan_period_id)  REFERENCES payer_plan_period (payer_plan_period_id);
+--ALTER TABLE @NHISNSC_database.cost ADD CONSTRAINT fpk_visit_cost_period FOREIGN KEY (payer_plan_period_id)  REFERENCES payer_plan_period (payer_plan_period_id);
 
 ALTER TABLE @NHISNSC_database.cost ADD CONSTRAINT fpk_drg_concept FOREIGN KEY (drg_concept_id) REFERENCES concept (concept_id);
 

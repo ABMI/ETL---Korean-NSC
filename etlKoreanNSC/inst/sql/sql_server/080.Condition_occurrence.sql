@@ -63,8 +63,8 @@ where a.invalid_reason is null and b.invalid_reason is null
 	   1) kcdcode full set -> SY Cho : Done
 	   2) Check condition_type_concept_id value-> SC You
 ***************************************/ 
--- 1-1. mapped, sub == main
-INSERT INTO NSC_syc.dbo.CONDITION_OCCURRENCE
+-- 1-1. mapped
+INSERT INTO @NHISNSC_database.CONDITION_OCCURRENCE
 	(condition_occurrence_id, person_id, condition_concept_id, condition_start_date, condition_end_date,
 	condition_type_concept_id, stop_reason, provider_id, visit_occurrence_id, condition_source_value, 
 	condition_source_concept_id)
@@ -93,77 +93,25 @@ from (
 		c.sick_sym,
 		case when c.SEQ_NO=1 then '44786627'--Primary Condition
 			when c.SEQ_NO=2 then '44786629' --Secondary Condition
-			else '44786628'					-- First Position Condition (3th and etc)
+			else '44786628'					--First Position Condition (3th and etc)
 		end as sick_order,
-		'Y' as sub_sick_yn
-	from (select master_seq, person_id, key_seq, seq_no from NSC_syc.dbo.SEQ_MASTER where source_table='140') a, 
+		case when b.sub_sick=c.sick_sym then 'Y' else 'N' end as sub_sick_yn
+	from (select master_seq, person_id, key_seq, seq_no from @NHISNSC_database.SEQ_MASTER where source_table='140') a, 
 		NHISNSC2013Original.dbo.NHID_GY20_T1 b, 
 		NHISNSC2013Original.dbo.NHID_GY40_T1 c,
-		NSC_syc.dbo.observation_period d --added
+		@NHISNSC_database.observation_period d --added
 	where a.person_id=b.person_id
 	and a.key_seq=b.key_seq
 	and a.key_seq=c.key_seq
 	and a.seq_no=c.seq_no
 	and b.person_id=d.person_id --added
-	and b.sub_sick=c.sick_sym
 	and convert(date, c.recu_fr_dt, 112) between d.observation_period_start_date and d.observation_period_end_date) as m, --added
-	NSC_syc.dbo.cnd_ocr_temp as n
+	@NHISNSC_database.cnd_ocr_temp as n
 
 where m.sick_sym=n.source_code;
 
---79255629
-
--- 1-2. mapped, sub != main
-INSERT INTO NSC_syc.dbo.CONDITION_OCCURRENCE
-	(condition_occurrence_id, person_id, condition_concept_id, condition_start_date, condition_end_date,
-	condition_type_concept_id, stop_reason, provider_id, visit_occurrence_id, condition_source_value, 
-	condition_source_concept_id)
-select
-	convert(bigint, convert(bigint, m.master_seq) * 10 + convert(bigint, ROW_NUMBER() OVER(partition BY key_seq, seq_no order by target_concept_id desc))) as condition_occurrence_id,
-	--ROW_NUMBER() OVER(partition BY key_seq, seq_no order by concept_id desc) AS rank, m.seq_no,
-	m.person_id as person_id,
-	n.target_concept_id as condition_concept_id,
-	convert(date, m.recu_fr_dt, 112) as condition_start_date,
-	m.visit_end_date as condition_end_date,
-	m.sick_order as condition_type_concept_id,
-	null as stop_reason,
-	null as provider_id,
-	m.key_seq as visit_occurrence_id,
-	m.sick_sym as condition_source_value,
-	null as condition_source_concept_id
-from (
-	select
-		a.master_seq, a.person_id, a.key_seq, a.seq_no, b.recu_fr_dt,
-		case when b.form_cd in ('02', '2', '04', '06', '07', '10', '12') and b.vscn > 0 then DATEADD(DAY, b.vscn-1, convert(date, b.recu_fr_dt , 112)) 
-			when b.form_cd in ('02', '2', '04', '06', '07', '10', '12') and b.vscn = 0 then DATEADD(DAY, cast(b.vscn as int), convert(date, b.recu_fr_dt , 112)) 
-			when b.form_cd in ('03', '3', '05', '08', '8', '09', '9', '11', '13', '20', '21', 'ZZ') and b.in_pat_cors_type in ('11', '21', '31') and vscn > 0 then DATEADD(DAY, b.vscn-1, convert(date, b.recu_fr_dt, 112)) 
-			when b.form_cd in ('03', '3', '05', '08', '8', '09', '9', '11', '13', '20', '21', 'ZZ') and b.in_pat_cors_type in ('11', '21', '31') and vscn = 0 then DATEADD(DAY, cast(b.vscn as int), convert(date, b.recu_fr_dt, 112)) 
-			else convert(date, b.recu_fr_dt, 112)
-		end as visit_end_date,
-		c.sick_sym,
-		case when c.SEQ_NO=1 then '44786627'--Primary Condition
-			when c.SEQ_NO=2 then '44786629' --Secondary Condition
-			else '44786628'					-- First Position Condition (3th and etc)
-		end as sick_order,
-		'N' as sub_sick_yn
-	from (select master_seq, person_id, key_seq, seq_no from NSC_syc.dbo.SEQ_MASTER where source_table='140') a, 
-		NHISNSC2013Original.dbo.NHID_GY20_T1 b, 
-		NHISNSC2013Original.dbo.NHID_GY40_T1 c,
-		NSC_syc.dbo.observation_period d --added
-	where a.person_id=b.person_id
-	and a.key_seq=b.key_seq
-	and a.key_seq=c.key_seq
-	and a.seq_no=c.seq_no
-	and b.person_id=d.person_id --added
-	and b.sub_sick!=c.sick_sym
-	and convert(date, c.recu_fr_dt, 112) between d.observation_period_start_date and d.observation_period_end_date) as m, --added
-	NSC_syc.dbo.cnd_ocr_temp as n
-
-where m.sick_sym=n.source_code;
---212993824
-
--- 2-1. unmapped, sub == main
-INSERT INTO NSC_syc.dbo.CONDITION_OCCURRENCE
+-- 2-1. unmapped
+INSERT INTO @NHISNSC_database.CONDITION_OCCURRENCE
 	(condition_occurrence_id, person_id, condition_concept_id, condition_start_date, condition_end_date,
 	condition_type_concept_id, stop_reason, provider_id, visit_occurrence_id, condition_source_value, 
 	condition_source_concept_id)
@@ -195,71 +143,30 @@ from (
 			when c.SEQ_NO=2 then '44786629' --Secondary Condition
 			else '44786628'					-- First Position Condition (3th and etc)
 		end as sick_order,
-		'Y' as sub_sick_yn
-	from (select master_seq, person_id, key_seq, seq_no from NSC_syc.dbo.SEQ_MASTER where source_table='140') a, 
+		case when b.sub_sick=c.sick_sym then 'Y' else 'N' end as sub_sick_yn
+	from (select master_seq, person_id, key_seq, seq_no from @NHISNSC_database.SEQ_MASTER where source_table='140') a, 
 		NHISNSC2013Original.dbo.NHID_GY20_T1 b, 
 		NHISNSC2013Original.dbo.NHID_GY40_T1 c,
-		NSC_syc.dbo.observation_period d --added
+		@NHISNSC_database.observation_period d --added
 	where a.person_id=b.person_id
 	and a.key_seq=b.key_seq
 	and a.key_seq=c.key_seq
 	and a.seq_no=c.seq_no
 	and b.person_id=d.person_id --added
-	and b.sub_sick=c.sick_sym
 	and convert(date, c.recu_fr_dt, 112) between d.observation_period_start_date and d.observation_period_end_date) as m --added
-where m.sick_sym not in (select source_code from NSC_syc.dbo.cnd_ocr_temp2)
+where m.sick_sym not in (select source_code from @NHISNSC_database.cnd_ocr_temp2)
 ;
---1702562
 
 
-
--- 2-2. unmapped, sub != main
-INSERT INTO NSC_syc.dbo.CONDITION_OCCURRENCE
-	(condition_occurrence_id, person_id, condition_concept_id, condition_start_date, condition_end_date,
-	condition_type_concept_id, stop_reason, provider_id, visit_occurrence_id, condition_source_value, 
-	condition_source_concept_id)
-select
-	convert(bigint, convert(bigint, m.master_seq) * 10 + convert(bigint, ROW_NUMBER() OVER(partition BY key_seq, seq_no order by m.sick_sym desc))) as condition_occurrence_id,
-	m.person_id as person_id,
-	0 as condition_concept_id,
-	convert(date, m.recu_fr_dt, 112) as condition_start_date,
-	m.visit_end_date as condition_end_date,
-	m.sick_order as condition_type_concept_id,
-	null as stop_reason,
-	null as provider_id,
-	m.key_seq as visit_occurrence_id,
-	m.sick_sym as condition_source_value,
-	null as condition_source_concept_id
-
-from (
-	select
-		a.master_seq, a.person_id, a.key_seq, a.seq_no, b.recu_fr_dt,
-		case when b.form_cd in ('02', '2', '04', '06', '07', '10', '12') and b.vscn > 0 then DATEADD(DAY, b.vscn-1, convert(date, b.recu_fr_dt , 112)) 
-			when b.form_cd in ('02', '2', '04', '06', '07', '10', '12') and b.vscn = 0 then DATEADD(DAY, cast(b.vscn as int), convert(date, b.recu_fr_dt , 112)) 
-			when b.form_cd in ('03', '3', '05', '08', '8', '09', '9', '11', '13', '20', '21', 'ZZ') and b.in_pat_cors_type in ('11', '21', '31') and vscn > 0 then DATEADD(DAY, b.vscn-1, convert(date, b.recu_fr_dt, 112)) 
-			when b.form_cd in ('03', '3', '05', '08', '8', '09', '9', '11', '13', '20', '21', 'ZZ') and b.in_pat_cors_type in ('11', '21', '31') and vscn = 0 then DATEADD(DAY, cast(b.vscn as int), convert(date, b.recu_fr_dt, 112)) 
-			else convert(date, b.recu_fr_dt, 112)
-		end as visit_end_date,
-		c.sick_sym,
-			case when c.SEQ_NO=1 then '44786627'--Primary Condition
-			when c.SEQ_NO=2 then '44786629' --Secondary Condition
-			else '44786628'					-- First Position Condition (3th and etc)
-		end as sick_order,
-		'N' as sub_sick_yn
-	from (select master_seq, person_id, key_seq, seq_no from NSC_syc.dbo.SEQ_MASTER where source_table='140') a, 
-		NHISNSC2013Original.dbo.NHID_GY20_T1 b, 
-		NHISNSC2013Original.dbo.NHID_GY40_T1 c,
-		NSC_syc.dbo.observation_period d --added
-	where a.person_id=b.person_id
-	and a.key_seq=b.key_seq
-	and a.key_seq=c.key_seq
-	and a.seq_no=c.seq_no
-	and b.person_id=d.person_id --added
-	and b.sub_sick!=c.sick_sym
-	and convert(date, c.recu_fr_dt, 112) between d.observation_period_start_date and d.observation_period_end_date) as m --added
-where m.sick_sym not in (select source_code from NSC_syc.dbo.cnd_ocr_temp2)
-;
---5473695
+-- subsick != sicksym  update문 추가
+/*
+update @NHISNSC_database.CONDITION_OCCURRENCE
+set condition_type_concept_id =
+case when a.main_sick = b.sick_sym and b.seq_no != '1' then '1'
+	 when a.sub_sick = b.sick_sym and b.seq_no != '2' then '2'
+from NHISNSC2013Original.dbo.NHID_GY20_T1 a, 
+	 NHISNSC2013Original.dbo.NHID_GY40_T1 b
+...이 쿼리만 하루 넘게 걸림.....*/ 
 
 
 drop table @NHISNSC_database.cnd_ocr_temp;
